@@ -1,0 +1,17 @@
+/* Ensure the html and body take full height of the viewport */
+html, body {
+    height: 100%;
+}
+
+/* Make the body a flex container with vertical direction,
+   so we can push the footer to the bottom if content is short */
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Allow the main content area to grow and take available space,
+   pushing the footer to the bottom when necessary */
+.content {
+    flex: 1;
+}

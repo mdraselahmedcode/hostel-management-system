@@ -1,0 +1,76 @@
+/* Ensure the html and body take full height of the viewport */
+html, body {
+    height: 100%;
+    margin: 0;
+
+}
+
+/* Make the body a flex container with vertical direction,
+   so we can push the footer to the bottom if content is short */
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Allow the main content area to grow and take available space,
+   pushing the footer to the bottom when necessary */
+.content {
+    flex: 1;
+}
+
+.login-content {
+  display: block;
+}
+
+
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+
+.full-height {
+  flex: 1;
+  display: flex;
+  height: 100%;
+}
+.sidebar {
+  height: 100%;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar .nav-link {
+    color: #333;
+}
+.sidebar .nav-link.active {
+    font-weight: bold;
+    color: #007bff;
+}
+
+
+
+/* admin dashboard card design */
+.hover-card {
+    transition: transform 0.2s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

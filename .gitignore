@@ -1,0 +1,13 @@
+# PHP
+vendor/
+.env
+*.log
+*.lock
+composer.lock
+
+# Node (if you use npm for frontend)
+node_modules/
+
+# System Files
+.DS_Store
+Thumbs.db
