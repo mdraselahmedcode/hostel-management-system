@@ -34,6 +34,7 @@ $sql = "
         rooms.room_number,
         rooms.max_capacity,
         room_types.type_name,
+        room_types.default_capacity,
         floors.floor_number,
         floors.floor_name,
         hostels.hostel_name,
@@ -94,16 +95,16 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 
                             <!-- Floor Dropdown (only if hostel is selected) -->
                             <?php if (!empty($floors)): ?>
-                            <div class="col-md-4">
-                                <select name="floor_id" class="form-select" onchange="this.form.submit()">
-                                    <option value="0">-- Filter by Floor --</option>
-                                    <?php foreach ($floors as $floor): ?>
-                                        <option value="<?= $floor['id'] ?>" <?= $selectedFloorId == $floor['id'] ? 'selected' : '' ?>>
-                                            Floor <?= htmlspecialchars($floor['floor_number']) ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                                <div class="col-md-4">
+                                    <select name="floor_id" class="form-select" onchange="this.form.submit()">
+                                        <option value="0">-- Filter by Floor --</option>
+                                        <?php foreach ($floors as $floor): ?>
+                                            <option value="<?= $floor['id'] ?>" <?= $selectedFloorId == $floor['id'] ? 'selected' : '' ?>>
+                                                Floor <?= htmlspecialchars($floor['floor_number']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
                             <?php endif; ?>
                         </div>
                     </form>
@@ -112,10 +113,13 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         <table class="table table-bordered table-striped">
                             <thead class="table-dark">
                                 <tr>
+                                    <th>#</th> <!-- Serial Number Column -->
                                     <th>ID</th>
                                     <th>Room Number</th>
+                                    <th>Default Capacity</th>
                                     <th>Max Capacity</th>
                                     <th>Current Occupants</th>
+                                    <th>Available Seat</th>
                                     <th>Room Type</th>
                                     <th>Floor</th>
                                     <th>Floor Name</th>
@@ -127,15 +131,23 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                             <tbody>
                                 <?php if (empty($rooms)): ?>
                                     <tr>
-                                        <td colspan="10" class="text-center">No rooms found.</td>
+                                        <td colspan="13" class="text-center">No rooms found.</td>
                                     </tr>
                                 <?php else: ?>
+                                    <?php $serial = 1; ?>
                                     <?php foreach ($rooms as $room): ?>
                                         <tr>
+                                            <td><?= $serial++ ?></td>
                                             <td><?= $room['id'] ?></td>
                                             <td><?= htmlspecialchars($room['room_number']) ?></td>
+                                            <td><?= $room['default_capacity'] ?? '0' ?></td>
                                             <td><?= $room['max_capacity'] ?></td>
-                                            <td><?= $room['current_occupants'] ?? '0' ?></td>  
+                                            <td><?= $room['current_occupants'] ?? '0' ?></td>
+                                            <?php
+                                            $capacity = isset($room['default_capacity']) ? (int)$room['default_capacity'] : 0;
+                                            $occupants = isset($room['current_occupants']) ? (int)$room['current_occupants'] : 0;
+                                            ?>
+                                            <td><?= $capacity - $occupants ?></td>
                                             <td><?= $room['type_name'] ?? 'N/A' ?></td>
                                             <td><?= $room['floor_number'] ?? 'N/A' ?></td>
                                             <td><?= $room['floor_name'] ?? 'N/A' ?></td>
@@ -144,7 +156,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                                 <a href="<?= BASE_URL ?>/admin/sections/rooms/edit.php?id=<?= $room['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
                                             </td>
                                             <td>
-                                                <button class="btn btn-sm btn-danger delete-room" data-id="<?= $room['id'] ?>">Delete</button>
+                                                <a href="javascript:void(0);" class="delete-room btn btn-sm btn-danger" data-id="<?= $room['id'] ?>">Delete</a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -153,6 +165,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         </table>
                         <div id="showMessage" class="mt-3"></div>
                     </div>
+
                 </div>
             </div>
         </main>
@@ -160,10 +173,10 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 </div>
 
 <script>
-$(document).ready(function() {
     $('.delete-room').on('click', function() {
         const button = $(this);
         const roomId = button.data('id');
+        console.log("Room ID:", roomId); // Debug
 
         if (confirm('Are you sure you want to delete this room?')) {
             button.prop('disabled', true);
@@ -171,16 +184,29 @@ $(document).ready(function() {
             $.ajax({
                 type: 'POST',
                 url: '<?= BASE_URL ?>/admin/php_files/sections/rooms/delete.php',
-                data: { id: roomId },
+                data: {
+                    id: roomId
+                },
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
                         button.closest('tr').remove();
-                        $("#showMessage").html('<div class="alert alert-success">' + response.message + '</div>');
+                        setTimeout(function() {
+                            $("#showMessage").html('<div class="alert alert-success">' + response.message + '</div>');
+
+                            // Hide the message after 3 seconds
+                            setTimeout(function() {
+                                $("#showMessage").fadeOut('slow', function() {
+                                    $(this).html('').show(); // Clear and reset visibility
+                                });
+                            }, 3000);
+
+                        }, 300); // Initial delay before showing the message
                     } else {
                         $("#showMessage").html('<div class="alert alert-danger">' + response.message + '</div>');
                     }
                 },
+
                 error: function(xhr) {
                     console.error(xhr.responseText);
                     $("#showMessage").html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
@@ -191,7 +217,6 @@ $(document).ready(function() {
             });
         }
     });
-});
 </script>
 
 <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>

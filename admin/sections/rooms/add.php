@@ -13,7 +13,11 @@ if ($hostelResult && $hostelResult->num_rows > 0) {
 
 // Fetch room types for dropdown
 $roomTypes = [];
-$typeResult = $conn->query("SELECT id, type_name FROM room_types ORDER BY type_name ASC");
+$typeResult = $conn->query("
+    SELECT id, type_name, default_capacity, buffer_limit 
+    FROM room_types 
+    ORDER BY type_name ASC
+");
 if ($typeResult && $typeResult->num_rows > 0) {
     $roomTypes = $typeResult->fetch_all(MYSQLI_ASSOC);
 }
@@ -21,7 +25,7 @@ if ($typeResult && $typeResult->num_rows > 0) {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="container mt-5">
+<div class="content container mt-5">
     <a href="<?= BASE_URL ?>/admin/sections/rooms/index.php" class="btn btn-secondary mb-3">← Back</a>
 
     <div class="card shadow-sm">
@@ -29,7 +33,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             <h4>Add New Room</h4>
         </div>
         <div class="card-body">
-            <div id="formMessage"></div>
 
             <form id="addRoomForm">
                 <div class="mb-3">
@@ -53,12 +56,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     <label for="room_number" class="form-label">Room Number</label>
                     <input type="text" name="room_number" id="room_number" class="form-control" required>
                 </div>
-
-                <div class="mb-3">
-                    <label for="max_capacity" class="form-label">Max Capacity</label>
-                    <input type="number" name="max_capacity" id="max_capacity" class="form-control" required>
-                </div>
-
+                
                 <div class="mb-3">
                     <label for="room_type_id" class="form-label">Room Type</label>
                     <select name="room_type_id" id="room_type_id" class="form-select" required>
@@ -69,8 +67,14 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     </select>
                 </div>
 
+                <div class="mb-3">
+                    <label for="max_capacity" class="form-label">Max Capacity</label>
+                    <input type="number" name="max_capacity" id="max_capacity" class="form-control" required>
+                </div>
+
                 <button type="submit" class="btn btn-success">Add Room</button>
             </form>
+            <div id="formMessage" class="mt-3"></div>
         </div>
     </div>
 </div>
