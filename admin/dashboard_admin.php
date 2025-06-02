@@ -61,6 +61,16 @@
                     </a>
                 </div>
                 <div class="col-md-3 mb-3">
+                    <a href="<?= BASE_URL . '/admin/sections/roomTypes/index.php' ?>" class="text-decoration-none">
+                        <div class="card text-center shadow-sm hover-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Room Types</h5>
+                                <p class="card-text">Manage Room Types</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 mb-3">
                     <a href="./sections/admins/admins_admin.php" class="text-decoration-none">
                         <div class="card text-center shadow-sm hover-card">
                             <div class="card-body">
