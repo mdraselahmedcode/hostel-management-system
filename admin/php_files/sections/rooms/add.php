@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$room_number  = trim($_POST['room_number'] ?? '');
+$room_number  = strtolower(trim($_POST['room_number'] ?? ''));
 $max_capacity = (int) ($_POST['max_capacity'] ?? 0);
 $room_type_id = (int) ($_POST['room_type_id'] ?? 0);
 $floor_id     = (int) ($_POST['floor_id'] ?? 0);
@@ -73,10 +73,10 @@ if ($buffer_limit > 0 && $max_capacity > $default_capacity + $buffer_limit) {
 // Check if a room with the same number already exists in the same hostel
 $duplicateStmt = $conn->prepare("
     SELECT id FROM rooms
-    WHERE hostel_id = ? AND room_number = ?
+    WHERE hostel_id = ? AND LOWER(room_number) = ?
     LIMIT 1
 ");
-$duplicateStmt->bind_param("is", $hostel_id, $room_number); 
+$duplicateStmt->bind_param("is", $hostel_id, $room_number); // $room_number is already lowercased
 $duplicateStmt->execute(); 
 $duplicateResult = $duplicateStmt->get_result(); 
 $duplicateStmt->close(); 

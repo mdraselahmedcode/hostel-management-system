@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Sanitize and validate inputs
 $room_id       = isset($_POST['room_id']) ? (int) $_POST['room_id'] : 0;
-$room_number   = isset($_POST['room_number']) ? trim($_POST['room_number']) : '';
+$room_number = isset($_POST['room_number']) ? strtolower(trim($_POST['room_number'])) : '';
 $max_capacity  = isset($_POST['max_capacity']) ? (int) $_POST['max_capacity'] : 0;
 $room_type_id  = isset($_POST['room_type_id']) ? (int) $_POST['room_type_id'] : 0;
 $floor_id      = isset($_POST['floor_id']) ? (int) $_POST['floor_id'] : 0;
@@ -100,10 +100,10 @@ $hostel_id = $roomData['hostel_id'];
 // Check if a room with the same number already exists in the same hostel
 $duplicateStmt = $conn->prepare("
     SELECT id FROM rooms 
-    WHERE hostel_id = ? AND room_number = ? AND id != ?
+    WHERE hostel_id = ? AND LOWER(room_number) = ? AND id != ?
     LIMIT 1 
 ");
-$duplicateStmt->bind_param("isi", $hostel_id, $room_number, $room_id);  // Exclude current room's ID
+$duplicateStmt->bind_param("isi", $hostel_id, $room_number, $room_id);
 $duplicateStmt->execute(); 
 $duplicateResult = $duplicateStmt->get_result(); 
 $duplicateStmt->close(); 
@@ -115,6 +115,7 @@ if($duplicateResult->num_rows > 0) {
     ]);
     exit;
 }
+
 
 // Update room
 $updateStmt = $conn->prepare("
