@@ -4,6 +4,17 @@ require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
 require_once BASE_PATH . '/admin/includes/header_admin.php';
+
+
+// Fetch hostels for dropdown
+$hostels = [];
+$hostelResult = $conn->query("SELECT id, hostel_name FROM hostels ORDER BY hostel_name");
+if ($hostelResult && $hostelResult->num_rows > 0) {
+    $hostels = $hostelResult->fetch_all(MYSQLI_ASSOC);
+}
+
+
+
 ?>
 
 <div class="content container mt-5">
@@ -15,6 +26,16 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         </div>
         <div class="card-body">
             <form id="addRoomTypeForm">
+                <!-- Filtering by hostel by selection -->
+                <div class="mb-3 ">
+                    <label for="hostel_id" class="form-label">Select Hostel</label>
+                    <select name="hostel_id" id="hostel_id" class="form-select">
+                        <option value="">-- Select Hostel --</option>
+                        <?php foreach($hostels as $hostel): ?>
+                            <option value="<?= $hostel['id'] ?>"><?= htmlspecialchars($hostel['hostel_name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <div class="mb-3">
                     <label for="type_name" class="form-label">Room Type Name</label>
                     <input type="text" name="type_name" id="type_name" class="form-control" required>

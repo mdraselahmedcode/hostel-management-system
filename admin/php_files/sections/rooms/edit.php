@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Sanitize and validate inputs
 $room_id       = isset($_POST['room_id']) ? (int) $_POST['room_id'] : 0;
+$hostel_id       = isset($_POST['hostel_id']) ? (int) $_POST['hostel_id'] : 0;
 $room_number = isset($_POST['room_number']) ? strtolower(trim($_POST['room_number'])) : '';
 $max_capacity  = isset($_POST['max_capacity']) ? (int) $_POST['max_capacity'] : 0;
 $room_type_id  = isset($_POST['room_type_id']) ? (int) $_POST['room_type_id'] : 0;
@@ -26,9 +27,9 @@ if ($room_id <= 0 || empty($room_number) || $max_capacity <= 0 || $room_type_id 
 
 // Get default capacity for the given room_type_id
 $roomTypeStmt = $conn->prepare("
-    SELECT default_capacity, buffer_limit, type_name
+    SELECT default_capacity, buffer_limit, type_name, hostel_id
     FROM room_types 
-    WHERE id = ?
+    WHERE id = ? 
 ");
 $roomTypeStmt->bind_param("i", $room_type_id);
 $roomTypeStmt->execute();
@@ -43,6 +44,12 @@ if ($roomTypeResult->num_rows !== 1) {
 $roomType = $roomTypeResult->fetch_assoc();
 $default_capacity = (int) $roomType['default_capacity'];
 $buffer_limit = (int) $roomType['buffer_limit'];
+
+// ✅ Verify that the room type belongs to the same hostel
+if ((int)$roomType['hostel_id'] !== (int)$hostel_id) {
+    echo json_encode(['success' => false, 'message' => 'The selected room type does not belong to the same hostel.']);
+    exit;
+}
 
 // Check if the entered max_capacity is less than the default capacity
 if ($max_capacity < $default_capacity) {

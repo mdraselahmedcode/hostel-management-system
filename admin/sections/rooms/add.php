@@ -48,7 +48,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 <div class="mb-3">
                     <label for="floor_id" class="form-label">Floor</label>
                     <select name="floor_id" id="floor_id" class="form-select" required>
-                        <option value="">-- Select Floor --</option>
+                        <!-- Will be populated dynamically -->
                     </select>
                 </div>
 
@@ -56,14 +56,11 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     <label for="room_number" class="form-label">Room Number</label>
                     <input type="text" name="room_number" id="room_number" class="form-control" required>
                 </div>
-                
+
                 <div class="mb-3">
                     <label for="room_type_id" class="form-label">Room Type</label>
                     <select name="room_type_id" id="room_type_id" class="form-select" required>
-                        <option value="">-- Select Type --</option>
-                        <?php foreach ($roomTypes as $type): ?>
-                            <option value="<?= $type['id'] ?>"><?= htmlspecialchars($type['type_name']) ?></option>
-                        <?php endforeach; ?>
+                        <!-- Will be populated dynamically -->
                     </select>
                 </div>
 
@@ -80,59 +77,88 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 </div>
 
 <script>
-$(document).ready(function() {
-    $('#hostel_id').on('change', function () {
-        const hostelId = $(this).val();
-        $('#floor_id').html('<option value="">Loading...</option>');
+    $(document).ready(function() {
+        $('#hostel_id').on('change', function() {
+            const hostelId = $(this).val();
 
-        $.ajax({
-            url: '<?= BASE_URL ?>/admin/php_files/sections/floors/get_floors_by_hostel_id.php',
-            type: 'GET',
-            dataType: 'json',
-            data: { hostel_id: hostelId },
-            success: function (response) {
-                if (response.success) {
+            // Fetch Floors
+            $('#floor_id').html('<option value="">Loading...</option>');
+            $.ajax({
+                url: '<?= BASE_URL ?>/admin/php_files/sections/floors/get_floors_by_hostel_id.php',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    hostel_id: hostelId
+                },
+                success: function(response) {
                     let options = '<option value="">-- Select Floor --</option>';
-                    response.data.forEach(function (floor) {
-                        options += `<option value="${floor.id}">Floor ${floor.floor_number}</option>`;
-                    });
+                    if (response.success) {
+                        response.data.forEach(function(floor) {
+                            options += `<option value="${floor.id}">Floor ${floor.floor_number}</option>`;
+                        });
+                    } else {
+                        options = `<option value="">${response.message}</option>`;
+                    }
                     $('#floor_id').html(options);
-                } else {
-                    $('#floor_id').html(`<option value="">${response.message}</option>`);
+                },
+                error: function() {
+                    $('#floor_id').html('<option value="">Error loading floors</option>');
                 }
-            },
-            error: function () {
-                $('#floor_id').html('<option value="">Error loading floors</option>');
-            }
+            });
+
+            // Fetch Room Types
+            $('#room_type_id').html('<option value="">Loading...</option>');
+            $.ajax({
+                url: '<?= BASE_URL ?>/admin/php_files/sections/roomTypes/get_room_types_by_hostel_id.php',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    hostel_id: hostelId
+                },
+                success: function(response) {
+                    let options = '<option value="">-- Select Type --</option>';
+                    if (response.success) {
+                        response.data.forEach(function(type) {
+                            options += `<option value="${type.id}">${type.type_name}</option>`;
+                        });
+                    } else {
+                        options = `<option value="">${response.message}</option>`;
+                    }
+                    $('#room_type_id').html(options);
+                },
+                error: function() {
+                    $('#room_type_id').html('<option value="">Error loading room types</option>');
+                }
+            });
+        });
+
+
+        // Submit form via AJAX
+        $('#addRoomForm').on('submit', function(e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+
+            $.ajax({
+                url: '<?= BASE_URL . '/admin/php_files/sections/rooms/add.php' ?>',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        $('#formMessage').html(`<div class="alert alert-success">${response.message}</div>`);
+                        $('#addRoomForm')[0].reset();
+                        $('#floor_id').html('<option value="">-- Select Floor --</option>');
+                    } else {
+                        $('#formMessage').html(`<div class="alert alert-danger">${response.message}</div>`);
+                    }
+                },
+                error: function(xhr) {
+                    $('#formMessage').html(`<div class="alert alert-danger">An error occurred.</div>`);
+                    console.log(xhr.responseText);
+                }
+            });
         });
     });
-
-    // Submit form via AJAX
-    $('#addRoomForm').on('submit', function(e) {
-        e.preventDefault();
-        const formData = $(this).serialize();
-
-        $.ajax({
-            url: '<?= BASE_URL . '/admin/php_files/sections/rooms/add.php' ?>',
-            type: 'POST',
-            data: formData,
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    $('#formMessage').html(`<div class="alert alert-success">${response.message}</div>`);
-                    $('#addRoomForm')[0].reset();
-                    $('#floor_id').html('<option value="">-- Select Floor --</option>');
-                } else {
-                    $('#formMessage').html(`<div class="alert alert-danger">${response.message}</div>`);
-                }
-            },
-            error: function(xhr) {
-                $('#formMessage').html(`<div class="alert alert-danger">An error occurred.</div>`);
-                console.log(xhr.responseText);
-            }
-        });
-    });
-});
 </script>
 
 <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>

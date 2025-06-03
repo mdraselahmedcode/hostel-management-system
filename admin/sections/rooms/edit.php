@@ -33,7 +33,7 @@ if ($floorResult && $floorResult->num_rows > 0) {
 
 // Fetch Room Types
 $roomTypes = [];
-$typeSql = "SELECT id, type_name, default_capacity FROM room_types ORDER BY type_name ASC";
+$typeSql = "SELECT id, type_name, default_capacity FROM room_types WHERE hostel_id = {$room['hostel_id']} ORDER BY type_name ASC";
 $typeResult = $conn->query($typeSql);
 if ($typeResult && $typeResult->num_rows > 0) {
     $roomTypes = $typeResult->fetch_all(MYSQLI_ASSOC);
@@ -54,7 +54,9 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     <h2 class="mb-4">Edit Room</h2>
 
                     <form id="editRoomForm" method="POST">
+                        <!-- passing editable room id and hostel id -->
                         <input type="hidden" name="room_id" value="<?= $roomId ?>">
+                        <input type="hidden" name="hostel_id" value="<?= $room['hostel_id'] ?>">  
 
                         <div class="mb-3">
                             <label for="room_number" class="form-label">Room Number</label>
@@ -70,15 +72,22 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 
                         <div class="mb-3">
                             <label for="room_type_id" class="form-label">Room Type</label>
-                            <select name="room_type_id" id="room_type_id" class="form-select" required>
-                                <option value="">-- Select Room Type --</option>
-                                <?php foreach ($roomTypes as $type): ?>
-                                    <option value="<?= $type['id'] ?>" <?= $room['room_type_id'] == $type['id'] ? 'selected' : '' ?>>
-                                        <?= htmlspecialchars($type['type_name']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
+                            <?php if (empty($roomTypes)): ?>
+                                <div class="alert alert-warning">
+                                    No room types have been created for this hostel yet.
+                                </div>
+                            <?php else: ?>
+                                <select name="room_type_id" id="room_type_id" class="form-select" required>
+                                    <option value="">-- Select Room Type --</option>
+                                    <?php foreach ($roomTypes as $type): ?>
+                                        <option value="<?= $type['id'] ?>" <?= $room['room_type_id'] == $type['id'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($type['type_name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            <?php endif; ?>
                         </div>
+
 
                         <div class="mb-3">
                             <label for="floor_id" class="form-label">Floor</label>
@@ -103,8 +112,8 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 </div>
 
 <script>
-    $(document).ready(function () {
-        $('#editRoomForm').on('submit', function (e) {
+    $(document).ready(function() {
+        $('#editRoomForm').on('submit', function(e) {
             e.preventDefault();
 
             const submitBtn = $(this).find('button[type="submit"]');
@@ -115,7 +124,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 method: 'POST',
                 data: $(this).serialize(),
                 dataType: 'json',
-                success: function (response) {
+                success: function(response) {
                     const msgClass = response.success ? 'success' : 'danger';
                     $('#showMessage').html(`<div class="alert alert-${msgClass}">${response.message}</div>`);
 
@@ -127,7 +136,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 
                     submitBtn.prop('disabled', false).text('Update Room');
                 },
-                error: function () {
+                error: function() {
                     $('#showMessage').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
                     submitBtn.prop('disabled', false).text('Update Room');
                 }

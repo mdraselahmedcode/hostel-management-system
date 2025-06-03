@@ -27,9 +27,9 @@ if (!$room_number || !$max_capacity || !$room_type_id || !$floor_id || !$hostel_
 $roomTypeStmt = $conn->prepare("
     SELECT default_capacity, buffer_limit, type_name
     FROM room_types
-    WHERE id = ?
+    WHERE id = ? AND hostel_id = ?
 ");
-$roomTypeStmt->bind_param("i", $room_type_id);
+$roomTypeStmt->bind_param("ii", $room_type_id, $hostel_id);
 $roomTypeStmt->execute();
 $roomTypeResult = $roomTypeStmt->get_result();
 $roomTypeStmt->close();

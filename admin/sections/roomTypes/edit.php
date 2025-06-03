@@ -5,19 +5,38 @@ require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 
+require_once BASE_PATH . '/admin/includes/csrf.php';
+$csrfToken = generate_csrf_token();
+
+
 // Get room type ID
-$id = $_GET['id'] ?? null;
+$id = $_GET['roomTypeId'] ?? null;
+
+// Get editable hostel id 
+$filterHostelId = $_GET['hostel_id'] ?? null;
+
+// Validate ID
 if (!$id || !is_numeric($id)) {
     header("Location: index.php?success=Invalid room type ID.");
     exit;
 }
 
+// Validate hostel id
+if (!$filterHostelId || !is_numeric($filterHostelId)) {
+    header("Location: index.php?success=Invalid Hostel ID.");
+    exit;
+}
+
 // Fetch existing room type
-$stmt = $conn->prepare("SELECT * FROM room_types WHERE id = ?");
-$stmt->bind_param("i", $id);
+$stmt = $conn->prepare("SELECT * FROM room_types WHERE id = ? And hostel_id = ?");
+$stmt->bind_param("ii", $id, $filterHostelId);
 $stmt->execute();
 $result = $stmt->get_result();
 $roomType = $result->fetch_assoc();
+
+
+
+
 
 if (!$roomType) {
     header("Location: index.php?success=Room type not found.");
@@ -34,7 +53,9 @@ if (!$roomType) {
         </div>
         <div class="card-body">
             <form id="editRoomTypeForm">
-                <input type="hidden" name="id" value="<?= htmlspecialchars($roomType['id']) ?>">
+                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                <input type="hidden" name="id" value="<?= htmlspecialchars($roomType['id']) ?>">  
+                <input type="hidden" name="hostel_id" value="<?= htmlspecialchars($roomType['hostel_id']) ?>">  
 
                 <div class="mb-3">
                     <label for="type_name" class="form-label">Room Type Name</label>
@@ -63,7 +84,6 @@ $(document).ready(function () {
     $('#editRoomTypeForm').on('submit', function (e) {
         e.preventDefault();
         const formData = $(this).serialize();
-        console.log("formData", formData); 
         $.ajax({
             url: '<?= BASE_URL ?>/admin/php_files/sections/roomTypes/edit.php',
             type: 'POST',

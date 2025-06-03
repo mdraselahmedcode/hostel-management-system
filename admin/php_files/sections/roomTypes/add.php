@@ -14,31 +14,32 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $type_name        = trim($_POST['type_name'] ?? '');
 $default_capacity = (int) ($_POST['default_capacity'] ?? 0);
 $buffer_limit     = (int) ($_POST['buffer_limit'] ?? 0);
+$hostel_id        = (int) ($_POST['hostel_id'] ?? 0);
 
 // Basic validation
-if (!$type_name || $default_capacity <= 0 || $buffer_limit < 0) {
-    echo json_encode(['success' => false, 'message' => 'All fields are required and must be valid.']);
+if (!$type_name || $default_capacity <= 0 || $buffer_limit < 0 || $hostel_id <= 0) {
+    echo json_encode(['success' => false, 'message' => 'All fields including hostel selection are required and must be valid.']);
     exit;
 }
 
-// Check for duplicate type name
-$checkStmt = $conn->prepare("SELECT id FROM room_types WHERE type_name = ? LIMIT 1");
-$checkStmt->bind_param("s", $type_name);
+// Check for duplicate type name for the same hostel
+$checkStmt = $conn->prepare("SELECT id FROM room_types WHERE type_name = ? AND hostel_id = ? LIMIT 1");
+$checkStmt->bind_param("si", $type_name, $hostel_id);
 $checkStmt->execute();
 $result = $checkStmt->get_result();
 $checkStmt->close();
 
 if ($result->num_rows > 0) {
-    echo json_encode(['success' => false, 'message' => 'Room type name already exists.']);
+    echo json_encode(['success' => false, 'message' => 'Room type already exists for this hostel.']);
     exit;
 }
 
-// Insert room type
+// Insert room type with hostel_id
 $stmt = $conn->prepare("
-    INSERT INTO room_types (type_name, default_capacity, buffer_limit)
-    VALUES (?, ?, ?)
+    INSERT INTO room_types (type_name, default_capacity, buffer_limit, hostel_id)
+    VALUES (?, ?, ?, ?)
 ");
-$stmt->bind_param("sii", $type_name, $default_capacity, $buffer_limit);
+$stmt->bind_param("siii", $type_name, $default_capacity, $buffer_limit, $hostel_id);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Room type added successfully.']);
