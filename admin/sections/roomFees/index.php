@@ -23,12 +23,10 @@ $sql = "
         room_fees.billing_cycle,
         room_fees.effective_from,
         room_types.type_name,
-        floors.floor_number,
         hostels.hostel_name
     FROM room_types
     LEFT JOIN room_fees ON room_types.id = room_fees.room_type_id
-    LEFT JOIN floors ON room_fees.floor_id = floors.id
-    LEFT JOIN hostels ON floors.hostel_id = hostels.id
+    LEFT JOIN hostels ON room_types.hostel_id = hostels.id
     WHERE 1
 ";
 
@@ -98,20 +96,45 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                 <?php else: ?>
                                     <?php $serial = 1; ?>
                                     <?php foreach ($roomFees as $fee): ?>
-                                        <tr>
-                                            <td><?= $serial++ ?></td>
-                                            <td><?= htmlspecialchars($fee['type_name']) ?></td>
-                                            <td><?= $fee['price'] !== null ? number_format($fee['price'], 2) : '<span class="text-muted">Not set</span>' ?></td>
-                                            <td><?= !empty($fee['billing_cycle']) ? ucfirst($fee['billing_cycle']) : '<span class="text-muted">N/A</span>' ?></td>
-                                            <td><?= !empty($fee['effective_from']) ? date('d M Y', strtotime($fee['effective_from'])) : '<span class="text-muted">N/A</span>' ?></td>
-                                            <td><?= !empty($fee['hostel_name']) ? htmlspecialchars($fee['hostel_name']) : '<span class="text-muted">N/A</span>' ?></td>
-                                            <td>
-                                                <a href="<?= BASE_URL ?>/admin/sections/roomFees/edit.php?id=<?= $fee['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="delete-fee btn btn-sm btn-danger" data-id="<?= $fee['id'] ?>">Delete</a>
-                                            </td>
-                                        </tr>
+
+                                            <?php if ($fee['price'] !== null && !empty($fee['billing_cycle']) && !empty($fee['effective_from'])): ?>
+                                                <tr>
+                                                    <td><?= $serial++ ?></td>
+                                                    <td><?= htmlspecialchars($fee['type_name']) ?></td>
+                                                    <td><?= number_format($fee['price'], 2) ?></td>
+                                                    <td><?= ucfirst($fee['billing_cycle']) ?></td>
+                                                    <td><?= date('d M Y', strtotime($fee['effective_from'])) ?></td>
+                                                    <td><?= htmlspecialchars($fee['hostel_name']) ?></td>
+                                                    <td>
+                                                        <a href="<?= BASE_URL ?>/admin/sections/roomFees/edit.php?id=<?= $fee['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                                                    </td>
+                                                    <td>
+                                                        <a href="javascript:void(0);" class="delete-fee btn btn-sm btn-danger" data-id="<?= $fee['id'] ?>">Delete</a>
+                                                    </td>
+                                                </tr>
+                                            <?php else: ?>
+                                                <tr
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="Add new fee for <?= htmlspecialchars($fee['type_name']) ?> rooms in <?= htmlspecialchars($fee['hostel_name'] ?? 'Unknown Hostel') ?>">
+                                                    <td><?= $serial++ ?></td>
+                                                    <td><?= htmlspecialchars($fee['type_name']) ?></td>
+                                                    <td><span class="text-muted">Not set</span></td>
+                                                    <td><span class="text-muted">N/A</span></td>
+                                                    <td><span class="text-muted">N/A</span></td>
+                                                    <td><?= htmlspecialchars($fee['hostel_name']) ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-secondary" disabled>Edit</button>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-secondary" disabled>Delete</button>
+                                                    </td>
+                                                </tr>
+                                            <?php endif; ?>
+
+
+
+                                        
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </tbody>
@@ -125,7 +148,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 </div>
 
 <script>
-    $('.delete-fee').on('click', function () {
+    $('.delete-fee').on('click', function() {
         const button = $(this);
         const feeId = button.data('id');
 
@@ -135,15 +158,17 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             $.ajax({
                 type: 'POST',
                 url: '<?= BASE_URL ?>/admin/php_files/sections/roomFees/delete.php',
-                data: { id: feeId },
+                data: {
+                    id: feeId
+                },
                 dataType: 'json',
-                success: function (response) {
+                success: function(response) {
                     if (response.success) {
                         button.closest('tr').remove();
                         $("#showMessage").html('<div class="alert alert-success">' + response.message + '</div>').fadeIn();
 
-                        setTimeout(function () {
-                            $("#showMessage").fadeOut('slow', function () {
+                        setTimeout(function() {
+                            $("#showMessage").fadeOut('slow', function() {
                                 $(this).html('').show();
                             });
                         }, 3000);
@@ -151,14 +176,18 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         $("#showMessage").html('<div class="alert alert-danger">' + response.message + '</div>');
                     }
                 },
-                error: function () {
+                error: function() {
                     $("#showMessage").html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
                 },
-                complete: function () {
+                complete: function() {
                     button.prop('disabled', false);
                 }
             });
         }
+    });
+
+    $(function() {
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 </script>
 

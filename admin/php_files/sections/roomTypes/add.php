@@ -11,7 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$type_name        = trim($_POST['type_name'] ?? '');
+
+$type_name = htmlspecialchars(trim($_POST['type_name'] ?? ''));
+$lower_type_name = strtolower($type_name); 
 $default_capacity = (int) ($_POST['default_capacity'] ?? 0);
 $buffer_limit     = (int) ($_POST['buffer_limit'] ?? 0);
 $hostel_id        = (int) ($_POST['hostel_id'] ?? 0);
@@ -23,8 +25,13 @@ if (!$type_name || $default_capacity <= 0 || $buffer_limit < 0 || $hostel_id <= 
 }
 
 // Check for duplicate type name for the same hostel
-$checkStmt = $conn->prepare("SELECT id FROM room_types WHERE type_name = ? AND hostel_id = ? LIMIT 1");
-$checkStmt->bind_param("si", $type_name, $hostel_id);
+$checkStmt = $conn->prepare("
+    SELECT id 
+    FROM room_types 
+    WHERE LOWER(type_name) = ? AND hostel_id = ? 
+    LIMIT 1
+");
+$checkStmt->bind_param("si", $lower_type_name, $hostel_id);
 $checkStmt->execute();
 $result = $checkStmt->get_result();
 $checkStmt->close();
@@ -39,7 +46,7 @@ $stmt = $conn->prepare("
     INSERT INTO room_types (type_name, default_capacity, buffer_limit, hostel_id)
     VALUES (?, ?, ?, ?)
 ");
-$stmt->bind_param("siii", $type_name, $default_capacity, $buffer_limit, $hostel_id);
+$stmt->bind_param("siii", $lower_type_name, $default_capacity, $buffer_limit, $hostel_id);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Room type added successfully.']);

@@ -15,13 +15,15 @@ if (!validate_csrf_token($_POST['csrf_token'] ?? '')) {
 // Unset token after validation (to prevent reuse)
 unset_csrf_token();
 
-$roomTypeId = $_POST['id'] ?? '';
-$hostelId = $_POST['hostel_id'] ?? '' ; 
-$type_name = trim($_POST['type_name'] ?? '');
-$default_capacity = $_POST['default_capacity'] ?? '';
-$buffer_limit = $_POST['buffer_limit'] ?? '';
+$roomTypeId = (int) ($_POST['id'] ?? 0); 
+$hostelId = (int) ($_POST['hostel_id'] ?? 0); 
+$type_name = htmlspecialchars(trim($_POST['type_name'] ?? ''));
+$lower_type_name = strtolower($type_name);
+$default_capacity = (int) ($_POST['default_capacity'] ?? 0);
+$buffer_limit = (int) ($_POST['buffer_limit'] ?? 0); 
 
-if (!is_numeric($roomTypeId) || !is_numeric($hostelId) || $type_name === '' || !is_numeric($default_capacity) || !is_numeric($buffer_limit)) {
+
+if (!is_numeric($roomTypeId) || !is_numeric($hostelId) || $lower_type_name === '' || !is_numeric($default_capacity) || !is_numeric($buffer_limit)) {
     echo json_encode(['success' => false, 'message' => 'Invalid or missing input.']);
     exit;
 }
@@ -30,7 +32,7 @@ $stmt = $conn->prepare("
     UPDATE room_types 
     SET type_name = ?, default_capacity = ?, buffer_limit = ? WHERE id = ? AND hostel_id = ?
 ");
-$stmt->bind_param("siiii", $type_name, $default_capacity, $buffer_limit, $roomTypeId, $hostelId);
+$stmt->bind_param("siiii", $lower_type_name, $default_capacity, $buffer_limit, $roomTypeId, $hostelId);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Room type updated successfully.']);

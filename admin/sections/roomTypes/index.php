@@ -103,7 +103,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                         <tr>
                                             <td><?= $serial++ ?></td>
                                             <td><?= $type['id'] ?></td>
-                                            <td><?= htmlspecialchars($type['type_name']) ?></td>
+                                            <td><?= htmlspecialchars(ucfirst(strtolower($type['type_name']))) ?></td>
                                             <td><?= (int)$type['default_capacity'] ?></td>
                                             <td><?= (int)$type['buffer_limit'] ?></td>
                                             <td><?= htmlspecialchars($type['hostel_name']) ?></td>
