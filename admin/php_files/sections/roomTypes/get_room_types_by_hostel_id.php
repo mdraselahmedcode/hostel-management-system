@@ -23,5 +23,5 @@ while ($row = $result->fetch_assoc()) {
 if (!empty($roomTypes)) {
     echo json_encode(['success' => true, 'data' => $roomTypes]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'No room types found for this hostel']);
+    echo json_encode(['success' => false, 'message' => 'No room types have been created for this hostel']);
 }

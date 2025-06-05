@@ -23,7 +23,9 @@ $sql = "
         room_fees.billing_cycle,
         room_fees.effective_from,
         room_types.type_name,
-        hostels.hostel_name
+        room_types.id As roomType_id,
+        hostels.hostel_name,
+        hostels.id AS hostel_id
     FROM room_types
     LEFT JOIN room_fees ON room_types.id = room_fees.room_type_id
     LEFT JOIN hostels ON room_types.hostel_id = hostels.id
@@ -106,7 +108,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                                     <td><?= date('d M Y', strtotime($fee['effective_from'])) ?></td>
                                                     <td><?= htmlspecialchars($fee['hostel_name']) ?></td>
                                                     <td>
-                                                        <a href="<?= BASE_URL ?>/admin/sections/roomFees/edit.php?id=<?= $fee['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                                                        <a href="<?= BASE_URL ?>/admin/sections/roomFees/edit.php?roomFees_id=<?= $fee['id'] ?>&hostel_id=<?= $fee['hostel_id'] ?>&roomType_id=<?= $fee['roomType_id'] ?>" class="btn btn-sm btn-primary">Edit</a>
                                                     </td>
                                                     <td>
                                                         <a href="javascript:void(0);" class="delete-fee btn btn-sm btn-danger" data-id="<?= $fee['id'] ?>">Delete</a>
