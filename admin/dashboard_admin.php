@@ -91,7 +91,7 @@
                     </a>
                 </div>
                 <div class="col-md-3 mb-3">
-                    <a href="./sections/students/students_admin.php" class="text-decoration-none">
+                    <a href="<?= BASE_URL . '/admin/sections/students/index.php' ?>" class="text-decoration-none">
                         <div class="card text-center shadow-sm hover-card">
                             <div class="card-body">
                                 <h5 class="card-title">Students</h5>
