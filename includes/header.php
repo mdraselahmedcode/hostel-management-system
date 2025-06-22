@@ -28,10 +28,13 @@
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
+                        <a class="nav-link" href="index.php">Home</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="admin/login_admin.php">Admin Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="student/login.php">Student Login</a>
+                        <a class="nav-link" href="student/login_student.php">Student Login</a>
                     </li>
                 </ul>
             </div>

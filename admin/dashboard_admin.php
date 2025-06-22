@@ -16,8 +16,6 @@
         
          <!-- Main Content -->
          <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-            <!-- back button -->
-             <a href="<?= BASE_URL . '/admin/dashboard_admin.php' ?>" class="btn btn-secondary mb-3">Back</a>
             <!-- Welcome Card -->
             <div class="make card shadow-sm mb-4">
                 <div class="card-body">

@@ -4,82 +4,123 @@ require_once BASE_PATH . '/config/db.php';
 
 $approval = $_GET['approval'] ?? 'all';
 $hostelId = $_GET['hostel_id'] ?? 'all';
+$verification = $_GET['verification'] ?? 'all';
+$checkedIn = $_GET['checked_in'] ?? 'all';
 
-$sql = "
-    SELECT 
-        students.id,
-        students.first_name,
-        students.last_name,
-        students.email,
-        students.contact_number AS phone,
-        students.is_approved AS status,
-        hostels.hostel_name
-    FROM students
-    LEFT JOIN hostels ON students.hostel_id = hostels.id
-    WHERE 1
-";
+$whereClauses = [];
+$params = [];
+$types = '';
 
-if ($approval !== 'all') {
-    $status = $conn->real_escape_string($approval);
-    // Your 'approval' filter might be 'approved' or 'requested' - adjust accordingly
-    // Assuming status is stored as boolean is_approved:
-    if ($status === 'approved') {
-        $sql .= " AND students.is_approved = 1";
-    } elseif ($status === 'requested') {
-        $sql .= " AND students.is_approved = 0";
-    }
+// Build WHERE clauses dynamically
+if ($approval === 'approved') {
+    $whereClauses[] = "students.is_approved = 1";
+} elseif ($approval === 'requested') {
+    $whereClauses[] = "students.is_approved = 0";
+}
+
+if ($verification === 'verified') {
+    $whereClauses[] = "students.is_verified = 1";
+} elseif ($verification === 'unverified') {
+    $whereClauses[] = "students.is_verified = 0";
 }
 
 if ($hostelId !== 'all') {
-    $hostelId = (int)$hostelId;
-    $sql .= " AND students.hostel_id = $hostelId";
+    $whereClauses[] = "students.hostel_id = ?";
+    $params[] = $hostelId;
+    $types .= 'i';
 }
 
-$sql .= " ORDER BY students.id DESC";
+if ($checkedIn === 'checked_in') {
+    $whereClauses[] = "students.is_checked_in = 1";
+} elseif ($checkedIn === 'not_checked_in') {
+    $whereClauses[] = "students.is_checked_in = 0";
+}
 
-$result = $conn->query($sql);
+$whereSQL = '';
+if (!empty($whereClauses)) {
+    $whereSQL = 'WHERE ' . implode(' AND ', $whereClauses);
+}
+
+// Prepare SQL
+$sql = "
+    SELECT students.*, hostels.hostel_name, rooms.room_number
+    FROM students
+    LEFT JOIN hostels ON students.hostel_id = hostels.id
+    LEFT JOIN rooms ON students.room_id = rooms.id
+    $whereSQL
+    ORDER BY students.created_at DESC
+";
+
+$stmt = $conn->prepare($sql);
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
 
 ?>
 
-<table class="table table-bordered table-striped">
-    <thead class="table-dark">
+<table class="table table-bordered table-hover">
+    <thead>
         <tr>
             <th>#</th>
-            <th>ID</th>
+            <th>Image</th>
             <th>Name</th>
+            <th>Varsity ID</th>
             <th>Email</th>
-            <th>Phone</th>
-            <th>Status</th>
             <th>Hostel</th>
-            <th>Edit</th>
-            <th>Delete</th>
+            <th>Room</th>
+            <th>Verified</th>
+            <th>Approved</th>
+            <th>Checked In</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-        <?php if ($result && $result->num_rows > 0): ?>
-            <?php $i = 1; ?>
-            <?php while ($row = $result->fetch_assoc()): ?>
+        <?php if ($result->num_rows > 0): ?>
+            <?php $serial = 1; ?>
+            <?php while ($student = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?= $i++ ?></td>
-                    <td><?= $row['id'] ?></td>
-                    <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
-                    <td><?= htmlspecialchars($row['email']) ?></td>
-                    <td><?= htmlspecialchars($row['phone']) ?></td>
-                    <td><?= $row['status'] ? 'Approved' : 'Requested' ?></td>
-                    <td><?= htmlspecialchars($row['hostel_name'] ?? 'N/A') ?></td>
+                    <td><?= $serial++ ?></td>
                     <td>
-                        <a href="edit.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                        <?php if ($student['profile_image_url']): ?>
+                            <img src="<?= htmlspecialchars($student['profile_image_url']) ?>" alt="Profile" width="50" height="50">
+                        <?php else: ?>
+                            N/A
+                        <?php endif; ?>
+                    </td>
+                    <td><?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?></td>
+                    <td><?= htmlspecialchars($student['varsity_id']) ?></td>
+                    <td><?= htmlspecialchars($student['email']) ?></td>
+                    <td><?= htmlspecialchars($student['hostel_name'] ?? 'N/A') ?></td>
+                    <td><?= htmlspecialchars($student['room_number'] ?? 'N/A') ?></td>
+                    <td>
+                        <?= $student['is_verified'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>' ?>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-danger delete-student" data-id="<?= $row['id'] ?>">Delete</button>
+                        <?= $student['is_approved'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-warning text-dark">No</span>' ?>
                     </td>
+                    <td>
+                        <?= $student['is_checked_in'] ? '<span class="badge bg-success">Checked In</span>' : '<span class="badge bg-danger">Not Checked In</span>' ?>
+                    </td>
+                    <td>
+                        <a href="view.php?id=<?= $student['id'] ?>" class="btn btn-sm btn-info text-light ">View</a>
+                        <a href="edit.php?id=<?= $student['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                        <button class="btn btn-sm btn-danger delete-student" data-id="<?= $student['id'] ?>">Delete</button>
+                    </td>
+
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="9" class="text-center">No students found.</td>
+                <td colspan="10" class="text-center">No students found.</td>
             </tr>
         <?php endif; ?>
     </tbody>
-
 </table>
+
+<?php
+$stmt->close();
+$conn->close();
+?>
