@@ -220,8 +220,27 @@ if ($countryStmt->num_rows === 0) {
 $countryStmt->close();
 
 // checking hostel id exists or not
+// $hostelStmt = $conn->prepare("
+//     SELECT id, hostel_name, hostel_type
+//     FROM hostels
+//     WHERE id = ? 
+// ");
+// $hostelStmt->bind_param("i", $hostel_id);
+// $hostelStmt->execute();
+// $hostelStmt->store_result();
+// if ($hostelStmt->num_rows === 0) {
+//     echo json_encode([
+//         'success' => false,
+//         'message' => 'The hostel was not found'
+//     ]);
+//     exit;
+// }
+
+// $hostelStmt->close();
+
+// checking hostel id exists or not
 $hostelStmt = $conn->prepare("
-    SELECT id, hostel_name 
+    SELECT id, hostel_name, hostel_type
     FROM hostels
     WHERE id = ? 
 ");
@@ -235,6 +254,24 @@ if ($hostelStmt->num_rows === 0) {
     ]);
     exit;
 }
+
+// Checking gender match with hostel type
+// Bind the result to variables
+$hostelStmt->bind_result($db_hostel_id, $db_hostel_name, $db_hostel_type);
+$hostelStmt->fetch();
+
+// Gender/hostel type validation (dynamic, not hardcoded)
+$student_gender = strtolower(trim($gender));
+$hostel_type = strtolower(trim($db_hostel_type));
+// If hostel_type is not 'co-ed' or 'both', check for mismatch
+if ($hostel_type !== 'co-ed' && $hostel_type !== 'both' && $hostel_type !== $student_gender) {
+    echo json_encode([
+        'success' => false,
+        'message' => "This hostel is for {$hostel_type} students only."
+    ]);
+    exit;
+}
+
 $hostelStmt->close();
 
 // checking floor id exists in that particular hostel or not

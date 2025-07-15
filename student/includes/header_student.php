@@ -27,7 +27,7 @@ require_once __DIR__ . '/../../config/config.php';  // Adjust path as needed
         </button>
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link" href="<?= BASE_URL . '/index.php' ?>">Home</a>
                 </li>
                 <li class="nav-item">
@@ -35,7 +35,7 @@ require_once __DIR__ . '/../../config/config.php';  // Adjust path as needed
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/student/login_student.php">Student Login</a>
-                </li>
+                </li> -->
             </ul>
         </div>
     </div>

@@ -1,17 +1,115 @@
-/* Ensure the html and body take full height of the viewport */
-html, body {
-    height: 100%;
+/* Base Styles */
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --dark-color: #212529;
+    --light-color: #f8f9fa;
+    --accent-color: #ffc107;
 }
 
-/* Make the body a flex container with vertical direction,
-   so we can push the footer to the bottom if content is short */
+html, body {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+}
+
 body {
     display: flex;
     flex-direction: column;
+    color: #333;
+    line-height: 1.6;
 }
 
-/* Allow the main content area to grow and take available space,
-   pushing the footer to the bottom when necessary */
+/* Top Bar Styles */
+.top-bar {
+    font-size: 0.9rem;
+    background-color: var(--dark-color) !important;
+}
+
+.top-bar a {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s;
+}
+
+.top-bar a:hover {
+    color: white;
+    text-decoration: none;
+}
+
+/* Navigation Styles */
+.navbar {
+    padding: 0.8rem 0;
+    transition: all 0.3s;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.navbar-dark .navbar-brand {
+    color: white;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link.active {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+}
+
+/* Content Area */
 .content {
     flex: 1;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        padding: 1rem 0;
+    }
+    
+    .navbar-nav .nav-item {
+        margin-bottom: 0.5rem;
+    }
+    
+    .dropdown-menu {
+        margin-left: 1rem;
+        border-left: 3px solid var(--accent-color);
+    }
+}
+
+/* Animation for active link */
+.nav-link.active {
+    position: relative;
+}
+
+.nav-link.active:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background-color: var(--accent-color);
+    border-radius: 3px;
 }

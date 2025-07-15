@@ -1,70 +1,98 @@
-<?php 
-    // include('./php_files/guest_only_check_admin.php'); 
-    session_start();    
-    require_once __DIR__ . '/../config/config.php';
-    require_once BASE_PATH . '/student/includes/header_student.php';
-    // require_once BASE_PATH . '/student/php_files/guest_only_check_student.php'; 
-    
+<?php
+session_start();
+require_once __DIR__ . '/../config/config.php';
+require_once BASE_PATH . '/includes/header.php';
 ?>
-
 
 <div class="content container mt-5 d-block">
     <div class="row justify-content-center d-flex align-items-center h-100">
         <div class="col-md-6">
-
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">Student Login</h4>
                 </div>
                 <div class="card-body">
-                    <div id="loginAlert" class="alert alert-danger d-none"></div>
-
                     <form id="adminLoginForm">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email address</label>
                             <input type="email" id="email" name="email" class="form-control" required>
                         </div>
-
-                        <div class="mb-3">
+                        <div class="mb-3 position-relative">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
+                            <div class="input-group">
+                                <input type="password" id="password" name="password" class="form-control" required>
+                                <span class="input-group-text toggle-password" style="cursor: pointer;">
+                                    <i class="fas fa-eye"></i>
+                                </span>
+                            </div>
                         </div>
-
                         <button type="submit" class="btn btn-primary w-100">Login</button>
                     </form>
+                    <div class="d-flex justify-content-between mt-3">
+                        <a href="<?= BASE_URL . '/student/sections/forgot_password.php' ?>" class="text-primary">Forgot Password?</a>
+                        <a href="<?= BASE_URL . '/student/sections/checkStatus.php' ?>" class="text-primary">Check Application Status</a>
+                    </div>
+                    <div class="text-center mt-3">
+                        <p>Don't have an account? <a href="<?= BASE_URL . '/student/register_student.php' ?>" class="text-primary">Apply for Hostel</a></p>
+                    </div>
+                    <div id="showMessage" class="mt-3"></div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
 <script>
+    // Password toggle functionality
+    $(document).ready(function() {
+        $('.toggle-password').click(function() {
+            const passwordInput = $('#password');
+            const icon = $(this).find('i');
+            
+            if (passwordInput.attr('type') === 'password') {
+                passwordInput.attr('type', 'text');
+                icon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                passwordInput.attr('type', 'password');
+                icon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+    });
+
     $('#adminLoginForm').on('submit', function(e) {
         e.preventDefault();
         const formData = $(this).serialize();
 
+        // Clear previous messages
+        $('#showMessage').html('');
+
         $.ajax({
-            url: 'php_files/login_student_handler.php',
+            url: '<?= BASE_URL . '/student/php_files/login_student_handler.php' ?>',
             type: 'POST',
             data: formData,
             dataType: 'json',
             success: function(res) {
-                
                 if (res.success) {
-                    console.log('Login successful');
-                    window.location.href = 'dashboard_student.php';
+                    $('#showMessage').html('<div class="alert alert-success">' + res.message + ' Redirecting...</div>');
+                    setTimeout(function() {
+                        window.location.href = res.redirect || '<?= BASE_URL . '/student/dashboard.php' ?>';
+                    }, 1000);
                 } else {
-                    $('#loginAlert').text(res.message).removeClass('d-none');
+                    let errorMsg = res.message || 'Login failed. Please try again.';
+                    $('#showMessage').html('<div class="alert alert-danger">' + errorMsg + '</div>');
                 }
             },
-
+            error: function(xhr, status, error) {
+                let errorMsg = 'An error occurred. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMsg = xhr.responseJSON.message;
+                }
+                $('#showMessage').html('<div class="alert alert-danger">' + errorMsg + '</div>');
+            }
         });
-
     });
 </script>
 
-
-    <?php 
-        require_once BASE_PATH . '/student/includes/footer_student.php'; 
-    ?>
+<?php
+require_once BASE_PATH . '/student/includes/footer_student.php';
+?>
