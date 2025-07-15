@@ -47,7 +47,7 @@ if ($result && $result->num_rows > 0) {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="content container-fluid">
+<div class="content container-fluid mt-5">
     <div class="row full-height">
         <!-- Sidebar -->
         <?php
@@ -69,7 +69,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         <table class="table table-bordered table-striped">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>ID</th>
+                                    <th>#</th>
                                     <th>Hostel Name</th>
                                     <th>Incharge</th>
                                     <th>Type</th>
@@ -91,9 +91,10 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                         <td colspan="12" class="text-center">No hostels found.</td>
                                     </tr>
                                 <?php else: ?>
+                                    <?php $serial = 1; ?>
                                     <?php foreach ($hostels as $hostel): ?>
                                         <tr>
-                                            <td><?= $hostel['id'] ?></td>
+                                            <td><?= $serial++ ?></td>
                                             <td><?= htmlspecialchars($hostel['hostel_name']) ?></td>
                                             <td><?= htmlspecialchars($hostel['incharge_firstname'] . ' ' . $hostel['incharge_lastname']) ?></td>
                                             <td><?= ucfirst($hostel['hostel_type']) ?></td>
@@ -102,11 +103,11 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                             <td><?= $hostel['capacity'] ?></td>
                                             <td><?= $hostel['contact_number'] ?></td>
                                             <!-- <td>  -->
-                                                <!-- htmlspecialchars($hostel['amenities'])  -->
+                                            <!-- htmlspecialchars($hostel['amenities'])  -->
                                             <!-- </td> -->
                                             <td><?= htmlspecialchars($hostel['country_name'] ?? 'N/A') ?></td>
                                             <!-- <td> -->
-                                                <!-- htmlspecialchars(
+                                            <!-- htmlspecialchars(
                                                     implode(', ', array_filter([
                                                         $hostel['house_no'] ?? '',
                                                         $hostel['street'] ?? '',

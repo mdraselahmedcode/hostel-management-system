@@ -38,6 +38,10 @@ require_once BASE_PATH . '/admin/php_files/guest_only_check_admin.php';
     </div>
 </div>
 
+<!-- Load JavaScript files here instead of in footer -->
+<script src="<?= BASE_URL ?>/vendor/jquery/jquery.min.js"></script>
+<script src="<?= BASE_URL ?>/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
 <script>
     $(document).ready(function() {
         // Password toggle functionality

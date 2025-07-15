@@ -1,9 +1,13 @@
-<!-- includes/footer.php -->
-
-    <footer class="bg-light text-center py-3 fixed-footer">
-        <small>&copy; <?= date('Y') ?> Hostel Management System</small>
+<!-- Footer -->
+    <footer class="admin-footer fixed-footer py-3">
+        <div class="container text-center">
+            <small>&copy; <?= date('Y') ?> Hostel Management System | v1.0.0</small>
+        </div>
     </footer>
 
-
+    <!-- jQuery -->
+    <script src="<?= BASE_URL ?>/vendor/jquery/jquery.min.js"></script>
+    <!-- Bootstrap Bundle JS -->
+    <script src="<?= BASE_URL ?>/vendor/bootstrap/js/bootstrap.bundle.js"></script>
 </body>
 </html>

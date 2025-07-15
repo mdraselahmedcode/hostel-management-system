@@ -46,7 +46,7 @@ if ($result && $result->num_rows > 0) {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="content container-fluid">
+<div class="content container-fluid mt-5">
     <div class="row full-height">
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
@@ -76,7 +76,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     </form>
 
                     <!-- Room Fees Table -->
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                         <table class="table table-bordered table-striped">
                             <thead class="table-dark">
                                 <tr>

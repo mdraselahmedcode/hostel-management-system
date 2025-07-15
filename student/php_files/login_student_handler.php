@@ -6,8 +6,8 @@ error_reporting(E_ALL);
 session_start();
 header('Content-Type: application/json');
 
-include __DIR__ . '/../../config/config.php';
-include __DIR__ . '/../../config/db.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../config/db.php';
 
 $email = trim($_POST['email'] ?? '');
 $password = trim($_POST['password'] ?? '');
@@ -33,18 +33,18 @@ if (!empty($errors)) {
     exit;
 }
 
-// Updated query to include is_checked_in check
 $stmt = $conn->prepare("
     SELECT id, first_name, last_name, email, password, 
            is_approved, is_verified, is_checked_in 
     FROM students 
     WHERE email = ?
 ");
+
 if (!$stmt) {
     http_response_code(500);
     echo json_encode([
         "success" => false,
-        "message" => "Server error. Try again later."
+        "message" => "Server error. Please try again later."
     ]);
     exit;
 }
@@ -91,7 +91,6 @@ if (!$student['is_approved']) {
     exit;
 }
 
-// New check for is_checked_in status
 if (!$student['is_checked_in']) {
     http_response_code(403);
     echo json_encode([
@@ -101,12 +100,15 @@ if (!$student['is_checked_in']) {
     exit;
 }
 
-// Login successful
+// ✅ Successful login – set session
 $_SESSION['student'] = [
     'id' => $student['id'],
     'first_name' => $student['first_name'],
     'last_name' => $student['last_name'],
-    'email' => $email,
+    'email' => $student['email'],
+    'is_verified' => $student['is_verified'],
+    'is_approved' => $student['is_approved'],
+    'is_checked_in' => $student['is_checked_in'],
     'logged_in' => true
 ];
 
@@ -118,4 +120,8 @@ echo json_encode([
 
 $stmt->close();
 $conn->close();
-?>
+
+
+
+// $_SESSION['student']['is_verified']        
+//  $_SESSION['student']['is_checked_in']

@@ -44,40 +44,51 @@ if (!$roomType) {
 }
 ?>
 
-<div class="content container mt-5">
-    <a href="<?= BASE_URL ?>/admin/sections/roomTypes/index.php" class="btn btn-secondary mb-3">← Back</a>
+<div class="container mt-5 px-3 mt-5">
+    <a href="<?= BASE_URL ?>/admin/sections/roomTypes/index.php" class="btn btn-outline-secondary mb-4 mt-4">
+        ← Back to Room Types
+    </a>
 
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4>Edit Room Type</h4>
+    <div class="card shadow rounded-4 border-0">
+        <div class="card-header bg-primary text-white d-flex align-items-center rounded-top-4">
+            <i class="bi bi-pencil-square me-2 fs-4"></i>
+            <h5 class="mb-0">Edit Room Type</h5>
         </div>
-        <div class="card-body">
-            <form id="editRoomTypeForm">
+        <div class="card-body p-4">
+            <form id="editRoomTypeForm" novalidate>
                 <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
                 <input type="hidden" name="id" value="<?= htmlspecialchars($roomType['id']) ?>">  
                 <input type="hidden" name="hostel_id" value="<?= htmlspecialchars($roomType['hostel_id']) ?>">  
 
                 <div class="mb-3">
-                    <label for="type_name" class="form-label">Room Type Name</label>
+                    <label for="type_name" class="form-label">Room Type Name <span class="text-danger">*</span></label>
                     <input type="text" name="type_name" id="type_name" class="form-control" required value="<?= htmlspecialchars($roomType['type_name']) ?>">
+                    <small class="text-muted">E.g., Single, Double, Suite, etc.</small>
                 </div>
 
                 <div class="mb-3">
-                    <label for="default_capacity" class="form-label">Default Capacity</label>
-                    <input type="number" name="default_capacity" id="default_capacity" class="form-control" required value="<?= (int)$roomType['default_capacity'] ?>">
+                    <label for="default_capacity" class="form-label">Default Capacity <span class="text-danger">*</span></label>
+                    <input type="number" name="default_capacity" id="default_capacity" class="form-control" required min="1" value="<?= (int)$roomType['default_capacity'] ?>">
+                    <small class="text-muted">Default number of people the room can hold.</small>
                 </div>
 
                 <div class="mb-3">
-                    <label for="buffer_limit" class="form-label">Buffer Limit</label>
-                    <input type="number" name="buffer_limit" id="buffer_limit" class="form-control" required value="<?= (int)$roomType['buffer_limit'] ?>">
+                    <label for="buffer_limit" class="form-label">Buffer Limit <span class="text-danger">*</span></label>
+                    <input type="number" name="buffer_limit" id="buffer_limit" class="form-control" required min="0" value="<?= (int)$roomType['buffer_limit'] ?>">
+                    <small class="text-muted">Extra capacity allowed (optional for flexible planning).</small>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Update Room Type</button>
+                <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+                    <button type="submit" class="btn btn-success px-4">
+                        <i class="bi bi-save2 me-1"></i> Update Room Type
+                    </button>
+                    <div id="formMessage" class="ms-3 flex-grow-1"></div>
+                </div>
             </form>
-            <div id="formMessage" class="mt-3"></div>
         </div>
     </div>
 </div>
+
 
 <script>
 $(document).ready(function () {

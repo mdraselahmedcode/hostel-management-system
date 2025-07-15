@@ -29,10 +29,10 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
-
-<div class="content container mt-4">
+<div class="content container my-5">
+    <a href="<?= BASE_URL . '/admin/sections/students/index.php' ?>" class="btn btn-secondary mb-3 mt-4 ">Back</a>
+    <div id="showMessage" class="alert d-none mt-3"></div>
     <h2>Add New Student</h2>
-    <a href="<?= BASE_URL . '/admin/sections/students/index.php' ?>" class="btn btn-secondary mb-3 ">Back</a>
 
 
     <form id="add-student-form" enctype="multipart/form-data">
@@ -184,9 +184,8 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             </div>
         </div>
 
-        <button type="submit" class="btn btn-success mb-3">Add Student</button>
+        <button type="submit" class="btn btn-success mb-4">Add Student</button>
     </form>
-    <div id="showMessage" class="alert d-none mt-3"></div>
 </div>
 
 

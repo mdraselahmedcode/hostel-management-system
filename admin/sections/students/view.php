@@ -41,7 +41,6 @@ $sql = "
     WHERE students.id = ?
 ";
 
-
 $stmt = $conn->prepare($sql);
 $stmt->bind_param('i', $studentId);
 $stmt->execute();
@@ -53,116 +52,217 @@ if ($result->num_rows === 0) {
 }
 
 $student = $result->fetch_assoc();
+
+
 ?>
 
-<!DOCTYPE html>
-<html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Details - <?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+        .card-header {
+            font-weight: 600;
+        }
+        .profile-img {
+            max-width: 150px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
+    <div class="header">
+        <?php 
+        require_once BASE_PATH . '/admin/includes/header_admin.php';
+        ?>
+    </div>
+    <!-- Main Content -->
+    <main class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back
+            </a>
+            <h2 class="mb-0 text-primary">
+                <i class="fas fa-id-card me-2"></i>Student Details
+            </h2>
+            <div></div> <!-- Empty div for alignment -->
+        </div>
 
-<body class="container mt-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">Profile Information</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <dl class="row">
+                            <dt class="col-sm-4">Full Name</dt>
+                            <dd class="col-sm-8"><?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?></dd>
 
-    <h2>Student Details</h2>
-    <a href="javascript:history.back()" class="btn btn-secondary mb-3">Back</a>
+                            <dt class="col-sm-4">Email</dt>
+                            <dd class="col-sm-8"><?= htmlspecialchars($student['email']) ?></dd>
 
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-light">Profile</div>
-        <div class="card-body">
-            <div class="mb-3">
-                <strong>Name:</strong> <?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?><br>
-                <strong>Email:</strong> <?= htmlspecialchars($student['email']) ?><br>
-                <strong>Varsity ID:</strong> <?= htmlspecialchars($student['varsity_id']) ?><br>
-                <strong>Gender:</strong> <?= htmlspecialchars($student['gender']) ?><br>
-                <strong>Contact:</strong> <?= htmlspecialchars($student['contact_number']) ?><br>
-                <strong>Emergency Contact:</strong> <?= htmlspecialchars($student['emergency_contact']) ?><br>
-                <strong>Profile Image:</strong><br>
-                <?php if ($student['profile_image_url']): ?>
-                    <img src="<?= htmlspecialchars($student['profile_image_url']) ?>" alt="Profile Image" width="120">
-                <?php else: ?>
-                    N/A
-                <?php endif; ?>
+                            <dt class="col-sm-4">Varsity ID</dt>
+                            <dd class="col-sm-8"><?= htmlspecialchars($student['varsity_id']) ?></dd>
+
+                            <dt class="col-sm-4">Gender</dt>
+                            <dd class="col-sm-8"><?= htmlspecialchars($student['gender']) ?></dd>
+
+                            <dt class="col-sm-4">Contact Number</dt>
+                            <dd class="col-sm-8"><?= htmlspecialchars($student['contact_number']) ?></dd>
+
+                            <dt class="col-sm-4">Emergency Contact</dt>
+                            <dd class="col-sm-8"><?= htmlspecialchars($student['emergency_contact']) ?></dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <?php if ($student['profile_image_url']): ?>
+                            <img src="<?= htmlspecialchars($student['profile_image_url']) ?>" alt="Profile Image" class="profile-img img-thumbnail">
+                        <?php else: ?>
+                            <div class="text-muted">No profile image</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">Parent Details</div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-5">Father's Name</dt>
+                            <dd class="col-sm-7"><?= htmlspecialchars($student['father_name'] ?? 'N/A') ?></dd>
 
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-light">Parent Details</div>
-        <div class="card-body">
-            <strong>Father's Name:</strong> <?= htmlspecialchars($student['father_name'] ?? 'N/A') ?><br>
-            <strong>Father's Contact:</strong> <?= htmlspecialchars($student['father_contact'] ?? 'N/A') ?><br>
-            <strong>Mother's Name:</strong> <?= htmlspecialchars($student['mother_name'] ?? 'N/A') ?><br>
-            <strong>Mother's Contact:</strong> <?= htmlspecialchars($student['mother_contact'] ?? 'N/A') ?><br>
-            <strong>Emergency Contact:</strong> <?= htmlspecialchars($student['emergency_contact'] ?? 'N/A') ?><br>
+                            <dt class="col-sm-5">Father's Contact</dt>
+                            <dd class="col-sm-7"><?= htmlspecialchars($student['father_contact'] ?? 'N/A') ?></dd>
+
+                            <dt class="col-sm-5">Mother's Name</dt>
+                            <dd class="col-sm-7"><?= htmlspecialchars($student['mother_name'] ?? 'N/A') ?></dd>
+
+                            <dt class="col-sm-5">Mother's Contact</dt>
+                            <dd class="col-sm-7"><?= htmlspecialchars($student['mother_contact'] ?? 'N/A') ?></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">Hostel Information</div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-5">Hostel</dt>
+                            <dd class="col-sm-7"><?= htmlspecialchars($student['hostel_name'] ?? 'N/A') ?></dd>
+
+                            <dt class="col-sm-5">Room Number</dt>
+                            <dd class="col-sm-7"><?= htmlspecialchars($student['room_number'] ?? 'N/A') ?></dd>
+
+                            <dt class="col-sm-5">Floor</dt>
+                            <dd class="col-sm-7"><?= htmlspecialchars($student['floor_number'] ?? 'N/A') ?> (<?= htmlspecialchars($student['floor_name'] ?? 'N/A') ?>)</dd>
+
+                            <dt class="col-sm-5">Status</dt>
+                            <dd class="col-sm-7"><?= $student['is_checked_in'] ? 'Checked In' : 'Checked Out' ?></dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">Permanent Address</div>
+                    <div class="card-body">
+                        <address>
+                            <?= htmlspecialchars($student['house_no'] ?? '') ?>, <?= htmlspecialchars($student['street'] ?? '') ?><br>
+                            <?= htmlspecialchars($student['village'] ?? '') ?>, <?= htmlspecialchars($student['sub_district'] ?? '') ?><br>
+                            <?= htmlspecialchars($student['district'] ?? '') ?>, <?= htmlspecialchars($student['division'] ?? '') ?><br>
+                            <?= htmlspecialchars($student['perm_country_name'] ?? 'N/A') ?><br>
+                            Postal Code: <?= htmlspecialchars($student['postalcode'] ?? '') ?>
+                        </address>
+                    </div>
+                </div>
+            </div>
 
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-light">Hostel & Room</div>
-        <div class="card-body">
-            <strong>Hostel:</strong> <?= htmlspecialchars($student['hostel_name'] ?? 'N/A') ?><br>
-            <strong>Room:</strong> <?= htmlspecialchars($student['room_number'] ?? 'N/A') ?><br>
-            <strong>Floor Number:</strong> <?= htmlspecialchars($student['floor_number'] ?? 'N/A') ?><br>
-            <strong>Floor Name:</strong> <?= htmlspecialchars($student['floor_name'] ?? 'N/A') ?><br>
-            <strong>Checked In:</strong> <?= $student['is_checked_in'] ? 'Yes' : 'No' ?><br>
-            <strong>Check In Time:</strong> <?= $student['check_in_at'] ?? 'N/A' ?><br>
-            <strong>Check Out Time:</strong> <?= $student['check_out_at'] ?? 'N/A' ?><br>
+            <div class="col-md-6">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header bg-primary text-white">Temporary Address</div>
+                    <div class="card-body">
+                        <address>
+                            <?= htmlspecialchars($student['temp_house_no'] ?? '') ?>, <?= htmlspecialchars($student['temp_street'] ?? '') ?><br>
+                            <?= htmlspecialchars($student['temp_village'] ?? '') ?>, <?= htmlspecialchars($student['temp_sub_district'] ?? '') ?><br>
+                            <?= htmlspecialchars($student['temp_district'] ?? '') ?>, <?= htmlspecialchars($student['temp_division'] ?? '') ?><br>
+                            <?= htmlspecialchars($student['temp_country_name'] ?? 'N/A') ?><br>
+                            Postal Code: <?= htmlspecialchars($student['temp_postalcode'] ?? '') ?>
+                        </address>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">System Information</div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Verified</dt>
+                    <dd class="col-sm-9"><?= $student['is_verified'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-danger">No</span>' ?></dd>
 
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-light">Approval & Verification</div>
-        <div class="card-body">
-            <strong>Verified:</strong> <?= $student['is_verified'] ? 'Yes' : 'No' ?><br>
-            <strong>Approved:</strong> <?= $student['is_approved'] ? 'Yes' : 'No' ?><br>
-            <strong>Verification Token:</strong> <?= htmlspecialchars($student['verification_token'] ?? 'N/A') ?><br>
+                    <dt class="col-sm-3">Approved</dt>
+                    <dd class="col-sm-9"><?= $student['is_approved'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-danger">No</span>' ?></dd>
+
+                    <dt class="col-sm-3">Checked In</dt>
+                    <dd class="col-sm-9"><?= $student['check_in_at'] ?? 'N/A' ?></dd>
+
+                    <dt class="col-sm-3">Checked Out</dt>
+                    <dd class="col-sm-9"><?= $student['check_out_at'] ?? 'N/A' ?></dd>
+                </dl>
+            </div>
         </div>
-    </div>
+    </main>
 
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-light">Permanent Address</div>
-        <div class="card-body">
-            <strong>Country:</strong> <?= htmlspecialchars($student['perm_country_name'] ?? 'N/A') ?><br>
-            <strong>Division:</strong> <?= htmlspecialchars($student['division'] ?? '') ?><br>
-            <strong>District:</strong> <?= htmlspecialchars($student['district'] ?? '') ?><br>
-            <strong>Sub-district:</strong> <?= htmlspecialchars($student['sub_district'] ?? '') ?><br>
-            <strong>Village:</strong> <?= htmlspecialchars($student['village'] ?? '') ?><br>
-            <strong>Postal Code:</strong> <?= htmlspecialchars($student['postalcode'] ?? '') ?><br>
-            <strong>Street:</strong> <?= htmlspecialchars($student['street'] ?? '') ?><br>
-            <strong>House No:</strong> <?= htmlspecialchars($student['house_no'] ?? '') ?><br>
-            <strong>Detail:</strong> <?= htmlspecialchars($student['detail'] ?? '') ?><br>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; <?= date('Y') ?> Student Management System</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        <a href="#" class="text-white me-3"><i class="fas fa-question-circle"></i> Help</a>
+                        <a href="#" class="text-white"><i class="fas fa-envelope"></i> Contact</a>
+                    </p>
+                </div>
+            </div>
         </div>
-    </div>
+    </footer>
 
-    <div class="card mb-4">
-        <div class="card-header bg-primary text-light">Temporary Address</div>
-        <div class="card-body">
-            <strong>Country:</strong> <?= htmlspecialchars($student['temp_country_name'] ?? 'N/A') ?><br>
-            <strong>State:</strong> <?= htmlspecialchars($student['temp_state'] ?? '') ?><br>
-            <strong>Division:</strong> <?= htmlspecialchars($student['temp_division'] ?? '') ?><br>
-            <strong>District:</strong> <?= htmlspecialchars($student['temp_district'] ?? '') ?><br>
-            <strong>Sub-district:</strong> <?= htmlspecialchars($student['temp_sub_district'] ?? '') ?><br>
-            <strong>Village:</strong> <?= htmlspecialchars($student['temp_village'] ?? '') ?><br>
-            <strong>Postal Code:</strong> <?= htmlspecialchars($student['temp_postalcode'] ?? '') ?><br>
-            <strong>Street:</strong> <?= htmlspecialchars($student['temp_street'] ?? '') ?><br>
-            <strong>House No:</strong> <?= htmlspecialchars($student['temp_house_no'] ?? '') ?><br>
-            <strong>Detail:</strong> <?= htmlspecialchars($student['temp_detail'] ?? '') ?><br>
-        </div>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
 
-
-</body>
-
-</html>
 
 <?php
+require_once BASE_PATH . '/admin/includes/footer_admin.php';
 $stmt->close();
 $conn->close();
 ?>

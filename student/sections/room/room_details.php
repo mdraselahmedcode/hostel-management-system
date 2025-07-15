@@ -96,7 +96,7 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
 <div class="content container-fluid">
     <div class="row full-height">
         <?php require_once BASE_PATH . '/student/includes/sidebar_student.php'; ?>
-        <main class="col-md-10 ms-sm-auto px-md-4">
+        <main class="col-md-10 ms-sm-auto px-md-4" style="overflow-y: auto; max-height: calc(100vh - 119px);">
             <div class="mb-3 mt-3">
                 <a href="javascript:history.back()" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Back

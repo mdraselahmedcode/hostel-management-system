@@ -65,11 +65,11 @@ if ($result && $result->num_rows > 0) {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="content container-fluid">
+<div class="content container-fluid mt-5">
     <div class="row full-height">
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
-        <main class="col-md-10 ms-sm-auto px-md-4 py-4">
+        <main class="col-md-10 ms-sm-auto px-md-4 py-4" style="overflow-y: auto; max-height: calc(100vh - 95px)">
             <a href="<?= BASE_URL . '/admin/dashboard_admin.php' ?>" class="btn btn-secondary mb-3">Back</a>
 
             <div class="card shadow-sm">
@@ -109,12 +109,11 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         </div>
                     </form>
 
-                    <div class="table-responsive">
+                    <div class="table-responsive pt-2 " style="max-height: 400px; overflow-y:auto">
                         <table class="table table-bordered table-striped">
                             <thead class="table-dark">
                                 <tr>
                                     <th>#</th> <!-- Serial Number Column -->
-                                    <th>ID</th>
                                     <th>Room Number</th>
                                     <th>Default Capacity</th>
                                     <th>Max Capacity</th>
@@ -138,7 +137,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                     <?php foreach ($rooms as $room): ?>
                                         <tr>
                                             <td><?= $serial++ ?></td>
-                                            <td><?= $room['id'] ?></td>
                                             <td><?= htmlspecialchars($room['room_number']) ?></td>
                                             <td><?= $room['default_capacity'] ?? '0' ?></td>
                                             <td><?= $room['max_capacity'] ?></td>

@@ -35,7 +35,7 @@ $stmt->close();
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="content container-fluid">
+<div class="content container-fluid mt-5">
     <div class="row full-height">
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
@@ -77,7 +77,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                             </select>
                         </div>
 
-                        <button type="submit" class="btn btn-primary mb-3">Update Admin</button>
+                        <button type="submit" class="btn btn-primary mb-2">Update Admin</button>
                     </form>
                     <div id="showMessage"></div>
                 </div>

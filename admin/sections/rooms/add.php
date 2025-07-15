@@ -25,55 +25,55 @@ if ($typeResult && $typeResult->num_rows > 0) {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="content container mt-5">
-    <a href="<?= BASE_URL ?>/admin/sections/rooms/index.php" class="btn btn-secondary mb-3">← Back</a>
-
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h4>Add New Room</h4>
+<div class="content container mt-5" >
+        <a href="<?= BASE_URL ?>/admin/sections/rooms/index.php" class="btn btn-secondary mt-4 mb-3">← Back</a>
+    
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4>Add New Room</h4>
+            </div>
+            <div class="card-body">
+    
+                <form id="addRoomForm">
+                    <div class="mb-3">
+                        <label for="hostel_id" class="form-label">Hostel</label>
+                        <select name="hostel_id" id="hostel_id" class="form-select" required>
+                            <option value="">-- Select Hostel --</option>
+                            <?php foreach ($hostels as $hostel): ?>
+                                <option value="<?= $hostel['id'] ?>"><?= htmlspecialchars($hostel['hostel_name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="floor_id" class="form-label">Floor</label>
+                        <select name="floor_id" id="floor_id" class="form-select" required>
+                            <!-- Will be populated dynamically -->
+                        </select>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="room_number" class="form-label">Room Number</label>
+                        <input type="text" name="room_number" id="room_number" class="form-control" required>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="room_type_id" class="form-label">Room Type</label>
+                        <select name="room_type_id" id="room_type_id" class="form-select" required>
+                            <!-- Will be populated dynamically -->
+                        </select>
+                    </div>
+    
+                    <div class="mb-3">
+                        <label for="max_capacity" class="form-label">Max Capacity</label>
+                        <input type="number" name="max_capacity" id="max_capacity" class="form-control" required>
+                    </div>
+    
+                    <button type="submit" class="btn btn-success">Add Room</button>
+                </form>
+                <div id="formMessage" class="mt-3"></div>
+            </div>
         </div>
-        <div class="card-body">
-
-            <form id="addRoomForm">
-                <div class="mb-3">
-                    <label for="hostel_id" class="form-label">Hostel</label>
-                    <select name="hostel_id" id="hostel_id" class="form-select" required>
-                        <option value="">-- Select Hostel --</option>
-                        <?php foreach ($hostels as $hostel): ?>
-                            <option value="<?= $hostel['id'] ?>"><?= htmlspecialchars($hostel['hostel_name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="floor_id" class="form-label">Floor</label>
-                    <select name="floor_id" id="floor_id" class="form-select" required>
-                        <!-- Will be populated dynamically -->
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="room_number" class="form-label">Room Number</label>
-                    <input type="text" name="room_number" id="room_number" class="form-control" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="room_type_id" class="form-label">Room Type</label>
-                    <select name="room_type_id" id="room_type_id" class="form-select" required>
-                        <!-- Will be populated dynamically -->
-                    </select>
-                </div>
-
-                <div class="mb-3">
-                    <label for="max_capacity" class="form-label">Max Capacity</label>
-                    <input type="number" name="max_capacity" id="max_capacity" class="form-control" required>
-                </div>
-
-                <button type="submit" class="btn btn-success">Add Room</button>
-            </form>
-            <div id="formMessage" class="mt-3"></div>
-        </div>
-    </div>
 </div>
 
 <script>

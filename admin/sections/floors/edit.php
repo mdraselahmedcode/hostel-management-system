@@ -62,7 +62,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
 <!-- Edit Floors Form -->
-<div class="content container py-4">
+<div class="content container py-4 mt-5">
     <a href="<?= BASE_URL ?>/admin/sections/floors/index.php" class="btn btn-outline-secondary mb-4">← Back to Floor List</a>
     <div class="card shadow">
         <div class="card-header bg-primary text-white">

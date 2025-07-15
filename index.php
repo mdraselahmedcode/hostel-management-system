@@ -1,28 +1,49 @@
-<?php 
-    include __DIR__ . '/config/config.php'; 
-    include BASE_PATH . '/includes/header.php'; 
+<?php
+include __DIR__ . '/config/config.php';
+
+require_once BASE_PATH . '/config/auth.php';
+
+// Redirect if logged in
+if (is_student_logged_in()) {
+    header("Location: " . BASE_URL . "/student/dashboard.php");
+    exit;
+}
+
+if (is_admin_logged_in()) {
+    header("Location: " . BASE_URL . "/admin/dashboard_admin.php");
+    exit;
+}
+
+include BASE_PATH . '/includes/header.php';
 ?>
 
 <!-- Hero Section with University Branding -->
-<section class="hero-section bg-university text-white py-5" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('assets/images/university-campus.jpg') no-repeat center center; background-size: cover;">
+<section class="hero-section bg-university text-white py-5" style="background: linear-gradient(rgba(158, 228, 155, 0.7), rgba(0, 0, 0, 0.7)), url('assets/images/university-campus_2.jpg') no-repeat center center; background-size: cover;">
     <div class="container py-5">
         <div class="row align-items-center">
             <div class="col-lg-7">
                 <div class="d-flex align-items-center mb-3">
-                    <img src="assets/images/provided_logo.jpg" alt="University Logo" class="me-3" style="height: 60px;">
+                    <img src="assets/images/provided_logo.jpg" alt="University Logo" class="me-3" style="height: 60px; border-radius: 50%;">
                     <h2 class="mb-0">University Hostel System</h2>
                 </div>
                 <h1 class="display-4 fw-bold mb-4">Comfortable Living for Academic Success</h1>
-                <p class="lead mb-4">Secure your place in our university hostels - safe, affordable, and convenient accommodation for students.</p>
-                <div class="d-flex gap-3">
-                    <a href="<?= BASE_URL ?>/student/login_student.php" class="btn btn-light btn-lg px-4">Student Login</a>
-                    <a href="<?= BASE_URL ?>/student/register_student.php" class="btn btn-outline-light btn-lg px-4">Apply Now</a>
+                <p class="lead mb-4">Secure your place in our university hostels — safe, affordable, and convenient accommodation for students.</p>
+
+                <!-- Button Group with Mobile Margin -->
+                <div class="d-flex flex-wrap gap-3 mb-4 mb-sm-0 justify-content-center justify-content-sm-start">
+                    <a href="<?= BASE_URL ?>/student/login_student.php" class="btn btn-light btn-lg px-4 mb-2 mb-sm-0">
+                        Student Login
+                    </a>
+                    <a href="<?= BASE_URL ?>/student/register_student.php" class="btn btn-outline-light btn-lg px-4">
+                        Apply Now
+                    </a>
                 </div>
             </div>
-            <div class="col-lg-5">
+
+            <div class="col-lg-5" >
                 <div class="card shadow-lg">
-                    <div class="card-body p-4">
-                        <h3 class="fw-bold mb-3 text-center">Application Process</h3>
+                    <div class="card-body p-4" >
+                        <h3 class="fw-bold mb-3 text-center" style="color: rgba(20, 17, 17, 1);">Application Process</h3>
                         <div class="process-steps">
                             <div class="step">
                                 <div class="step-number bg-primary text-white">1</div>
@@ -67,10 +88,11 @@
             <h2 class="fw-bold">Our Hostels</h2>
             <p class="lead text-muted">Modern facilities across multiple locations</p>
         </div>
-        
+
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="card h-100 border-0 shadow-sm overflow-hidden">
+                    <!-- <img src="assets/images/hostel_building.jpg" class="card-img-top" alt="Boys Hostel"> -->
                     <img src="assets/images/hostel_building.jpg" class="card-img-top" alt="Boys Hostel">
                     <div class="card-body">
                         <h4 class="fw-bold">Boys Hostel</h4>
@@ -86,7 +108,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-6">
                 <div class="card h-100 border-0 shadow-sm overflow-hidden">
                     <img src="assets/images/girls_building.png" class="card-img-top" alt="Girls Hostel">
@@ -104,24 +126,6 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- <div class="col-md-4">
-                <div class="card h-100 border-0 shadow-sm overflow-hidden">
-                    <img src="assets/images/hostel-3.jpg" class="card-img-top" alt="International Hostel">
-                    <div class="card-body">
-                        <h4 class="fw-bold">International Hostel</h4>
-                        <p class="text-muted">Capacity: 120 students</p>
-                        <ul class="list-unstyled">
-                            <li class="mb-2"><i class="fas fa-wifi text-primary me-2"></i> High-speed WiFi</li>
-                            <li class="mb-2"><i class="fas fa-utensils text-primary me-2"></i> Dining Hall</li>
-                            <li class="mb-2"><i class="fas fa-tshirt text-primary me-2"></i> Laundry Services</li>
-                        </ul>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <a href="#" class="btn btn-outline-primary">View Details</a>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </div>
 </section>
@@ -181,7 +185,7 @@
             <h2 class="fw-bold">Application Timeline</h2>
             <p class="lead text-muted">Important dates for hostel applications</p>
         </div>
-        
+
         <div class="timeline">
             <div class="timeline-item">
                 <div class="timeline-date">July 1</div>
@@ -212,7 +216,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="text-center mt-5">
             <a href="<?= BASE_URL ?>/student/register_student.php" class="btn btn-primary btn-lg px-5">Apply Now</a>
         </div>
@@ -226,7 +230,7 @@
             <h2 class="fw-bold">Frequently Asked Questions</h2>
             <p class="lead text-muted">Find answers to common questions about hostel accommodation</p>
         </div>
-        
+
         <div class="row">
             <div class="col-lg-6">
                 <div class="accordion mb-4" id="faqAccordion1">
@@ -355,24 +359,29 @@
 </section>
 
 <?php
-    include BASE_PATH . '/includes/footer.php'; 
+include BASE_PATH . '/includes/footer.php';
 ?>
 
 <style>
     .hero-section {
         position: relative;
     }
-    
+
     .bg-university {
-        background-color: #003366; /* University color theme */
+        background-color: #003366;
+        /* University color theme */
     }
-    
+
+    .step-content h5 {
+        color: rgba(20, 17, 17, 1);
+    }
+
     .process-steps .step {
         display: flex;
         align-items: flex-start;
         margin-bottom: 1.5rem;
     }
-    
+
     .process-steps .step-number {
         width: 30px;
         height: 30px;
@@ -383,13 +392,13 @@
         margin-right: 1rem;
         flex-shrink: 0;
     }
-    
+
     .timeline {
         position: relative;
         max-width: 800px;
         margin: 0 auto;
     }
-    
+
     .timeline::before {
         content: '';
         position: absolute;
@@ -400,22 +409,22 @@
         left: 50%;
         margin-left: -1px;
     }
-    
+
     .timeline-item {
         padding: 10px 40px;
         position: relative;
         width: 50%;
         box-sizing: border-box;
     }
-    
+
     .timeline-item:nth-child(odd) {
         left: 0;
     }
-    
+
     .timeline-item:nth-child(even) {
         left: 50%;
     }
-    
+
     .timeline-date {
         padding: 8px 15px;
         background-color: #0d6efd;
@@ -425,22 +434,22 @@
         margin-bottom: 10px;
         font-weight: bold;
     }
-    
+
     .timeline-content {
         padding: 20px;
         background-color: white;
         border-radius: 8px;
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
-    
+
     .timeline-item:nth-child(odd) .timeline-content {
         margin-right: 15px;
     }
-    
+
     .timeline-item:nth-child(even) .timeline-content {
         margin-left: 15px;
     }
-    
+
     .timeline-item::after {
         content: '';
         position: absolute;
@@ -452,46 +461,46 @@
         top: 25px;
         z-index: 1;
     }
-    
+
     .timeline-item:nth-child(odd)::after {
         right: -10px;
     }
-    
+
     .timeline-item:nth-child(even)::after {
         left: -10px;
     }
 </style>
 
 <script>
-$(document).ready(function() {
-    // Animate stats counting
-    function animateValue(id, start, end, duration) {
-        let obj = document.getElementById(id);
-        let range = end - start;
-        let current = start;
-        let increment = end > start ? 1 : -1;
-        let stepTime = Math.abs(Math.floor(duration / range));
-        let timer = setInterval(function() {
-            current += increment;
-            obj.innerHTML = id === 'occupancy-rate' ? current + "%" : current;
-            if (current == end) {
-                clearInterval(timer);
-            }
-        }, stepTime);
-    }
-    
-    // Example values - replace with actual data from your database via AJAX
-    animateValue("room-count", 0, 320, 1000);
-    animateValue("student-count", 0, 1250, 1000);
-    animateValue("occupancy-rate", 0, 92, 1000);
-    animateValue("staff-count", 0, 28, 1000);
-    
-    // Contact form submission
-    $('#contactForm').submit(function(e) {
-        e.preventDefault();
-        // Add your form submission logic here
-        alert('Thank you for your message. We will contact you soon.');
-        this.reset();
+    $(document).ready(function() {
+        // Animate stats counting
+        // function animateValue(id, start, end, duration) {
+        //     let obj = document.getElementById(id);
+        //     let range = end - start;
+        //     let current = start;
+        //     let increment = end > start ? 1 : -1;
+        //     let stepTime = Math.abs(Math.floor(duration / range));
+        //     let timer = setInterval(function() {
+        //         current += increment;
+        //         obj.innerHTML = id === 'occupancy-rate' ? current + "%" : current;
+        //         if (current == end) {
+        //             clearInterval(timer);
+        //         }
+        //     }, stepTime);
+        // }
+
+        // Example values - replace with actual data from your database via AJAX
+        // animateValue("room-count", 0, 320, 1000);
+        // animateValue("student-count", 0, 1250, 1000);
+        // animateValue("occupancy-rate", 0, 92, 1000);
+        // animateValue("staff-count", 0, 28, 1000);
+
+        // Contact form submission
+        $('#contactForm').submit(function(e) {
+            e.preventDefault();
+            // Add your form submission logic here
+            alert('Thank you for your message. We will contact you soon.');
+            this.reset();
+        });
     });
-});
 </script>

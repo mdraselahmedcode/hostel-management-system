@@ -48,7 +48,7 @@ if ($result && $result->num_rows > 0) {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="content container-fluid">
+<div class="content container-fluid mt-5">
     <div class="row full-height">
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
@@ -79,46 +79,45 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                             </select>
                         </form>
 
-                        <table class="table table-bordered table-striped">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>ID</th>
-                                    <th>Type Name</th>
-                                    <th>Default Capacity</th>
-                                    <th>Buffer Limit</th>
-                                    <th>Hostel Name</th>
-                                    <th>Edit</th>
-                                    <th>Delete</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (empty($roomTypes)): ?>
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                            <table class="table table-bordered table-striped mb-0">
+                                <thead class="table-dark text-center">
                                     <tr>
-                                        <td colspan="11" class="text-center">No room types found.</td>
+                                        <th>#</th>
+                                        <th>Type Name</th>
+                                        <th>Default Capacity</th>
+                                        <th>Buffer Limit</th>
+                                        <th>Hostel Name</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
                                     </tr>
-                                <?php else: ?>
-                                    <?php $serial = 1; ?>
-                                    <?php foreach ($roomTypes as $type): ?>
+                                </thead>
+                                <tbody>
+                                    <?php if (empty($roomTypes)): ?>
                                         <tr>
-                                            <td><?= $serial++ ?></td>
-                                            <td><?= $type['id'] ?></td>
-                                            <td><?= htmlspecialchars(ucfirst(strtolower($type['type_name']))) ?></td>
-                                            <td><?= (int)$type['default_capacity'] ?></td>
-                                            <td><?= (int)$type['buffer_limit'] ?></td>
-                                            <td><?= htmlspecialchars($type['hostel_name']) ?></td>
-                                            <td>
-                                                <a href="<?= BASE_URL ?>/admin/sections/roomTypes/edit.php?roomTypeId=<?= $type['id'] ?>&hostel_id=<?= $type['hostel_id'] ?>" class="btn btn-sm btn-primary">Edit</a>
-                                            </td>
-                                            <td>
-                                                <a href="javascript:void(0);" class="btn btn-sm btn-danger delete-type" data-id="<?= $type['id'] ?>" data-hostel-id="<?= $type['hostel_id'] ?>">Delete</a>
-                                            </td>
+                                            <td colspan="8" class="text-center">No room types found.</td>
                                         </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </tbody>
-
-                        </table>
+                                    <?php else: ?>
+                                        <?php $serial = 1; ?>
+                                        <?php foreach ($roomTypes as $type): ?>
+                                            <tr>
+                                                <td><?= $serial++ ?></td>
+                                                <td><?= htmlspecialchars(ucfirst(strtolower($type['type_name']))) ?></td>
+                                                <td><?= (int)$type['default_capacity'] ?></td>
+                                                <td><?= (int)$type['buffer_limit'] ?></td>
+                                                <td><?= htmlspecialchars($type['hostel_name']) ?></td>
+                                                <td>
+                                                    <a href="<?= BASE_URL ?>/admin/sections/roomTypes/edit.php?roomTypeId=<?= $type['id'] ?>&hostel_id=<?= $type['hostel_id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:void(0);" class="btn btn-sm btn-danger delete-type" data-id="<?= $type['id'] ?>" data-hostel-id="<?= $type['hostel_id'] ?>">Delete</a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
                         <div id="showMessage" class="mt-3"></div>
                     </div>
                 </div>

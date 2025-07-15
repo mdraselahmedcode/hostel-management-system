@@ -44,12 +44,12 @@ if ($result && $result->num_rows > 0) {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="content container-fluid">
+<div class="content container-fluid mt-5">
     <div class="row full-height">
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
         <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-            <a href="<?= BASE_URL . '/admin/dashboard_admin.php' ?>" class="btn btn-secondary mb-3">Back</a>
+            <a href="<?= BASE_URL . '/admin/dashboard_admin.php' ?>" class="btn btn-secondary mb-3 ">Back</a>
 
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -73,12 +73,11 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         </div>
                     </form>
 
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                         <table class="table table-bordered table-striped">
                             <thead class="table-dark">
                                 <tr>
                                     <th>#</th>
-                                    <th>ID</th>
                                     <th>First Name</th>
                                     <th>Last Name</th>
                                     <th>Email</th>
@@ -99,7 +98,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                     <?php foreach ($admins as $admin): ?>
                                         <tr>
                                             <td><?= $serial++ ?></td>
-                                            <td><?= $admin['id'] ?></td>
                                             <td><?= htmlspecialchars($admin['firstname']) ?></td>
                                             <td><?= htmlspecialchars($admin['lastname']) ?></td>
                                             <td><?= htmlspecialchars($admin['email']) ?></td>

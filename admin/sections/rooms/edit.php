@@ -42,11 +42,11 @@ if ($typeResult && $typeResult->num_rows > 0) {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="content container-fluid">
+<div class="content container-fluid mt-5">
     <div class="row full-height">
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
-        <main class="col-md-10 ms-sm-auto px-md-4 py-4">
+        <main class="col-md-10 ms-sm-auto px-md-4 py-4" style="overflow-y: auto; max-height: calc(100vh - 95px)">
             <a href="<?= BASE_URL . '/admin/sections/rooms/index.php' ?>" class="btn btn-secondary mb-3">Back to Room List</a>
 
             <div class="card shadow-sm">

@@ -96,176 +96,414 @@ if ($student['floor_id']) {
     $rooms = $roomQuery->get_result()->fetch_all(MYSQLI_ASSOC);
 }
 
-require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<!DOCTYPE html>
-<html>
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Student - <?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?></title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        .footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+        .card-header {
+            font-weight: 600;
+        }
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+    </style>
 </head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <?php
+            require_once BASE_PATH . '/admin/includes/header_admin.php';
+        ?>
+    </header>
 
-<body class="container mt-4">
-    <h2>Edit Student</h2>
-    <a href="<?= BASE_URL . '/admin/sections/students/index.php' ?>" class="btn btn-sm btn-secondary mb-3">Back</a>
-
-    <form id="edit-student-form" enctype="multipart/form-data">
-        <input type="hidden" name="id" value="<?= $student['id'] ?>">
-        <input type="hidden" name="permanent_address_id" value="<?= $student['permanent_address_id'] ?>">
-        <input type="hidden" name="temporary_address_id" value="<?= $student['temporary_address_id'] ?>">
-
-        <!-- Profile Section -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-light">Profile</div>
-            <div class="card-body">
-                <input type="text" name="first_name" value="<?= htmlspecialchars($student['first_name']) ?>" class="form-control mb-2" required>
-                <input type="text" name="last_name" value="<?= htmlspecialchars($student['last_name']) ?>" class="form-control mb-2" required>
-                <input type="email" name="email" value="<?= htmlspecialchars($student['email']) ?>" class="form-control mb-2" required>
-                <input type="text" name="varsity_id" value="<?= htmlspecialchars($student['varsity_id']) ?>" class="form-control mb-2" required>
-
-                <select name="gender" class="form-control mb-2">
-                    <option value="">-- Select Gender --</option>
-                    <option value="male" <?= $student['gender'] === 'male' ? 'selected' : '' ?>>Male</option>
-                    <option value="female" <?= $student['gender'] === 'female' ? 'selected' : '' ?>>Female</option>
-                    <option value="other" <?= $student['gender'] === 'other' ? 'selected' : '' ?>>Other</option>
-                </select>
-
-                <input type="text" name="contact_number" value="<?= htmlspecialchars($student['contact_number']) ?>" class="form-control mb-2">
-                <input type="text" name="emergency_contact" value="<?= htmlspecialchars($student['emergency_contact']) ?>" class="form-control mb-2">
-            </div>
+    <!-- Main Content -->
+    <main class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="<?= BASE_URL . '/admin/sections/students/index.php' ?>" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back to Students
+            </a>
+            <h2 class="mb-0 text-primary">
+                <i class="fas fa-user-edit me-2"></i>Edit Student
+            </h2>
+            <div></div> <!-- Empty div for alignment -->
         </div>
 
-        <!-- Parent Details -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-light">Parent Details</div>
-            <div class="card-body">
-                <input type="text" name="father_name" value="<?= htmlspecialchars($student['father_name']) ?>" class="form-control mb-2">
-                <input type="text" name="father_contact" value="<?= htmlspecialchars($student['father_contact']) ?>" class="form-control mb-2">
-                <input type="text" name="mother_name" value="<?= htmlspecialchars($student['mother_name']) ?>" class="form-control mb-2">
-                <input type="text" name="mother_contact" value="<?= htmlspecialchars($student['mother_contact']) ?>" class="form-control mb-2">
-            </div>
-        </div>
+        <form id="edit-student-form" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <input type="hidden" name="id" value="<?= $student['id'] ?>">
+            <input type="hidden" name="permanent_address_id" value="<?= $student['permanent_address_id'] ?>">
+            <input type="hidden" name="temporary_address_id" value="<?= $student['temporary_address_id'] ?>">
 
-        <!-- Hostel Info -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-light">Hostel & Room</div>
-            <div class="card-body">
-                <select name="hostel_id" id="hostel-select" class="form-select mb-2" required>
-                    <option value="">-- Select Hostel --</option>
-                    <?php foreach ($hostels as $hostel): ?>
-                        <option value="<?= $hostel['id'] ?>" <?= $hostel['id'] == $student['hostel_id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($hostel['hostel_name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-
-                <select name="floor_id" id="floor-select" class="form-select mb-2">
-                    <option value="">-- Select Floor --</option>
-                    <?php foreach ($floors as $floor): ?>
-                        <option value="<?= $floor['id'] ?>" <?= $floor['id'] == $student['floor_id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($floor['floor_name'] ?? 'Floor ' . $floor['floor_number']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-
-                <select name="room_id" id="room-select" class="form-select mb-3">
-                    <option value="">-- Select Room --</option>
-                    <?php foreach ($rooms as $room): ?>
-                        <option value="<?= $room['id'] ?>" <?= $room['id'] == $student['room_id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($room['room_number']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-
-                <div class="form-check mb-2">
-                    <input type="checkbox" name="is_checked_in" value="1" <?= $student['is_checked_in'] ? 'checked' : '' ?> class="form-check-input">
-                    <label class="form-check-label">Checked In</label>
+            <!-- Profile Section -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-id-card me-2"></i>Profile Information
                 </div>
-
-                <input type="datetime-local" name="check_in_at" value="<?= $student['check_in_at'] ? date('Y-m-d\TH:i', strtotime($student['check_in_at'])) : '' ?>" class="form-control mb-2">
-                <input type="datetime-local" name="check_out_at" value="<?= $student['check_out_at'] ? date('Y-m-d\TH:i', strtotime($student['check_out_at'])) : '' ?>" class="form-control mb-2">
-            </div>
-        </div>
-
-        <!-- Verification -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-light">Approval & Verification</div>
-            <div class="card-body">
-                <div class="form-check">
-                    <input type="checkbox" name="is_verified" value="1" <?= $student['is_verified'] ? 'checked' : '' ?> class="form-check-input">
-                    <label class="form-check-label">Verified</label>
-                </div>
-                <div class="form-check">
-                    <input type="checkbox" name="is_approved" value="1" <?= $student['is_approved'] ? 'checked' : '' ?> class="form-check-input">
-                    <label class="form-check-label">Approved</label>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="first_name" class="form-label required-field">First Name</label>
+                            <input type="text" name="first_name" id="first_name" 
+                                   value="<?= htmlspecialchars($student['first_name']) ?>" 
+                                   class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="last_name" class="form-label required-field">Last Name</label>
+                            <input type="text" name="last_name" id="last_name" 
+                                   value="<?= htmlspecialchars($student['last_name']) ?>" 
+                                   class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label required-field">Email</label>
+                            <input type="email" name="email" id="email" 
+                                   value="<?= htmlspecialchars($student['email']) ?>" 
+                                   class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="varsity_id" class="form-label required-field">Varsity ID</label>
+                            <input type="text" name="varsity_id" id="varsity_id" 
+                                   value="<?= htmlspecialchars($student['varsity_id']) ?>" 
+                                   class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="gender" class="form-label required-field">Gender</label>
+                            <select name="gender" id="gender" class="form-select" required>
+                                <option value="">-- Select Gender --</option>
+                                <option value="male" <?= $student['gender'] === 'male' ? 'selected' : '' ?>>Male</option>
+                                <option value="female" <?= $student['gender'] === 'female' ? 'selected' : '' ?>>Female</option>
+                                <option value="other" <?= $student['gender'] === 'other' ? 'selected' : '' ?>>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="contact_number" class="form-label">Contact Number</label>
+                            <input type="text" name="contact_number" id="contact_number" 
+                                   value="<?= htmlspecialchars($student['contact_number']) ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="emergency_contact" class="form-label">Emergency Contact</label>
+                            <input type="text" name="emergency_contact" id="emergency_contact" 
+                                   value="<?= htmlspecialchars($student['emergency_contact']) ?>" 
+                                   class="form-control">
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Permanent Address -->
-        <!-- Permanent Address -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-light">Permanent Address</div>
-            <div class="card-body">
-                <select name="perm_country_id" class="form-control mb-2">
-                    <option value="">Select Country</option>
-                    <?php foreach ($countries as $country): ?>
-                        <option value="<?= $country['id'] ?>" <?= $country['id'] == $student['perm_country_id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($country['country_name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <input type="text" name="perm_state" value="<?= htmlspecialchars($student['perm_state'] ?? '') ?>" class="form-control mb-2" placeholder="State">
-                <input type="text" name="perm_division" value="<?= htmlspecialchars($student['perm_division'] ?? '') ?>" class="form-control mb-2" placeholder="Division">
-                <input type="text" name="perm_district" value="<?= htmlspecialchars($student['perm_district'] ?? '') ?>" class="form-control mb-2" placeholder="District">
-                <input type="text" name="perm_sub_district" value="<?= htmlspecialchars($student['perm_sub_district'] ?? '') ?>" class="form-control mb-2" placeholder="Sub-district">
-                <input type="text" name="perm_village" value="<?= htmlspecialchars($student['perm_village'] ?? '') ?>" class="form-control mb-2" placeholder="Village">
-                <input type="text" name="perm_postalcode" value="<?= htmlspecialchars($student['perm_postalcode'] ?? '') ?>" class="form-control mb-2" placeholder="Postal Code">
-                <input type="text" name="perm_street" value="<?= htmlspecialchars($student['perm_street'] ?? '') ?>" class="form-control mb-2" placeholder="Street">
-                <input type="text" name="perm_house_no" value="<?= htmlspecialchars($student['perm_house_no'] ?? '') ?>" class="form-control mb-2" placeholder="House No">
-                <textarea name="perm_detail" class="form-control mb-2" placeholder="Additional Detail"><?= htmlspecialchars($student['perm_detail'] ?? '') ?></textarea>
+            <!-- Parent Details -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-users me-2"></i>Parent Details
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="father_name" class="form-label">Father's Name</label>
+                            <input type="text" name="father_name" id="father_name" 
+                                   value="<?= htmlspecialchars($student['father_name']) ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="father_contact" class="form-label">Father's Contact</label>
+                            <input type="text" name="father_contact" id="father_contact" 
+                                   value="<?= htmlspecialchars($student['father_contact']) ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="mother_name" class="form-label">Mother's Name</label>
+                            <input type="text" name="mother_name" id="mother_name" 
+                                   value="<?= htmlspecialchars($student['mother_name']) ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="mother_contact" class="form-label">Mother's Contact</label>
+                            <input type="text" name="mother_contact" id="mother_contact" 
+                                   value="<?= htmlspecialchars($student['mother_contact']) ?>" 
+                                   class="form-control">
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Copy Address Checkbox -->
-        <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="same-address">
-            <label class="form-check-label" for="same-address">Same as permanent address</label>
-        </div>
-
-        <!-- Temporary Address -->
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-light">Temporary Address</div>
-            <div class="card-body">
-                <select name="temp_country_id" class="form-control mb-2">
-                    <option value="">-- Select Country --</option>
-                    <?php foreach ($countries as $country): ?>
-                        <option value="<?= $country['id'] ?>" <?= $country['id'] == $student['temp_country_id'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($country['country_name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <input type="text" name="temp_state" value="<?= htmlspecialchars($student['temp_state'] ?? '') ?>" class="form-control mb-2" placeholder="State">
-                <input type="text" name="temp_division" value="<?= htmlspecialchars($student['temp_division'] ?? '') ?>" class="form-control mb-2" placeholder="Division">
-                <input type="text" name="temp_district" value="<?= htmlspecialchars($student['temp_district'] ?? '') ?>" class="form-control mb-2" placeholder="District">
-                <input type="text" name="temp_sub_district" value="<?= htmlspecialchars($student['temp_sub_district'] ?? '') ?>" class="form-control mb-2" placeholder="Sub-district">
-                <input type="text" name="temp_village" value="<?= htmlspecialchars($student['temp_village'] ?? '') ?>" class="form-control mb-2" placeholder="Village">
-                <input type="text" name="temp_postalcode" value="<?= htmlspecialchars($student['temp_postalcode'] ?? '') ?>" class="form-control mb-2" placeholder="Postal Code">
-                <input type="text" name="temp_street" value="<?= htmlspecialchars($student['temp_street'] ?? '') ?>" class="form-control mb-2" placeholder="Street">
-                <input type="text" name="temp_house_no" value="<?= htmlspecialchars($student['temp_house_no'] ?? '') ?>" class="form-control mb-2" placeholder="House No">
-                <textarea name="temp_detail" class="form-control mb-2" placeholder="Additional Detail"><?= htmlspecialchars($student['temp_detail'] ?? '') ?></textarea>
+            <!-- Hostel Info -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-bed me-2"></i>Hostel Information
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="hostel-select" class="form-label required-field">Hostel</label>
+                            <select name="hostel_id" id="hostel-select" class="form-select" required>
+                                <option value="">-- Select Hostel --</option>
+                                <?php foreach ($hostels as $hostel): ?>
+                                    <option value="<?= $hostel['id'] ?>" <?= $hostel['id'] == $student['hostel_id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($hostel['hostel_name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="floor-select" class="form-label">Floor</label>
+                            <select name="floor_id" id="floor-select" class="form-select">
+                                <option value="">-- Select Floor --</option>
+                                <?php foreach ($floors as $floor): ?>
+                                    <option value="<?= $floor['id'] ?>" <?= $floor['id'] == $student['floor_id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($floor['floor_name'] ?? 'Floor ' . $floor['floor_number']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="room-select" class="form-label">Room</label>
+                            <select name="room_id" id="room-select" class="form-select">
+                                <option value="">-- Select Room --</option>
+                                <?php foreach ($rooms as $room): ?>
+                                    <option value="<?= $room['id'] ?>" <?= $room['id'] == $student['room_id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($room['room_number']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch pt-4">
+                                <input type="checkbox" name="is_checked_in" id="is_checked_in" value="1" 
+                                       <?= $student['is_checked_in'] ? 'checked' : '' ?> class="form-check-input">
+                                <label class="form-check-label" for="is_checked_in">Checked In</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="check_in_at" class="form-label">Check In Time</label>
+                            <input type="datetime-local" name="check_in_at" id="check_in_at" 
+                                   value="<?= $student['check_in_at'] ? date('Y-m-d\TH:i', strtotime($student['check_in_at'])) : '' ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="check_out_at" class="form-label">Check Out Time</label>
+                            <input type="datetime-local" name="check_out_at" id="check_out_at" 
+                                   value="<?= $student['check_out_at'] ? date('Y-m-d\TH:i', strtotime($student['check_out_at'])) : '' ?>" 
+                                   class="form-control">
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <button type="submit" class="btn btn-primary mb-3">Update Student</button>
-    </form>
+            <!-- Verification -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-shield-alt me-2"></i>Verification Status
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input type="checkbox" name="is_verified" id="is_verified" value="1" 
+                                       <?= $student['is_verified'] ? 'checked' : '' ?> class="form-check-input">
+                                <label class="form-check-label" for="is_verified">Verified</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch">
+                                <input type="checkbox" name="is_approved" id="is_approved" value="1" 
+                                       <?= $student['is_approved'] ? 'checked' : '' ?> class="form-check-input">
+                                <label class="form-check-label" for="is_approved">Approved</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div id="showMessage" class="alert d-none mt-3"></div>
-    </div>
+            <!-- Permanent Address -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-home me-2"></i>Permanent Address
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="perm_country_id" class="form-label">Country</label>
+                            <select name="perm_country_id" id="perm_country_id" class="form-select">
+                                <option value="">-- Select Country --</option>
+                                <?php foreach ($countries as $country): ?>
+                                    <option value="<?= $country['id'] ?>" <?= $country['id'] == $student['perm_country_id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($country['country_name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="perm_state" class="form-label">State</label>
+                            <input type="text" name="perm_state" id="perm_state" 
+                                   value="<?= htmlspecialchars($student['perm_state'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="perm_division" class="form-label">Division</label>
+                            <input type="text" name="perm_division" id="perm_division" 
+                                   value="<?= htmlspecialchars($student['perm_division'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="perm_district" class="form-label">District</label>
+                            <input type="text" name="perm_district" id="perm_district" 
+                                   value="<?= htmlspecialchars($student['perm_district'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="perm_sub_district" class="form-label">Sub-district</label>
+                            <input type="text" name="perm_sub_district" id="perm_sub_district" 
+                                   value="<?= htmlspecialchars($student['perm_sub_district'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="perm_village" class="form-label">Village</label>
+                            <input type="text" name="perm_village" id="perm_village" 
+                                   value="<?= htmlspecialchars($student['perm_village'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="perm_postalcode" class="form-label">Postal Code</label>
+                            <input type="text" name="perm_postalcode" id="perm_postalcode" 
+                                   value="<?= htmlspecialchars($student['perm_postalcode'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="perm_street" class="form-label">Street</label>
+                            <input type="text" name="perm_street" id="perm_street" 
+                                   value="<?= htmlspecialchars($student['perm_street'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="perm_house_no" class="form-label">House No</label>
+                            <input type="text" name="perm_house_no" id="perm_house_no" 
+                                   value="<?= htmlspecialchars($student['perm_house_no'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <label for="perm_detail" class="form-label">Additional Details</label>
+                            <textarea name="perm_detail" id="perm_detail" class="form-control"><?= htmlspecialchars($student['perm_detail'] ?? '') ?></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Copy Address Checkbox -->
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="same-address">
+                <label class="form-check-label" for="same-address">Same as permanent address</label>
+            </div>
+
+            <!-- Temporary Address -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <i class="fas fa-map-marker-alt me-2"></i>Temporary Address
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="temp_country_id" class="form-label">Country</label>
+                            <select name="temp_country_id" id="temp_country_id" class="form-select">
+                                <option value="">-- Select Country --</option>
+                                <?php foreach ($countries as $country): ?>
+                                    <option value="<?= $country['id'] ?>" <?= $country['id'] == $student['temp_country_id'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($country['country_name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="temp_state" class="form-label">State</label>
+                            <input type="text" name="temp_state" id="temp_state" 
+                                   value="<?= htmlspecialchars($student['temp_state'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="temp_division" class="form-label">Division</label>
+                            <input type="text" name="temp_division" id="temp_division" 
+                                   value="<?= htmlspecialchars($student['temp_division'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="temp_district" class="form-label">District</label>
+                            <input type="text" name="temp_district" id="temp_district" 
+                                   value="<?= htmlspecialchars($student['temp_district'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="temp_sub_district" class="form-label">Sub-district</label>
+                            <input type="text" name="temp_sub_district" id="temp_sub_district" 
+                                   value="<?= htmlspecialchars($student['temp_sub_district'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="temp_village" class="form-label">Village</label>
+                            <input type="text" name="temp_village" id="temp_village" 
+                                   value="<?= htmlspecialchars($student['temp_village'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="temp_postalcode" class="form-label">Postal Code</label>
+                            <input type="text" name="temp_postalcode" id="temp_postalcode" 
+                                   value="<?= htmlspecialchars($student['temp_postalcode'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="temp_street" class="form-label">Street</label>
+                            <input type="text" name="temp_street" id="temp_street" 
+                                   value="<?= htmlspecialchars($student['temp_street'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="temp_house_no" class="form-label">House No</label>
+                            <input type="text" name="temp_house_no" id="temp_house_no" 
+                                   value="<?= htmlspecialchars($student['temp_house_no'] ?? '') ?>" 
+                                   class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <label for="temp_detail" class="form-label">Additional Details</label>
+                            <textarea name="temp_detail" id="temp_detail" class="form-control"><?= htmlspecialchars($student['temp_detail'] ?? '') ?></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 mb-4">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    <i class="fas fa-save me-2"></i> Update Student
+                </button>
+            </div>
+        </form>
+
+        <div id="showMessage" class="alert d-none mt-3"></div>
+    </main>
+
+    <!-- Footer -->
+    <?php 
+        require_once BASE_PATH . '/admin/includes/footer_admin.php';
+    ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             // Load floors when hostel is selected
@@ -339,9 +577,16 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     $('textarea[name="temp_detail"]').val($('textarea[name="perm_detail"]').val());
                 } else {
                     // Clear temporary address fields
-                    $('select[name="temp_country_id"]').val('');
-                    $('input[name="temp_state"], input[name="temp_division"], input[name="temp_district"], input[name="temp_sub_district"], input[name="temp_village"], input[name="temp_postalcode"], input[name="temp_street"], input[name="temp_house_no"]').val('');
-                    $('textarea[name="temp_detail"]').val('');
+                    $('select[name="temp_country_id"]').val('<?= $student['temp_country_id'] ?? '' ?>');
+                    $('input[name="temp_state"]').val('<?= htmlspecialchars($student['temp_state'] ?? '') ?>');
+                    $('input[name="temp_division"]').val('<?= htmlspecialchars($student['temp_division'] ?? '') ?>');
+                    $('input[name="temp_district"]').val('<?= htmlspecialchars($student['temp_district'] ?? '') ?>');
+                    $('input[name="temp_sub_district"]').val('<?= htmlspecialchars($student['temp_sub_district'] ?? '') ?>');
+                    $('input[name="temp_village"]').val('<?= htmlspecialchars($student['temp_village'] ?? '') ?>');
+                    $('input[name="temp_postalcode"]').val('<?= htmlspecialchars($student['temp_postalcode'] ?? '') ?>');
+                    $('input[name="temp_street"]').val('<?= htmlspecialchars($student['temp_street'] ?? '') ?>');
+                    $('input[name="temp_house_no"]').val('<?= htmlspecialchars($student['temp_house_no'] ?? '') ?>');
+                    $('textarea[name="temp_detail"]').val('<?= htmlspecialchars($student['temp_detail'] ?? '') ?>');
                 }
             });
 
@@ -350,12 +595,18 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 e.preventDefault();
                 var form = this;
                 var formData = new FormData(this);
+                var submitBtn = $(this).find('button[type="submit"]');
+                var originalBtnText = submitBtn.html();
 
                 // Show loading state
+                submitBtn.prop('disabled', true).html(
+                    '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Processing...'
+                );
+
                 $('#showMessage').html('')
                     .removeClass('alert-danger alert-success')
                     .addClass('alert-info')
-                    .html('<div class="spinner-border spinner-border-sm" role="status"></div> Updating student...')
+                    .html('<div class="spinner-border spinner-border-sm me-2" role="status"></div> Updating student information...')
                     .removeClass('d-none');
 
                 $.ajax({
@@ -366,14 +617,16 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     contentType: false,
                     dataType: 'json',
                     success: function(response) {
-                        var messageDiv = $('#showMessage')
+                        $('#showMessage')
                             .removeClass('alert-info alert-danger')
                             .addClass(response.success ? 'alert-success' : 'alert-danger')
-                            .html(response.message);
+                            .html(response.success ? 
+                                '<i class="fas fa-check-circle me-2"></i>' + response.message : 
+                                '<i class="fas fa-exclamation-circle me-2"></i>' + response.message);
 
                         if (response.success) {
                             setTimeout(function() {
-                                messageDiv.fadeOut();
+                                $('#showMessage').fadeOut();
                             }, 3000);
                         }
                     },
@@ -381,11 +634,15 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         $('#showMessage')
                             .removeClass('alert-info alert-success')
                             .addClass('alert-danger')
-                            .html('Server error: ' + error);
+                            .html('<i class="fas fa-times-circle me-2"></i> Server error: ' + error);
+                    },
+                    complete: function() {
+                        submitBtn.prop('disabled', false).html(originalBtnText);
                     }
                 });
             });
         });
     </script>
+</body>
+</html>
 
-    <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>

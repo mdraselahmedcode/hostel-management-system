@@ -59,12 +59,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="content container-fluid">
+<div class="content container-fluid mt-5">
     <div class="row full-height">
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
         <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-            <a href="<?= BASE_URL . '/admin/sections/admins/' ?>" class="btn btn-secondary mb-3">Back to Admin List</a>
+            <a href="<?= BASE_URL . '/admin/sections/admins/index.php' ?>" class="btn btn-secondary mb-3 mt-2">Back to Admin List</a>
 
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -116,7 +116,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-success mb-3">Add Admin</button>
+                        <button type="submit" class="btn btn-success mb-3 mb-2">Add Admin</button>
                     </form>
                     <div class="showMessage"></div>
                 </div>

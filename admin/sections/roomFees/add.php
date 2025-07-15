@@ -24,8 +24,9 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
 <div class="content container mt-5">
-    <a href="<?= BASE_URL . '/admin/sections/roomFees/index.php' ?>" class="btn btn-secondary mb-3">← Back</a>
+    <a href="<?= BASE_URL . '/admin/sections/roomFees/index.php' ?>" class="btn btn-secondary mb-3 mt-4">← Back</a>
 
+    <div id="formMessage" class="mt-3"></div>
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
             <h4>Add New Room Fees</h4>
@@ -72,7 +73,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 
                 <button type="submit" class="btn btn-primary">Add Fee</button>
             </form>
-            <div id="formMessage" class="mt-3"></div>
         </div>
     </div>
 </div>

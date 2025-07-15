@@ -61,64 +61,66 @@ $result = $stmt->get_result();
 
 ?>
 
-<table class="table table-bordered table-hover">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Varsity ID</th>
-            <th>Email</th>
-            <th>Hostel</th>
-            <th>Room</th>
-            <th>Verified</th>
-            <th>Approved</th>
-            <th>Checked In</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if ($result->num_rows > 0): ?>
-            <?php $serial = 1; ?>
-            <?php while ($student = $result->fetch_assoc()): ?>
-                <tr>
-                    <td><?= $serial++ ?></td>
-                    <td>
-                        <?php if ($student['profile_image_url']): ?>
-                            <img src="<?= htmlspecialchars($student['profile_image_url']) ?>" alt="Profile" width="50" height="50">
-                        <?php else: ?>
-                            N/A
-                        <?php endif; ?>
-                    </td>
-                    <td><?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?></td>
-                    <td><?= htmlspecialchars($student['varsity_id']) ?></td>
-                    <td><?= htmlspecialchars($student['email']) ?></td>
-                    <td><?= htmlspecialchars($student['hostel_name'] ?? 'N/A') ?></td>
-                    <td><?= htmlspecialchars($student['room_number'] ?? 'N/A') ?></td>
-                    <td>
-                        <?= $student['is_verified'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>' ?>
-                    </td>
-                    <td>
-                        <?= $student['is_approved'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-warning text-dark">No</span>' ?>
-                    </td>
-                    <td>
-                        <?= $student['is_checked_in'] ? '<span class="badge bg-success">Checked In</span>' : '<span class="badge bg-danger">Not Checked In</span>' ?>
-                    </td>
-                    <td>
-                        <a href="view.php?id=<?= $student['id'] ?>" class="btn btn-sm btn-info text-light ">View</a>
-                        <a href="edit.php?id=<?= $student['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
-                        <button class="btn btn-sm btn-danger delete-student" data-id="<?= $student['id'] ?>">Delete</button>
-                    </td>
-
-                </tr>
-            <?php endwhile; ?>
-        <?php else: ?>
+<div style="max-height: 400px; overflow-y: auto;">
+    <table class="table table-bordered table-hover" >
+        <thead>
             <tr>
-                <td colspan="10" class="text-center">No students found.</td>
+                <th>#</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Varsity ID</th>
+                <th>Email</th>
+                <th>Hostel</th>
+                <th>Room</th>
+                <th>Verified</th>
+                <th>Approved</th>
+                <th>Checked In</th>
+                <th>Actions</th>
             </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            <?php if ($result->num_rows > 0): ?>
+                <?php $serial = 1; ?>
+                <?php while ($student = $result->fetch_assoc()): ?>
+                    <tr>
+                        <td><?= $serial++ ?></td>
+                        <td>
+                            <?php if ($student['profile_image_url']): ?>
+                                <img src="<?= htmlspecialchars($student['profile_image_url']) ?>" alt="Profile" width="50" height="50">
+                            <?php else: ?>
+                                N/A
+                            <?php endif; ?>
+                        </td>
+                        <td><?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?></td>
+                        <td><?= htmlspecialchars($student['varsity_id']) ?></td>
+                        <td><?= htmlspecialchars($student['email']) ?></td>
+                        <td><?= htmlspecialchars($student['hostel_name'] ?? 'N/A') ?></td>
+                        <td><?= htmlspecialchars($student['room_number'] ?? 'N/A') ?></td>
+                        <td>
+                            <?= $student['is_verified'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-secondary">No</span>' ?>
+                        </td>
+                        <td>
+                            <?= $student['is_approved'] ? '<span class="badge bg-success">Yes</span>' : '<span class="badge bg-warning text-dark">No</span>' ?>
+                        </td>
+                        <td>
+                            <?= $student['is_checked_in'] ? '<span class="badge bg-success">Checked In</span>' : '<span class="badge bg-danger">Not Checked In</span>' ?>
+                        </td>
+                        <td>
+                            <a href="view.php?id=<?= $student['id'] ?>" class="btn btn-sm btn-info text-light ">View</a>
+                            <a href="edit.php?id=<?= $student['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                            <button class="btn btn-sm btn-danger delete-student" data-id="<?= $student['id'] ?>">Delete</button>
+                        </td>
+    
+                    </tr>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="10" class="text-center">No students found.</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 
 <?php
 $stmt->close();

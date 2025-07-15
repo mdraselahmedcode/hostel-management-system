@@ -44,7 +44,7 @@ if ($result && $result->num_rows > 0) {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
-<div class="content container-fluid">
+<div class="content container-fluid mt-5">
     <div class="row full-height">
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
@@ -77,7 +77,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         <table class="table table-bordered table-striped">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>ID</th>
+                                    <th>#</th>
                                     <th>Floor name</th>
                                     <th>Floor number</th>
                                     <th>Hostel name</th>
@@ -93,13 +93,17 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                         <td colspan="12" class="text-center">No floors found.</td>
                                     </tr>
                                 <?php else: ?>  
+                                    <?php $serial = 1; ?>
                                     <?php foreach ($floors as $floor): ?>
                                         <tr>
-                                            <td><?= $floor['id'] ?></td>
+                                            <td><?= $serial++ ?></td>
                                             <td><?= htmlspecialchars($floor['floor_name']) ?></td>
                                             <td><?= $floor['floor_number'] ?? 'N/A' ?></td>
                                             <td><?= $floor['hostel_name'] ?? 'N/A' ?></td>
                                             <td><?= $floor['number_of_rooms'] ?? 'N/A' ?></td>
+                                            <td>
+                                                <a href="<?= BASE_URL ?>/admin/sections/floors/view.php?id=<?= $floor['id'] ?>" class="btn btn-sm btn-info text-light">View</a>
+                                            </td>
                                             <td>
                                                 <a href="<?= BASE_URL ?>/admin/sections/floors/edit.php?id=<?= $floor['id'] ?>" class="btn btn-sm btn-primary">Edit</a>
                                             </td>
