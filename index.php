@@ -31,7 +31,7 @@ include BASE_PATH . '/includes/header.php';
 
                 <!-- Button Group with Mobile Margin -->
                 <div class="d-flex flex-wrap gap-3 mb-4 mb-sm-0 justify-content-center justify-content-sm-start">
-                    <a href="<?= BASE_URL ?>/student/login_student.php" class="btn btn-light btn-lg px-4 mb-2 mb-sm-0">
+                    <a href="<?= BASE_URL ?>/student/login.php" class="btn btn-light btn-lg px-4 mb-2 mb-sm-0">
                         Student Login
                     </a>
                     <a href="<?= BASE_URL ?>/student/register.php" class="btn btn-outline-light btn-lg px-4">
@@ -40,9 +40,9 @@ include BASE_PATH . '/includes/header.php';
                 </div>
             </div>
 
-            <div class="col-lg-5" >
+            <div class="col-lg-5">
                 <div class="card shadow-lg">
-                    <div class="card-body p-4" >
+                    <div class="card-body p-4">
                         <h3 class="fw-bold mb-3 text-center" style="color: rgba(20, 17, 17, 1);">Application Process</h3>
                         <div class="process-steps">
                             <div class="step">
@@ -111,7 +111,7 @@ include BASE_PATH . '/includes/header.php';
 
             <div class="col-md-6">
                 <div class="card h-100 border-0 shadow-sm overflow-hidden">
-                    <img src="assets/images/girls_building.png" class="card-img-top" alt="Girls Hostel">
+                    <img src="assets/images/girls_building.jpg" class="card-img-top" alt="Girls Hostel">
                     <div class="card-body">
                         <h4 class="fw-bold">Girls Hostel</h4>
                         <p class="text-muted">Capacity: 180 students</p>
@@ -363,6 +363,15 @@ include BASE_PATH . '/includes/footer.php';
 ?>
 
 <style>
+    .btn-light:hover,
+    .btn-outline-light:hover {
+        background-color: #f8f9fa;
+        color: #000;
+        transform: scale(1.02);
+        transition: all 0.3s ease-in-out;
+    }
+
+
     .hero-section {
         position: relative;
     }

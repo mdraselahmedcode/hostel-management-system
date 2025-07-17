@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/config/config.php';
 require_once BASE_PATH . '/config/auth.php';
+include BASE_PATH . '/includes/slide_message.php'; 
 
 // Redirect if logged in
 if (is_student_logged_in()) {
@@ -140,7 +141,7 @@ include BASE_PATH . '/includes/header.php';
                         <h4 class="mb-0">Send Us a Message</h4>
                     </div>
                     <div class="card-body p-4">
-                        <form id="contactForm" method="POST">
+                        <form id="contactForm">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="name" name="name" required>
@@ -172,7 +173,6 @@ include BASE_PATH . '/includes/header.php';
                                 <i class="fas fa-paper-plane me-2"></i> Send Message
                             </button>
                         </form>
-                        <div id="formMessage" class="mt-3"></div>
                     </div>
                 </div>
             </div>
@@ -185,7 +185,7 @@ include BASE_PATH . '/includes/header.php';
                     <div class="card-body p-0">
                         <div class="map-container ratio ratio-16x9">
                             <!-- Google Map Embed -->
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d912.1185424070097!2d90.3102887!3d23.872799!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c2102dc1cd51%3A0x6f95e92193fc8978!2sCity%20University%20Bangladesh!5e0!3m2!1sen!2sbd!4v1752697102390!5m2!1sen!2sbd" 
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d912.1185424070097!2d90.3102887!3d23.872799!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c2102dc1cd51%3A0x6f95e92193fc8978!2sCity%20University%20Bangladesh!5e0!3m2!1sen!2sbd!4v1752697102390!5m2!1sen!2sbd"
                                 width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
                         <div class="p-4">
@@ -270,58 +270,35 @@ include BASE_PATH . '/includes/header.php';
 
 
 
-<!-- <script src="<?= BASE_URL ?>/vendor/jquery/jquery.min.js"></script>
-    <script src="<?= BASE_URL ?>/vendor/bootstrap/js/bootstrap.bundle.min.js"></script> -->
-
 
 
 <script>
     $(document).ready(function() {
-        // Form submission handling
         $('#contactForm').on('submit', function(e) {
             e.preventDefault();
             const form = $(this);
             const submitBtn = form.find('button[type="submit"]');
             const originalBtnText = submitBtn.html();
 
-            // Show loading state
             submitBtn.prop('disabled', true).html(
                 '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Sending...'
             );
 
             $.ajax({
-                url: '<?= BASE_URL ?>/includes/contact_handler.php',
+                url: '<?= BASE_URL ?>/contact_send_message_handler.php',
                 type: 'POST',
                 data: form.serialize(),
                 dataType: 'json',
                 success: function(response) {
-                    const messageDiv = $('#formMessage');
-                    messageDiv.empty();
-
                     if (response.success) {
-                        messageDiv.html(
-                            '<div class="alert alert-success alert-dismissible fade show">' +
-                            '<i class="fas fa-check-circle me-2"></i>' + response.message +
-                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                            '</div>'
-                        );
+                        showSlideMessage(response.message, 'success');
                         form[0].reset();
                     } else {
-                        messageDiv.html(
-                            '<div class="alert alert-danger alert-dismissible fade show">' +
-                            '<i class="fas fa-exclamation-circle me-2"></i>' + response.message +
-                            '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                            '</div>'
-                        );
+                        showSlideMessage(response.message, 'danger');
                     }
                 },
                 error: function(xhr) {
-                    $('#formMessage').html(
-                        '<div class="alert alert-danger alert-dismissible fade show">' +
-                        '<i class="fas fa-times-circle me-2"></i> An error occurred. Please try again later.' +
-                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-                        '</div>'
-                    );
+                    showSlideMessage('An error occurred. Please try again later.', 'danger');
                     console.error(xhr.responseText);
                 },
                 complete: function() {
@@ -331,6 +308,7 @@ include BASE_PATH . '/includes/header.php';
         });
     });
 </script>
+
 
 
 <!-- Include Footer -->
