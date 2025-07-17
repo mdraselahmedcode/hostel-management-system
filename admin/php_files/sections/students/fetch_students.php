@@ -104,7 +104,7 @@ $result = $stmt->get_result();
                         <td><?= $serial++ ?></td>
                         <td>
                             <?php if ($student['profile_image_url']): ?>
-                                <img src="<?= htmlspecialchars($student['profile_image_url']) ?>" alt="Profile" width="50" height="50">
+                                <img src="<?= htmlspecialchars($student['profile_image_url']) ?>" alt="Profile" width="50" height="50" style="border-radius: 50px">
                             <?php else: ?>
                                 N/A
                             <?php endif; ?>

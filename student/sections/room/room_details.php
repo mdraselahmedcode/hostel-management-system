@@ -163,7 +163,7 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
                                         <span class="badge bg-info"><?= htmlspecialchars(ucfirst($current_fee['billing_cycle'])) ?></span>
                                     </p>
                                     <p class="text-muted"><small>Effective from <?= date('M d, Y', strtotime($current_fee['effective_from'])) ?></small></p>
-                                    <a href="payment_history.php" class="btn btn-sm btn-outline-primary mt-2">
+                                    <a href="<?= BASE_URL . '/student/sections/payment/payment_history.php' ?>" class="btn btn-sm btn-outline-primary mt-2">
                                         View Payment History
                                     </a>
                                 <?php else: ?>

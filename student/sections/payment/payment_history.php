@@ -14,18 +14,17 @@ require_student();
 
     <!-- Main content -->
     <main class="col-12 col-md-10 col-lg-10 py-5 pt-3">
-
       <!-- Back Button -->
       <div class="mb-4">
         <a href="javascript:history.back()" class="btn btn-outline-secondary">
           <i class="bi bi-arrow-left"></i> Back
         </a>
       </div>
-
+      
       <div class="card mx-auto" style="max-width: 600px;">
         <div class="card-body text-center">
           <h3 class="card-title text-muted">
-            <i class="bi bi-exclamation-circle text-warning"></i> Outstanding Dues
+            <i class="bi bi-exclamation-circle text-warning"></i> Payment History
           </h3>
           <p class="fs-5 mt-3">
             This feature is not available yet.

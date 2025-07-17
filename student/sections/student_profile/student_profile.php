@@ -1,11 +1,12 @@
 <?php
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/config/auth.php'; 
+require_once BASE_PATH . '/config/auth.php';
+include BASE_PATH . '/includes/slide_message.php';
 
 
 
-require_student(); 
+require_student();
 
 require_once BASE_PATH . '/student/includes/header_student.php';
 
@@ -30,15 +31,19 @@ $profile = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 ?>
 
+<head>
+    <link rel="stylesheet" href="<?= BASE_URL . '/student/assets/css/student_profile.css' ?>">
+</head>
 
-<div class="content container-fluid" >
-    
+
+<div class="content container-fluid">
+
     <div class="row full-height">
         <!-- sidebar -->
         <?php require_once BASE_PATH . '/student/includes/sidebar_student.php'; ?>
-        
+
         <!-- main content -->
-         <main class="col-md-10 ms-sm-auto px-md-4" style="overflow-y: auto; max-height: calc(100vh - 20vh);">
+        <main class="col-md-10 ms-sm-auto px-md-4" style="overflow-y: auto; max-height: calc(100vh - 20vh);">
 
             <div class="mb-3 mt-3">
                 <a href="javascript:history.back()" class="btn btn-outline-secondary">
@@ -95,16 +100,16 @@ $stmt->close();
                             <h6 class="mb-0">Quick Links</h6>
                         </div>
                         <div class="list-group list-group-flush">
-                            <a href="payment_history.php" class="list-group-item list-group-item-action">
+                            <a href="<?= BASE_URL ?>/student/sections/payment/payment_history.php" class="list-group-item list-group-item-action">
                                 <i class="bi bi-credit-card-fill me-2"></i>Payment History
                             </a>
-                            <a href="room_change.php" class="list-group-item list-group-item-action">
+                            <a href="<?= BASE_URL ?>/student/sections/room/room_change.php" class="list-group-item list-group-item-action">
                                 <i class="bi bi-door-open-fill me-2"></i>Room Change Request
                             </a>
-                            <a href="complaints.php" class="list-group-item list-group-item-action">
+                            <a href="<?= BASE_URL ?>/student/sections/complaints/complaints.php" class="list-group-item list-group-item-action">
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>Submit Complaint
                             </a>
-                            <a href="change_password.php" class="list-group-item list-group-item-action">
+                            <a href="<?= BASE_URL ?>/student/sections/student_profile/change_password.php" class="list-group-item list-group-item-action">
                                 <i class="bi bi-key-fill me-2"></i>Change Password
                             </a>
                         </div>
@@ -291,8 +296,98 @@ $stmt->close();
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editProfileForm">
-                    <!-- Form content would go here -->
+                <form id="editProfileForm" style="max-height: 600px; overflow-y: auto; overflow-x: hidden;">
+                    <input type="hidden" name="student_id" value="<?= $profile['id'] ?>">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="contact_number">Your Contact Number</label>
+                            <input type="text" class="form-control" name="contact_number" id="contact_number" required
+                                value="<?= htmlspecialchars($profile['contact_number'] ?? '') ?>">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="father_name">Father's Name</label>
+                            <input type="text" class="form-control" name="father_name" id="father_name"
+                                value="<?= htmlspecialchars($profile['father_name'] ?? '') ?>">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="father_contact">Father's Contact</label>
+                            <input type="text" class="form-control" name="father_contact" id="father_contact"
+                                value="<?= htmlspecialchars($profile['father_contact'] ?? '') ?>">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="mother_name">Mother's Name</label>
+                            <input type="text" class="form-control" name="mother_name" id="mother_name"
+                                value="<?= htmlspecialchars($profile['mother_name'] ?? '') ?>">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="mother_contact">Mother's Contact</label>
+                            <input type="text" class="form-control" name="mother_contact" id="mother_contact"
+                                value="<?= htmlspecialchars($profile['mother_contact'] ?? '') ?>">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="emergency_contact">Emergency Contact</label>
+                            <input type="text" class="form-control" name="emergency_contact" id="emergency_contact"
+                                value="<?= htmlspecialchars($profile['emergency_contact'] ?? '') ?>">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="blood_group">Blood Group</label>
+                            <select class="form-control" name="blood_group" id="blood_group">
+                                <option value="Unknown" <?= ($profile['blood_group'] ?? '') === 'Unknown' ? 'selected' : '' ?>>Select</option>
+                                <option value="A+" <?= ($profile['blood_group'] ?? '') === 'A+' ? 'selected' : '' ?>>A+</option>
+                                <option value="A-" <?= ($profile['blood_group'] ?? '') === 'A-' ? 'selected' : '' ?>>A-</option>
+                                <option value="B+" <?= ($profile['blood_group'] ?? '') === 'B+' ? 'selected' : '' ?>>B+</option>
+                                <option value="B-" <?= ($profile['blood_group'] ?? '') === 'B-' ? 'selected' : '' ?>>B-</option>
+                                <option value="AB+" <?= ($profile['blood_group'] ?? '') === 'AB+' ? 'selected' : '' ?>>AB+</option>
+                                <option value="AB-" <?= ($profile['blood_group'] ?? '') === 'AB-' ? 'selected' : '' ?>>AB-</option>
+                                <option value="O+" <?= ($profile['blood_group'] ?? '') === 'O+' ? 'selected' : '' ?>>O+</option>
+                                <option value="O-" <?= ($profile['blood_group'] ?? '') === 'O-' ? 'selected' : '' ?>>O-</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <h6 class="text-primary mt-3">Permanent Address</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="house_no" class="form-label">House No</label>
+                            <input type="text" class="form-control" id="house_no" name="house_no" value="<?= htmlspecialchars($profile['house_no'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="street" class="form-label">Street</label>
+                            <input type="text" class="form-control" id="street" name="street" value="<?= htmlspecialchars($profile['street'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="village" class="form-label">Village</label>
+                            <input type="text" class="form-control" id="village" name="village" value="<?= htmlspecialchars($profile['village'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="sub_district" class="form-label">Sub-district</label>
+                            <input type="text" class="form-control" id="sub_district" name="sub_district" value="<?= htmlspecialchars($profile['sub_district'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="district" class="form-label">District</label>
+                            <input type="text" class="form-control" id="district" name="district" value="<?= htmlspecialchars($profile['district'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="division" class="form-label">Division</label>
+                            <input type="text" class="form-control" id="division" name="division" value="<?= htmlspecialchars($profile['division'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="state" class="form-label">State</label>
+                            <input type="text" class="form-control" id="state" placeholder="keep it empty if no" name="state" value="<?= htmlspecialchars($profile['state'] ?? '') ?>">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="postalcode" class="form-label">Postal Code</label>
+                            <input type="text" class="form-control" id="postalcode" name="postalcode" value="<?= htmlspecialchars($profile['postalcode'] ?? '') ?>">
+                        </div>
+                    </div>
                     <div class="text-end">
                         <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -303,94 +398,64 @@ $stmt->close();
     </div>
 </div>
 
-<?php require_once BASE_PATH . '/student/includes/footer_student.php'; ?>
-
-<style>
-    .profile-card {
-        border-radius: 15px;
-        overflow: hidden;
-        border: none;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    }
-
-    .profile-avatar-container {
-        position: relative;
-        display: inline-block;
-    }
-
-    .avatar-edit-btn {
-        position: absolute;
-        bottom: 10px;
-        right: 10px;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        padding: 0;
-    }
-
-    .profile-meta .meta-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
-    .profile-meta .meta-item i {
-        width: 24px;
-        text-align: center;
-        margin-right: 10px;
-        color: #0d6efd;
-    }
-
-    .info-card {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 15px;
-        height: 100%;
-    }
-
-    .info-title {
-        color: #0d6efd;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 15px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #eee;
-    }
-
-    .info-content p {
-        margin-bottom: 8px;
-    }
-
-    .status-card {
-        border-radius: 10px;
-        border: none;
-        transition: all 0.3s;
-    }
-
-    .status-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .status-icon {
-        font-size: 2rem;
-        margin: 10px 0;
-    }
-</style>
 
 <script>
     $(document).ready(function() {
         // Avatar form submission
         $('#avatarForm').on('submit', function(e) {
             e.preventDefault();
-            // AJAX upload logic here
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '<?= BASE_URL . '/student/php_files/sections/student_profile/upload_profile_image.php' ?>',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    if (response.success) {
+                        $('.profile-avatar-container img').attr('src', response.imageUrl + '?t=' + new Date().getTime());
+                        $('#avatarModal').modal('hide');
+                        showSlideMessage('Profile image updated successfully!', 'success');
+                    } else {
+                        showSlideMessage('Upload failed: ' + (response.error || 'Unknown error'), 'danger');
+                    }
+                },
+                error: function() {
+                    showSlideMessage('An error occurred while uploading.', 'danger');
+                }
+            });
         });
+
+
 
         // Edit profile form submission
         $('#editProfileForm').on('submit', function(e) {
             e.preventDefault();
-            // AJAX update logic here
+
+            $.ajax({
+                url: '<?= BASE_URL . '/student/php_files/sections/student_profile/update_profile_fields.php' ?>',
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success) {
+                        showSlideMessage(res.message, 'success');
+                        setTimeout(() => location.reload(), 3000); // Refresh after message
+                    } else {
+                        showSlideMessage(res.message, 'danger');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // console.error('AJAX Error:', xhr.responseText);
+                    showSlideMessage('An error occurred. Please try again.', 'danger');
+                }
+            });
         });
     });
 </script>
+
+
+
+<?php require_once BASE_PATH . '/student/includes/footer_student.php'; ?>

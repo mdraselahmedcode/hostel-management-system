@@ -1,1 +1,44 @@
+# Default file to load
 DirectoryIndex index.php
+
+# Enable URL rewriting
+RewriteEngine On
+
+# If request is for an existing file or directory, skip rewriting
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# ===================== FRONT CONTROLLER =====================
+# Root access goes to index.php
+RewriteRule ^$ index.php [L]
+
+# ===================== ADMIN ROUTES =========================
+RewriteRule ^admin/login$ admin/login.php [L]
+RewriteRule ^admin/dashboard$ admin/dashboard.php [L]
+
+# Admin section CRUD index routes
+RewriteRule ^admin/(hostels|rooms|students|floors|wardens)/?$ admin/$1/index.php [L]
+
+# Admin Add Routes
+RewriteRule ^admin/hostels/add$ admin/hostels/add.php [L]
+RewriteRule ^admin/rooms/add$ admin/rooms/add.php [L]
+RewriteRule ^admin/students/add$ admin/students/add.php [L]
+
+# Admin Update Routes
+RewriteRule ^admin/hostels/update/([0-9]+)$ admin/hostels/update.php?id=$1 [L,QSA]
+RewriteRule ^admin/rooms/update/([0-9]+)$ admin/rooms/update.php?id=$1 [L,QSA]
+RewriteRule ^admin/students/update/([0-9]+)$ admin/students/update.php?id=$1 [L,QSA]
+
+# ===================== STUDENT ROUTES =======================
+RewriteRule ^student/dashboard$ student/dashboard.php [L]
+RewriteRule ^student/profile$ student/profile.php [L]
+RewriteRule ^student/payment/history$ student/payment/history.php [L]
+
+# ===================== AUTH ROUTES ==========================
+RewriteRule ^login$ login.php [L]
+RewriteRule ^register$ register.php [L]
+RewriteRule ^logout$ logout.php [L]
+
+# ===================== 404 HANDLING =========================
+ErrorDocument 404 /hostel-management-system/404.php

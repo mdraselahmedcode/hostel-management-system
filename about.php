@@ -1,5 +1,17 @@
 <?php
 require_once __DIR__ . '/config/config.php';
+require_once BASE_PATH . '/config/auth.php';
+
+// Redirect if logged in
+if (is_student_logged_in()) {
+    header("Location: " . BASE_URL . "/student/dashboard.php");
+    exit;
+}
+
+if (is_admin_logged_in()) {
+    header("Location: " . BASE_URL . "/admin/dashboard.php");
+    exit;
+}
 
 $currentPage = 'about.php'; 
 
@@ -12,8 +24,8 @@ require_once BASE_PATH . '/includes/header.php';
 
     <style>
         .hero-section {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                        url('<?= BASE_URL ?>/assets/images/hostel-building.jpg') no-repeat center center;
+            background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.7)), 
+                        url('<?= BASE_URL ?>/assets/images/university-campus_1.jpg') no-repeat center center;
             background-size: cover;
             color: white;
             padding: 100px 0;
@@ -57,7 +69,7 @@ require_once BASE_PATH . '/includes/header.php';
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0">
-                    <img src="<?= BASE_URL ?>/assets/images/hostel_life_w_girl.jpg" alt="Hostel Life" class="img-fluid rounded shadow">
+                    <img src="<?= BASE_URL ?>/assets/images/about_hostel_life.png"  alt="Hostel Life" class="img-fluid rounded shadow">
                 </div>
                 <div class="col-lg-6">
                     <h2 class="fw-bold mb-4">Our Story</h2>
@@ -79,8 +91,8 @@ require_once BASE_PATH . '/includes/header.php';
             
             <div class="row g-4">
                 <div class="col-md-4">
-                    <div class="mission-card p-4 h-100 bg-white rounded shadow-sm">
-                        <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-flex">
+                    <div class="mission-card p-4 h-100 bg-white rounded shadow-sm text-center">
+                        <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-flex mx-auto">
                             <i class="fas fa-home fa-2x"></i>
                         </div>
                         <h4>Comfortable Living</h4>
@@ -89,8 +101,8 @@ require_once BASE_PATH . '/includes/header.php';
                 </div>
                 
                 <div class="col-md-4">
-                    <div class="mission-card p-4 h-100 bg-white rounded shadow-sm">
-                        <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-flex">
+                    <div class="mission-card p-4 h-100 bg-white rounded shadow-sm text-center">
+                        <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-flex mx-auto">
                             <i class="fas fa-shield-alt fa-2x"></i>
                         </div>
                         <h4>Safety First</h4>
@@ -99,8 +111,8 @@ require_once BASE_PATH . '/includes/header.php';
                 </div>
                 
                 <div class="col-md-4">
-                    <div class="mission-card p-4 h-100 bg-white rounded shadow-sm">
-                        <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-flex">
+                    <div class="mission-card p-4 h-100 bg-white rounded shadow-sm text-center">
+                        <div class="icon-box bg-primary bg-opacity-10 text-primary rounded-circle p-3 mb-3 d-inline-flex mx-auto">
                             <i class="fas fa-hand-holding-heart fa-2x"></i>
                         </div>
                         <h4>Student Support</h4>

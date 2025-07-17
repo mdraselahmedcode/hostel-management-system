@@ -35,7 +35,7 @@ $hostels = $hostelQuery->fetch_all(MYSQLI_ASSOC);
 </head>
 
 <div class="content container mt-4">
-    <a href="<?= BASE_URL . '/student/loginn.php' ?>" class="btn btn-secondary mb-3">Back to Login</a>
+    <a href="<?= BASE_URL . '/student/login.php' ?>" class="btn btn-secondary mb-3">Back to Login</a>
     <div class="card-header bg-primary text-white mb-2 shadow-sm">
         <h2 class="mb-0">Student Registration Application</h2>
         <small class="d-block mt-1">Your application will be reviewed by administration before approval</small>

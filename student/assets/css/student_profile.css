@@ -1,0 +1,71 @@
+.profile-card {
+        border-radius: 15px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-avatar-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .avatar-edit-btn {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        padding: 0;
+    }
+
+    .profile-meta .meta-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .profile-meta .meta-item i {
+        width: 24px;
+        text-align: center;
+        margin-right: 10px;
+        color: #0d6efd;
+    }
+
+    .info-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 15px;
+        height: 100%;
+    }
+
+    .info-title {
+        color: #0d6efd;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .info-content p {
+        margin-bottom: 8px;
+    }
+
+    .status-card {
+        border-radius: 10px;
+        border: none;
+        transition: all 0.3s;
+    }
+
+    .status-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .status-icon {
+        font-size: 2rem;
+        margin: 10px 0;
+    }

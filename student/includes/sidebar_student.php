@@ -82,6 +82,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                     <i class="bi bi-house-door me-2"></i>Room Details
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link <?= $currentPage == 'change_password.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/student_profile/change_password.php">
+                    <i class="bi bi-shield-lock me-2"></i>Change Password
+                </a>
+            </li>
             
             <li class="nav-item">
                 <a class="nav-link <?= $currentPage == 'room_change.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/room/room_change.php">
@@ -90,7 +96,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
             
             <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'payment_history.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/student_profile/payment_history.php">
+                <a class="nav-link <?= $currentPage == 'payment_history.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/payment/payment_history.php">
                     <i class="bi bi-receipt me-2"></i>Payment History
                 </a>
             </li>
@@ -102,16 +108,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
             
             <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'complaints.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/student_profile/complaints.php">
+                <a class="nav-link <?= $currentPage == 'complaints.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/complaints/complaints.php">
                     <i class="bi bi-megaphone me-2"></i>Complaints
                 </a>
             </li>
             
-            <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'change_password.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/student_profile/change_password.php">
-                    <i class="bi bi-shield-lock me-2"></i>Change Password
-                </a>
-            </li>
+            
             
             <li class="nav-item logout-link">
                 <a class="nav-link text-danger" href="<?= BASE_URL ?>/student/php_files/logout_student_handler.php">
