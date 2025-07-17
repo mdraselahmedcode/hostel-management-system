@@ -1,8 +1,10 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     echo "<div class='alert alert-danger'>Invalid floor ID</div>";
@@ -53,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 // CSRF Token
-if(empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); 
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
 require_once BASE_PATH . '/admin/includes/header_admin.php';
@@ -115,18 +117,18 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        $('#formMessage').html('<div class="alert alert-success">' + response.message + '</div>');
-                        setTimeout(function(){
+                        showSlideMessage(response.message, 'success');
+                        setTimeout(function() {
                             window.location.href = '<?= BASE_URL . "/admin/sections/floors/index.php" ?>';
-                        }, 2000)
+                        }, 2000);
                     } else {
-                        $('#formMessage').html('<div class="alert alert-danger">' + response.message + '</div>');
+                        showSlideMessage(response.message, 'danger');
                     }
                     submitBtn.prop('disabled', false).text('Update Floor');
                 },
                 error: function(xhr) {
                     console.error(xhr.responseText);
-                    $('#formMessage').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                    showSlideMessage('An error occurred. Please try again.', 'danger');
                     submitBtn.prop('disabled', false).text('Update Floor');
                 }
             });

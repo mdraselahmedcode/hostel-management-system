@@ -1,42 +1,34 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php'; 
+
+require_admin(); 
+
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 
 require_once BASE_PATH . '/admin/includes/csrf.php';
 $csrfToken = generate_csrf_token();
 
-
-// Get room type ID
 $id = $_GET['roomTypeId'] ?? null;
-
-// Get editable hostel id 
 $filterHostelId = $_GET['hostel_id'] ?? null;
 
-// Validate ID
 if (!$id || !is_numeric($id)) {
     header("Location: index.php?success=Invalid room type ID.");
     exit;
 }
 
-// Validate hostel id
 if (!$filterHostelId || !is_numeric($filterHostelId)) {
     header("Location: index.php?success=Invalid Hostel ID.");
     exit;
 }
 
-// Fetch existing room type
-$stmt = $conn->prepare("SELECT * FROM room_types WHERE id = ? And hostel_id = ?");
+$stmt = $conn->prepare("SELECT * FROM room_types WHERE id = ? AND hostel_id = ?");
 $stmt->bind_param("ii", $id, $filterHostelId);
 $stmt->execute();
 $result = $stmt->get_result();
 $roomType = $result->fetch_assoc();
-
-
-
-
 
 if (!$roomType) {
     header("Location: index.php?success=Room type not found.");
@@ -82,41 +74,38 @@ if (!$roomType) {
                     <button type="submit" class="btn btn-success px-4">
                         <i class="bi bi-save2 me-1"></i> Update Room Type
                     </button>
-                    <div id="formMessage" class="ms-3 flex-grow-1"></div>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-
 <script>
 $(document).ready(function () {
     $('#editRoomTypeForm').on('submit', function (e) {
         e.preventDefault();
         const formData = $(this).serialize();
+
         $.ajax({
             url: '<?= BASE_URL ?>/admin/php_files/sections/roomTypes/edit.php',
             type: 'POST',
             data: formData,
             dataType: 'json',
             success: function (response) {
-                const messageDiv = $('#formMessage');
                 if (response.success) {
-                    messageDiv.html(`<div class="alert alert-success">${response.message}</div>`);
+                    showSlideMessage(response.message, 'success');
+
+                    // Optional: redirect after update
                     setTimeout(() => {
-                        messageDiv.find('.alert-success').fadeOut('slow', function () {
-                            $(this).remove();
-                            // window.location.href = "index.php?success=Room type updated successfully.";
-                        });
+                        window.location.href = "index.php?success=Room type updated successfully.";
                     }, 2000);
                 } else {
-                    messageDiv.html(`<div class="alert alert-danger">${response.message}</div>`);
+                    showSlideMessage(response.message || 'Failed to update room type.', 'danger');
                 }
             },
             error: function (xhr) {
-                $('#formMessage').html(`<div class="alert alert-danger">An error occurred.</div>`);
                 console.error(xhr.responseText);
+                showSlideMessage('An error occurred. Please try again.', 'danger');
             }
         });
     });

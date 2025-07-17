@@ -2,6 +2,11 @@
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/admin/includes/response_helper.php';
+require_once BASE_PATH . '/config/auth.php';
+include BASE_PATH . '/includes/slide_message.php';
+
+
+require_admin();
 
 // Fetch the country list for dropdowns
 $countryQuery = $conn->query("
@@ -31,7 +36,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 </head>
 <div class="content container my-5">
     <a href="<?= BASE_URL . '/admin/sections/students/index.php' ?>" class="btn btn-secondary mb-3 mt-4 ">Back</a>
-    <div id="showMessage" class="alert d-none mt-3"></div>
     <h2>Add New Student</h2>
 
 
@@ -296,60 +300,38 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 
 
 
-    // handle form submit
     $(document).ready(function() {
         $('#add-student-form').on('submit', function(e) {
             e.preventDefault();
             var form = this;
-            // creating FormData object from the form
             var formData = new FormData(this);
 
-            // Clearing previous messages and show loading state
-            $('#showMessage').html('')
-                .removeClass('alert-danger alert-success')
-                .addClass('alert-info')
-                .html('<div class="spinner-border spinner-border-sm " role="status"></div> Processing... ')
-                .removeClass('d-none');
+            // Optional: show temporary loading message
+            showSlideMessage('Processing student data...', 'info');
 
             $.ajax({
                 url: '<?= BASE_URL . '/admin/php_files/sections/students/add.php' ?>',
                 type: 'POST',
                 data: formData,
-                processData: false, // Required for FormData
-                contentType: false, // Required for formData
+                processData: false,
+                contentType: false,
                 dataType: 'json',
                 success: function(response) {
-
                     console.log(response);
-                    // Preapare message element
-                    var messageDiv = $('#showMessage')
-                        .removeClass('alert-info alert-danger')
-                        .addClass(response.success ? 'alert-success' : 'alert-danger')
-                        .html(response.message);
 
                     if (response.success) {
-                        // success case
+                        showSlideMessage(response.message || 'Student added successfully.', 'success');
                         form.reset();
-
-                        // optionally hide after 5 seconds
-                        setTimeout(function() {
-                            $('#showMessage').fadeOut();
-                        }, 3000)
                     } else {
-                        $('#showMessage')
-                        .html((response.message || 'Unknown error')); 
+                        showSlideMessage(response.message || 'Failed to add student.', 'danger');
                     }
                 },
                 error: function(xhr, status, error) {
-                    $('#showMessage')
-                        .removeClass('alert-info alert-success')
-                        .addClass('alert-danger')
-                        .html('Server error: ' + error);
+                    showSlideMessage('Server error: ' + error, 'danger');
                 }
-
-            })
-        })
-    })
+            });
+        });
+    });
 </script>
 
 

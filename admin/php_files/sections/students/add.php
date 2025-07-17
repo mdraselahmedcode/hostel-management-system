@@ -2,6 +2,10 @@
 require_once __DIR__ . '/../../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/admin/includes/response_helper.php';
+// only admin will get access
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 // Validate the Request Method
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -12,11 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// echo json_encode([
-//     'received data' => $_POST,
-//     'server method' => $_SERVER['REQUEST_METHOD']
-// ]);
-// exit; 
 
 // student fields
 $first_name = isset($_POST['first_name']) ? htmlspecialchars((trim($_POST['first_name']))) : null;
@@ -110,18 +109,6 @@ if (!empty($missingFields)) {
     ]);
     exit;
 }
-
-// check_in_at validation
-// $date = DateTime::createFromFormat('Y-m-d H:i:s', $_POST['check_in_at']);
-// if ($date) {
-//     $check_in_at = $date->format('Y-m-d H:i:s');
-// } else {
-//     echo json_encode([
-//         'success' => false,
-//         'message' => 'Invalid check-in datetime format'
-//     ]); 
-// }
-
 
 
 // Validate presence
@@ -219,24 +206,6 @@ if ($countryStmt->num_rows === 0) {
 }
 $countryStmt->close();
 
-// checking hostel id exists or not
-// $hostelStmt = $conn->prepare("
-//     SELECT id, hostel_name, hostel_type
-//     FROM hostels
-//     WHERE id = ? 
-// ");
-// $hostelStmt->bind_param("i", $hostel_id);
-// $hostelStmt->execute();
-// $hostelStmt->store_result();
-// if ($hostelStmt->num_rows === 0) {
-//     echo json_encode([
-//         'success' => false,
-//         'message' => 'The hostel was not found'
-//     ]);
-//     exit;
-// }
-
-// $hostelStmt->close();
 
 // checking hostel id exists or not
 $hostelStmt = $conn->prepare("

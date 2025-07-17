@@ -1,8 +1,11 @@
     <?php
-    session_start();
     require_once __DIR__ . '/../../../config/config.php';
     require_once BASE_PATH . '/config/db.php';
-    require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+    require_once BASE_PATH . '/config/auth.php'; 
+    include BASE_PATH . '/includes/slide_message.php';
+
+
+    require_admin(); 
     require_once BASE_PATH . '/admin/includes/response_helper.php';
     require_once BASE_PATH . '/admin/includes/csrf.php';
 
@@ -217,7 +220,7 @@
         })
 
         // handle on submit
-        $('#editFeesForm').on('submit', function(e) {
+        $('#editFeesForm').on('submit', function (e) {
             e.preventDefault();
 
             const submitBtn = $(this).find('button[type="submit"]');
@@ -228,27 +231,25 @@
                 method: 'POST',
                 data: $(this).serialize(),
                 dataType: 'json',
-                success: function(response) {
-                    const msgclass = response.success ? 'success' : 'danger';
-                    // showing responsed message
-                    $('#showMessage').html(`<div class="alert alert-${msgclass}"> 
-                                                ${response.message}
-                                            </div>`);
+                success: function (response) {
                     if (response.success) {
-                        setTimeout(function() {
+                        showSlideMessage(response.message, 'success');
+
+                        setTimeout(function () {
                             window.location.href = '<?= BASE_URL . '/admin/sections/roomFees/index.php' ?>';
                         }, 2000);
                     } else {
-                        console.warn(response.message || 'No fees record found');
-                        submitBtn.prop('disabled', false).text('Update Fee'); // 🛠️ Fix goes here
+                        showSlideMessage(response.message || 'No fees record found.', 'danger');
+                        submitBtn.prop('disabled', false).text('Update Fee');
                     }
                 },
-                error: function(xhr, status, error) {
-                    $('#showMessage').html('<div class="alert alert-danger"> An error occured. Please try again.</div>');
-                    submitBtn.prop('disabled', false).text('Update Room');
+                error: function (xhr, status, error) {
+                    showSlideMessage('An error occurred. Please try again.', 'danger');
+                    submitBtn.prop('disabled', false).text('Update Fee');
                     console.error('AJAX error: ', status, error);
                 }
-            })
-        })
+            });
+        });
+
     </script>
     <?php require_once BASE_PATH . '/admin/includes/footer_admin.php' ?>

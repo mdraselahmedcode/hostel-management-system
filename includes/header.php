@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/config.php';
-$currentPage = basename($_SERVER['PHP_SELF']);
+$currentPage = basename($_SERVER['SCRIPT_NAME']); // More accurate for subfolders
+$currentDir   = basename(dirname($_SERVER['SCRIPT_NAME']));
 ?>
 
 <!DOCTYPE html>
@@ -17,6 +18,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= BASE_URL ?>/assets/css/common.css" />
 
@@ -93,49 +96,51 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <ul class="navbar-nav ms-auto gap-1">
                     <li class="nav-item">
-                        <a class="nav-link <?= $currentPage == 'index.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/index.php">
+                        <a class="nav-link <?= $currentPage === 'index.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/index.php">
                             <i class="fas fa-home me-1"></i> Home
                         </a>
                     </li>
 
+                    <!-- Admin Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle <?= $currentPage == 'login_admin.php' ? 'active' : '' ?>" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle <?= $currentDir === 'admin' && $currentPage === 'login.php' ? 'active' : '' ?>" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user-shield me-1"></i> Admin
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item <?= $currentPage == 'login_admin.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/admin/login_admin.php">Login</a>
+                                <a class="dropdown-item <?= $currentDir === 'admin' && $currentPage === 'login.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/admin/login.php">Login</a>
                             </li>
                             <li><a class="dropdown-item" href="#">Help</a></li>
                         </ul>
                     </li>
 
+                    <!-- Student Dropdown -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle <?= in_array($currentPage, ['login_student.php', 'register_student.php', 'checkStatus.php']) ? 'active' : '' ?>" href="#" id="studentDropdown" role="button" data-bs-toggle="dropdown">
+                        <a class="nav-link dropdown-toggle <?= $currentDir === 'student' && in_array($currentPage, ['login.php', 'register.php']) || $currentPage === 'checkStatus.php' ? 'active' : '' ?>" href="#" id="studentDropdown" role="button" data-bs-toggle="dropdown">
                             <i class="fas fa-user-graduate me-1"></i> Student
                         </a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item <?= $currentPage == 'login_student.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/login_student.php">Login</a>
+                                <a class="dropdown-item <?= $currentDir === 'student' && $currentPage === 'login.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/login.php">Login</a>
                             </li>
                             <li>
-                                <a class="dropdown-item <?= $currentPage == 'register_student.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/register_student.php">Apply for Hostel</a>
+                                <a class="dropdown-item <?= $currentDir === 'student' && $currentPage === 'register.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/register.php">Apply for Hostel</a>
                             </li>
                             <li>
-                                <a class="dropdown-item <?= $currentPage == 'checkStatus.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/checkStatus.php">Check Status</a>
+                                <a class="dropdown-item <?= $currentPage === 'checkStatus.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/checkStatus.php">Check Status</a>
                             </li>
                             <li><a class="dropdown-item" href="#">Guidelines</a></li>
                         </ul>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link <?= $currentPage == 'about.php' ? 'active' : '' ?>" href="#">
+                        <a class="nav-link <?= $currentPage === 'about.php' ? 'active' : '' ?>" href="<?= BASE_URL . '/about.php' ?>">
                             <i class="fas fa-info-circle me-1"></i> About
                         </a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link <?= $currentPage == 'contact.php' ? 'active' : '' ?>" href="#">
+                        <a class="nav-link <?= $currentPage === 'contact.php' ? 'active' : '' ?>" href="<?= BASE_URL . '/contact.php' ?>">
                             <i class="fas fa-phone-alt me-1"></i> Contact
                         </a>
                     </li>
@@ -150,15 +155,13 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
     <script>
         $(document).ready(function () {
-            // Prevent closing dropdown when clicking inside
             $('.dropdown-menu').on('click', function (e) {
                 e.stopPropagation();
             });
 
-            // Ensure parent nav gets active when child link is active
             $('.dropdown-item.active').closest('.dropdown').find('.nav-link').addClass('active');
         });
     </script>
-</body>
+<!-- </body>
 
-</html>
+</html> -->

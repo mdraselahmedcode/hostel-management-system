@@ -77,7 +77,7 @@ require_once __DIR__ . '/../../config/config.php';
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark admin-header fixed-header">
         <div class="container">
-            <a class="navbar-brand" href="<?= BASE_URL ?>/admin/dashboard_admin.php">
+            <a class="navbar-brand" href="<?= BASE_URL ?>/admin/dashboard.php">
                 <i class="bi bi-shield-lock me-2"></i>Hostel Management System
             </a>
         </div>
@@ -87,8 +87,8 @@ require_once __DIR__ . '/../../config/config.php';
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('.navbar-brand')?.addEventListener('click', function () {
-            // window.location.href = BASE_URL + '/admin/login_admin.php';
-            window.location.href = "<?= BASE_URL ?>/admin/login_admin.php";
+            // window.location.href = BASE_URL + '/admin/login.php';
+            window.location.href = "<?= BASE_URL ?>/admin/dashboard.php";
         });
     });
 </script>

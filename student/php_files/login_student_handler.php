@@ -9,6 +9,7 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/db.php';
 
+
 $email = trim($_POST['email'] ?? '');
 $password = trim($_POST['password'] ?? '');
 

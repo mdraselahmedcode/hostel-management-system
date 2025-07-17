@@ -2,6 +2,10 @@
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/admin/includes/response_helper.php';
+require_once BASE_PATH . '/config/auth.php';
+include BASE_PATH . '/includes/slide_message.php';
+
+require_admin();
 
 // Check if student ID is provided
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -111,29 +115,34 @@ if ($student['floor_id']) {
             padding: 1rem 0;
             margin-bottom: 2rem;
         }
+
         .footer {
             background-color: #343a40;
             color: white;
             padding: 1rem 0;
             margin-top: 2rem;
         }
+
         .card-header {
             font-weight: 600;
         }
+
         .form-section {
             margin-bottom: 2rem;
         }
+
         .required-field::after {
             content: " *";
             color: red;
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <header class="header">
         <?php
-            require_once BASE_PATH . '/admin/includes/header_admin.php';
+        require_once BASE_PATH . '/admin/includes/header_admin.php';
         ?>
     </header>
 
@@ -163,27 +172,27 @@ if ($student['floor_id']) {
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="first_name" class="form-label required-field">First Name</label>
-                            <input type="text" name="first_name" id="first_name" 
-                                   value="<?= htmlspecialchars($student['first_name']) ?>" 
-                                   class="form-control" required>
+                            <input type="text" name="first_name" id="first_name"
+                                value="<?= htmlspecialchars($student['first_name']) ?>"
+                                class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label for="last_name" class="form-label required-field">Last Name</label>
-                            <input type="text" name="last_name" id="last_name" 
-                                   value="<?= htmlspecialchars($student['last_name']) ?>" 
-                                   class="form-control" required>
+                            <input type="text" name="last_name" id="last_name"
+                                value="<?= htmlspecialchars($student['last_name']) ?>"
+                                class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label for="email" class="form-label required-field">Email</label>
-                            <input type="email" name="email" id="email" 
-                                   value="<?= htmlspecialchars($student['email']) ?>" 
-                                   class="form-control" required>
+                            <input type="email" name="email" id="email"
+                                value="<?= htmlspecialchars($student['email']) ?>"
+                                class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label for="varsity_id" class="form-label required-field">Varsity ID</label>
-                            <input type="text" name="varsity_id" id="varsity_id" 
-                                   value="<?= htmlspecialchars($student['varsity_id']) ?>" 
-                                   class="form-control" required>
+                            <input type="text" name="varsity_id" id="varsity_id"
+                                value="<?= htmlspecialchars($student['varsity_id']) ?>"
+                                class="form-control" required>
                         </div>
                         <div class="col-md-6">
                             <label for="gender" class="form-label required-field">Gender</label>
@@ -196,15 +205,15 @@ if ($student['floor_id']) {
                         </div>
                         <div class="col-md-6">
                             <label for="contact_number" class="form-label">Contact Number</label>
-                            <input type="text" name="contact_number" id="contact_number" 
-                                   value="<?= htmlspecialchars($student['contact_number']) ?>" 
-                                   class="form-control">
+                            <input type="text" name="contact_number" id="contact_number"
+                                value="<?= htmlspecialchars($student['contact_number']) ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="emergency_contact" class="form-label">Emergency Contact</label>
-                            <input type="text" name="emergency_contact" id="emergency_contact" 
-                                   value="<?= htmlspecialchars($student['emergency_contact']) ?>" 
-                                   class="form-control">
+                            <input type="text" name="emergency_contact" id="emergency_contact"
+                                value="<?= htmlspecialchars($student['emergency_contact']) ?>"
+                                class="form-control">
                         </div>
                     </div>
                 </div>
@@ -219,27 +228,27 @@ if ($student['floor_id']) {
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="father_name" class="form-label">Father's Name</label>
-                            <input type="text" name="father_name" id="father_name" 
-                                   value="<?= htmlspecialchars($student['father_name']) ?>" 
-                                   class="form-control">
+                            <input type="text" name="father_name" id="father_name"
+                                value="<?= htmlspecialchars($student['father_name']) ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="father_contact" class="form-label">Father's Contact</label>
-                            <input type="text" name="father_contact" id="father_contact" 
-                                   value="<?= htmlspecialchars($student['father_contact']) ?>" 
-                                   class="form-control">
+                            <input type="text" name="father_contact" id="father_contact"
+                                value="<?= htmlspecialchars($student['father_contact']) ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="mother_name" class="form-label">Mother's Name</label>
-                            <input type="text" name="mother_name" id="mother_name" 
-                                   value="<?= htmlspecialchars($student['mother_name']) ?>" 
-                                   class="form-control">
+                            <input type="text" name="mother_name" id="mother_name"
+                                value="<?= htmlspecialchars($student['mother_name']) ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="mother_contact" class="form-label">Mother's Contact</label>
-                            <input type="text" name="mother_contact" id="mother_contact" 
-                                   value="<?= htmlspecialchars($student['mother_contact']) ?>" 
-                                   class="form-control">
+                            <input type="text" name="mother_contact" id="mother_contact"
+                                value="<?= htmlspecialchars($student['mother_contact']) ?>"
+                                class="form-control">
                         </div>
                     </div>
                 </div>
@@ -287,22 +296,22 @@ if ($student['floor_id']) {
                         </div>
                         <div class="col-md-6">
                             <div class="form-check form-switch pt-4">
-                                <input type="checkbox" name="is_checked_in" id="is_checked_in" value="1" 
-                                       <?= $student['is_checked_in'] ? 'checked' : '' ?> class="form-check-input">
+                                <input type="checkbox" name="is_checked_in" id="is_checked_in" value="1"
+                                    <?= $student['is_checked_in'] ? 'checked' : '' ?> class="form-check-input">
                                 <label class="form-check-label" for="is_checked_in">Checked In</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label for="check_in_at" class="form-label">Check In Time</label>
-                            <input type="datetime-local" name="check_in_at" id="check_in_at" 
-                                   value="<?= $student['check_in_at'] ? date('Y-m-d\TH:i', strtotime($student['check_in_at'])) : '' ?>" 
-                                   class="form-control">
+                            <input type="datetime-local" name="check_in_at" id="check_in_at"
+                                value="<?= $student['check_in_at'] ? date('Y-m-d\TH:i', strtotime($student['check_in_at'])) : '' ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="check_out_at" class="form-label">Check Out Time</label>
-                            <input type="datetime-local" name="check_out_at" id="check_out_at" 
-                                   value="<?= $student['check_out_at'] ? date('Y-m-d\TH:i', strtotime($student['check_out_at'])) : '' ?>" 
-                                   class="form-control">
+                            <input type="datetime-local" name="check_out_at" id="check_out_at"
+                                value="<?= $student['check_out_at'] ? date('Y-m-d\TH:i', strtotime($student['check_out_at'])) : '' ?>"
+                                class="form-control">
                         </div>
                     </div>
                 </div>
@@ -317,15 +326,15 @@ if ($student['floor_id']) {
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-check form-switch">
-                                <input type="checkbox" name="is_verified" id="is_verified" value="1" 
-                                       <?= $student['is_verified'] ? 'checked' : '' ?> class="form-check-input">
+                                <input type="checkbox" name="is_verified" id="is_verified" value="1"
+                                    <?= $student['is_verified'] ? 'checked' : '' ?> class="form-check-input">
                                 <label class="form-check-label" for="is_verified">Verified</label>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-check form-switch">
-                                <input type="checkbox" name="is_approved" id="is_approved" value="1" 
-                                       <?= $student['is_approved'] ? 'checked' : '' ?> class="form-check-input">
+                                <input type="checkbox" name="is_approved" id="is_approved" value="1"
+                                    <?= $student['is_approved'] ? 'checked' : '' ?> class="form-check-input">
                                 <label class="form-check-label" for="is_approved">Approved</label>
                             </div>
                         </div>
@@ -353,51 +362,51 @@ if ($student['floor_id']) {
                         </div>
                         <div class="col-md-6">
                             <label for="perm_state" class="form-label">State</label>
-                            <input type="text" name="perm_state" id="perm_state" 
-                                   value="<?= htmlspecialchars($student['perm_state'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="perm_state" id="perm_state"
+                                value="<?= htmlspecialchars($student['perm_state'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="perm_division" class="form-label">Division</label>
-                            <input type="text" name="perm_division" id="perm_division" 
-                                   value="<?= htmlspecialchars($student['perm_division'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="perm_division" id="perm_division"
+                                value="<?= htmlspecialchars($student['perm_division'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="perm_district" class="form-label">District</label>
-                            <input type="text" name="perm_district" id="perm_district" 
-                                   value="<?= htmlspecialchars($student['perm_district'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="perm_district" id="perm_district"
+                                value="<?= htmlspecialchars($student['perm_district'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="perm_sub_district" class="form-label">Sub-district</label>
-                            <input type="text" name="perm_sub_district" id="perm_sub_district" 
-                                   value="<?= htmlspecialchars($student['perm_sub_district'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="perm_sub_district" id="perm_sub_district"
+                                value="<?= htmlspecialchars($student['perm_sub_district'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="perm_village" class="form-label">Village</label>
-                            <input type="text" name="perm_village" id="perm_village" 
-                                   value="<?= htmlspecialchars($student['perm_village'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="perm_village" id="perm_village"
+                                value="<?= htmlspecialchars($student['perm_village'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="perm_postalcode" class="form-label">Postal Code</label>
-                            <input type="text" name="perm_postalcode" id="perm_postalcode" 
-                                   value="<?= htmlspecialchars($student['perm_postalcode'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="perm_postalcode" id="perm_postalcode"
+                                value="<?= htmlspecialchars($student['perm_postalcode'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="perm_street" class="form-label">Street</label>
-                            <input type="text" name="perm_street" id="perm_street" 
-                                   value="<?= htmlspecialchars($student['perm_street'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="perm_street" id="perm_street"
+                                value="<?= htmlspecialchars($student['perm_street'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="perm_house_no" class="form-label">House No</label>
-                            <input type="text" name="perm_house_no" id="perm_house_no" 
-                                   value="<?= htmlspecialchars($student['perm_house_no'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="perm_house_no" id="perm_house_no"
+                                value="<?= htmlspecialchars($student['perm_house_no'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-12">
                             <label for="perm_detail" class="form-label">Additional Details</label>
@@ -433,51 +442,51 @@ if ($student['floor_id']) {
                         </div>
                         <div class="col-md-6">
                             <label for="temp_state" class="form-label">State</label>
-                            <input type="text" name="temp_state" id="temp_state" 
-                                   value="<?= htmlspecialchars($student['temp_state'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="temp_state" id="temp_state"
+                                value="<?= htmlspecialchars($student['temp_state'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="temp_division" class="form-label">Division</label>
-                            <input type="text" name="temp_division" id="temp_division" 
-                                   value="<?= htmlspecialchars($student['temp_division'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="temp_division" id="temp_division"
+                                value="<?= htmlspecialchars($student['temp_division'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="temp_district" class="form-label">District</label>
-                            <input type="text" name="temp_district" id="temp_district" 
-                                   value="<?= htmlspecialchars($student['temp_district'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="temp_district" id="temp_district"
+                                value="<?= htmlspecialchars($student['temp_district'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="temp_sub_district" class="form-label">Sub-district</label>
-                            <input type="text" name="temp_sub_district" id="temp_sub_district" 
-                                   value="<?= htmlspecialchars($student['temp_sub_district'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="temp_sub_district" id="temp_sub_district"
+                                value="<?= htmlspecialchars($student['temp_sub_district'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="temp_village" class="form-label">Village</label>
-                            <input type="text" name="temp_village" id="temp_village" 
-                                   value="<?= htmlspecialchars($student['temp_village'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="temp_village" id="temp_village"
+                                value="<?= htmlspecialchars($student['temp_village'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="temp_postalcode" class="form-label">Postal Code</label>
-                            <input type="text" name="temp_postalcode" id="temp_postalcode" 
-                                   value="<?= htmlspecialchars($student['temp_postalcode'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="temp_postalcode" id="temp_postalcode"
+                                value="<?= htmlspecialchars($student['temp_postalcode'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="temp_street" class="form-label">Street</label>
-                            <input type="text" name="temp_street" id="temp_street" 
-                                   value="<?= htmlspecialchars($student['temp_street'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="temp_street" id="temp_street"
+                                value="<?= htmlspecialchars($student['temp_street'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-md-6">
                             <label for="temp_house_no" class="form-label">House No</label>
-                            <input type="text" name="temp_house_no" id="temp_house_no" 
-                                   value="<?= htmlspecialchars($student['temp_house_no'] ?? '') ?>" 
-                                   class="form-control">
+                            <input type="text" name="temp_house_no" id="temp_house_no"
+                                value="<?= htmlspecialchars($student['temp_house_no'] ?? '') ?>"
+                                class="form-control">
                         </div>
                         <div class="col-12">
                             <label for="temp_detail" class="form-label">Additional Details</label>
@@ -494,12 +503,11 @@ if ($student['floor_id']) {
             </div>
         </form>
 
-        <div id="showMessage" class="alert d-none mt-3"></div>
     </main>
 
     <!-- Footer -->
-    <?php 
-        require_once BASE_PATH . '/admin/includes/footer_admin.php';
+    <?php
+    require_once BASE_PATH . '/admin/includes/footer_admin.php';
     ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -603,11 +611,8 @@ if ($student['floor_id']) {
                     '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Processing...'
                 );
 
-                $('#showMessage').html('')
-                    .removeClass('alert-danger alert-success')
-                    .addClass('alert-info')
-                    .html('<div class="spinner-border spinner-border-sm me-2" role="status"></div> Updating student information...')
-                    .removeClass('d-none');
+                // Optional loading message
+                showSlideMessage('Updating student information...', 'info');
 
                 $.ajax({
                     url: '<?= BASE_URL . '/admin/php_files/sections/students/edit.php' ?>',
@@ -617,32 +622,28 @@ if ($student['floor_id']) {
                     contentType: false,
                     dataType: 'json',
                     success: function(response) {
-                        $('#showMessage')
-                            .removeClass('alert-info alert-danger')
-                            .addClass(response.success ? 'alert-success' : 'alert-danger')
-                            .html(response.success ? 
-                                '<i class="fas fa-check-circle me-2"></i>' + response.message : 
-                                '<i class="fas fa-exclamation-circle me-2"></i>' + response.message);
-
                         if (response.success) {
+                            showSlideMessage('<i class="fas fa-check-circle me-2"></i>' + response.message, 'success');
+
+                            // Redirect after 2.5 seconds (adjust if needed)
                             setTimeout(function() {
-                                $('#showMessage').fadeOut();
-                            }, 3000);
+                                window.location.href = response.redirect || '<?= BASE_URL . "/admin/sections/students/index.php" ?>';
+                            }, 2500);
+                        } else {
+                            showSlideMessage('<i class="fas fa-exclamation-circle me-2"></i>' + (response.message || 'Update failed.'), 'danger');
                         }
                     },
                     error: function(xhr, status, error) {
-                        $('#showMessage')
-                            .removeClass('alert-info alert-success')
-                            .addClass('alert-danger')
-                            .html('<i class="fas fa-times-circle me-2"></i> Server error: ' + error);
+                        showSlideMessage('<i class="fas fa-times-circle me-2"></i> Server error: ' + error, 'danger');
                     },
                     complete: function() {
                         submitBtn.prop('disabled', false).html(originalBtnText);
                     }
                 });
             });
+
         });
     </script>
 </body>
-</html>
 
+</html>

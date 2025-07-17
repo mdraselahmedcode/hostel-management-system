@@ -1,9 +1,12 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
+
 require_once BASE_PATH . '/admin/includes/header_admin.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
 
 // Fetch admins for the incharge dropdown
 $sql = "SELECT id, firstname, lastname FROM admins ORDER BY firstname ASC";
@@ -257,10 +260,10 @@ if (empty($_SESSION['csrf_token'])) {
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        showAlert('success', response.message);
+                        showSlideMessage(response.message, 'success');
                         $('#addHostelForm')[0].reset();
                     } else {
-                        showAlert('danger', response.message);
+                        showSlideMessage(response.message, 'danger');
                     }
                 },
                 error: function(xhr) {
@@ -271,33 +274,16 @@ if (empty($_SESSION['csrf_token'])) {
                     } catch (e) {
                         console.error('Error parsing response:', e);
                     }
-                    showAlert('danger', errorMsg);
+                    showSlideMessage(errorMsg, 'danger');
                 },
                 complete: function() {
                     submitBtn.prop('disabled', false).html(originalText);
                 }
             });
         });
-
-        function showAlert(type, message) {
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    <div class="d-flex">
-                        <div class="flex-grow-1">${message}</div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                </div>
-            `;
-            
-            $('#formMessage').html(alertHtml);
-            
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-                $('#formMessage .alert').alert('close');
-            }, 5000);
-        }
     });
 </script>
+
 
 <?php
 require_once BASE_PATH . '/admin/includes/footer_admin.php';

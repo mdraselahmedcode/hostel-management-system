@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/db.php';
 
+
 header('Content-Type: application/json');
 
 $response = ['success' => false, 'data' => null];

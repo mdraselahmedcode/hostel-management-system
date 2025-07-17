@@ -1,4 +1,10 @@
 <?php
+require_once __DIR__ . '/../../config/config.php';
+require_once BASE_PATH . '/config/db.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin(); 
+
 $currentSection = '';
 $uri = $_SERVER['REQUEST_URI'];
 $sections = [
@@ -83,8 +89,8 @@ $currentSection = array_search(true, $sections) ?: '';
         
         <ul class="nav flex-column px-2">
             <li class="nav-item">
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'dashboard_admin.php' ? 'active' : '' ?>" 
-                   href="<?= BASE_URL ?>/admin/dashboard_admin.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : '' ?>" 
+                   href="<?= BASE_URL ?>/admin/dashboard.php">
                     <i class="bi bi-speedometer2"></i>Dashboard
                 </a>
             </li>

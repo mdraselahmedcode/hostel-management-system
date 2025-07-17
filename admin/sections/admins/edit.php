@@ -1,8 +1,10 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 // Check if admin ID is provided and valid
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -91,9 +93,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         e.preventDefault();
 
         const form = e.target;
-        const messageDiv = document.getElementById('showMessage');
-        messageDiv.innerHTML = '';
-
         const formData = new FormData(form);
 
         fetch('<?= BASE_URL . '/admin/php_files/sections/admins/edit.php' ?>', {
@@ -103,29 +102,28 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    messageDiv.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
+                    showSlideMessage(data.message, 'success');
 
-                    // Wait 2 seconds, fade out the message, then redirect
+                    // Redirect after 2.5 seconds
                     setTimeout(() => {
-                        messageDiv.querySelector('.alert').classList.add('fade');
-                        setTimeout(() => {
-                            window.location.href = 'index.php';
-                        }, 500); // wait for fade animation
-                    }, 2000);
+                        window.location.href = 'index.php';
+                    }, 2500);
 
                 } else if (data.errors) {
                     const errorList = data.errors.map(err => `<li>${err}</li>`).join('');
-                    messageDiv.innerHTML = `<div class="alert alert-danger"><ul>${errorList}</ul></div>`;
+                    showSlideMessage(`<ul>${errorList}</ul>`, 'danger');
+
                 } else {
-                    messageDiv.innerHTML = `<div class="alert alert-danger">An unknown error occurred.</div>`;
+                    showSlideMessage('An unknown error occurred.', 'danger');
                 }
             })
             .catch(error => {
-                messageDiv.innerHTML = `<div class="alert alert-danger">Network error. Please try again.</div>`;
+                showSlideMessage('Network error. Please try again.', 'danger');
                 console.error('Error:', error);
             });
     });
 </script>
+
 
 
 <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>

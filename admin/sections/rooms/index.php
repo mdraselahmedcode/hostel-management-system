@@ -1,8 +1,11 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
+
 
 // Fetch all hostels for dropdown
 $hostels = [];
@@ -70,7 +73,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
         <main class="col-md-10 ms-sm-auto px-md-4 py-4" style="overflow-y: auto; max-height: calc(100vh - 95px)">
-            <a href="<?= BASE_URL . '/admin/dashboard_admin.php' ?>" class="btn btn-secondary mb-3">Back</a>
+            <a href="<?= BASE_URL . '/admin/dashboard.php' ?>" class="btn btn-secondary mb-3">Back</a>
 
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -161,9 +164,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                 <?php endif; ?>
                             </tbody>
                         </table>
-                        <div id="showMessage" class="mt-3"></div>
                     </div>
-
                 </div>
             </div>
         </main>
@@ -189,25 +190,14 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 success: function(response) {
                     if (response.success) {
                         button.closest('tr').remove();
-                        setTimeout(function() {
-                            $("#showMessage").html('<div class="alert alert-success">' + response.message + '</div>');
-
-                            // Hide the message after 3 seconds
-                            setTimeout(function() {
-                                $("#showMessage").fadeOut('slow', function() {
-                                    $(this).html('').show(); // Clear and reset visibility
-                                });
-                            }, 3000);
-
-                        }, 300); // Initial delay before showing the message
+                        showSlideMessage(response.message, 'success');
                     } else {
-                        $("#showMessage").html('<div class="alert alert-danger">' + response.message + '</div>');
+                        showSlideMessage(response.message || 'Failed to delete room.', 'danger');
                     }
                 },
-
                 error: function(xhr) {
                     console.error(xhr.responseText);
-                    $("#showMessage").html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                    showSlideMessage('An error occurred. Please try again.', 'danger');
                 },
                 complete: function() {
                     button.prop('disabled', false);
@@ -216,5 +206,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         }
     });
 </script>
+
 
 <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>

@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/../../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
+// only admin will get access
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 header('Content-Type: application/json');
 

@@ -1,10 +1,12 @@
     <?php
-    session_start();
     header('Content-Type: application/json');
 
     require_once __DIR__ . '/../../../../config/config.php';
     require_once BASE_PATH . '/config/db.php';
-    require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+    // only admin will get access
+    require_once BASE_PATH . '/config/auth.php';
+
+    require_admin();
 
     // Validate and sanitize input 
     $hostel_id       = isset($_POST['hostel_id']) ? intval($_POST['hostel_id']) : 0;

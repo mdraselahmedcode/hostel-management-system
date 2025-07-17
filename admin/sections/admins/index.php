@@ -1,8 +1,10 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 // Fetch all admin types for filter dropdown
 $adminTypes = [];
@@ -49,7 +51,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
         <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-            <a href="<?= BASE_URL . '/admin/dashboard_admin.php' ?>" class="btn btn-secondary mb-3 ">Back</a>
+            <a href="<?= BASE_URL . '/admin/dashboard.php' ?>" class="btn btn-secondary mb-3 ">Back</a>
 
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -141,19 +143,14 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 success: function(response) {
                     if (response.success) {
                         button.closest('tr').remove();
-                        $("#showMessage").html('<div class="alert alert-success">' + response.message + '</div>');
-                        setTimeout(() => {
-                            $("#showMessage").fadeOut('slow', function() {
-                                $(this).html('').show();
-                            });
-                        }, 3000);
+                        showSlideMessage(response.message, 'success');
                     } else {
-                        $("#showMessage").html('<div class="alert alert-danger">' + response.message + '</div>');
+                        showSlideMessage(response.message, 'danger');
                     }
                 },
                 error: function(xhr) {
                     console.error(xhr.responseText);
-                    $("#showMessage").html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                    showSlideMessage('An error occurred. Please try again.', 'danger');
                 },
                 complete: function() {
                     button.prop('disabled', false);
@@ -162,5 +159,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         }
     });
 </script>
+
 
 <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>

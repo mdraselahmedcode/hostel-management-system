@@ -1,8 +1,10 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 // Get Room ID
 $roomId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
@@ -56,7 +58,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     <form id="editRoomForm" method="POST">
                         <!-- passing editable room id and hostel id -->
                         <input type="hidden" name="room_id" value="<?= $roomId ?>">
-                        <input type="hidden" name="hostel_id" value="<?= $room['hostel_id'] ?>">  
+                        <input type="hidden" name="hostel_id" value="<?= $room['hostel_id'] ?>">
 
                         <div class="mb-3">
                             <label for="room_number" class="form-label">Room Number</label>
@@ -125,8 +127,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 data: $(this).serialize(),
                 dataType: 'json',
                 success: function(response) {
-                    const msgClass = response.success ? 'success' : 'danger';
-                    $('#showMessage').html(`<div class="alert alert-${msgClass}">${response.message}</div>`);
+                    showSlideMessage(response.message, response.success ? 'success' : 'danger');
 
                     if (response.success) {
                         setTimeout(() => {
@@ -137,7 +138,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     submitBtn.prop('disabled', false).text('Update Room');
                 },
                 error: function() {
-                    $('#showMessage').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                    showSlideMessage('An error occurred. Please try again.', 'danger');
                     submitBtn.prop('disabled', false).text('Update Room');
                 }
             });

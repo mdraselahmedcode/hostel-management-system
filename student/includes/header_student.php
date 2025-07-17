@@ -48,8 +48,7 @@ require_once __DIR__ . '/../../config/config.php';  // Adjust path as needed
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelector('.navbar-brand')?.addEventListener('click', function () {
-            // window.location.href = BASE_URL + '/admin/login_admin.php';
-            window.location.href = "<?= BASE_URL ?>/student/login_student.php";
+            window.location.href = "<?= BASE_URL ?>/student/dashboard.php";
         });
     });
 </script>

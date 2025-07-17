@@ -1,8 +1,10 @@
 <?php
-session_start();
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../../../config/config.php';
 require_once __DIR__ . '/../../../../config/db.php';
+require_once BASE_PATH . '/config/auth.php'; 
+
+require_student(); 
 
 if (!isset($_SESSION['student'])) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized. Please log in again.']);

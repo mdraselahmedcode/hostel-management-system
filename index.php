@@ -10,7 +10,7 @@ if (is_student_logged_in()) {
 }
 
 if (is_admin_logged_in()) {
-    header("Location: " . BASE_URL . "/admin/dashboard_admin.php");
+    header("Location: " . BASE_URL . "/admin/dashboard.php");
     exit;
 }
 
@@ -34,7 +34,7 @@ include BASE_PATH . '/includes/header.php';
                     <a href="<?= BASE_URL ?>/student/login_student.php" class="btn btn-light btn-lg px-4 mb-2 mb-sm-0">
                         Student Login
                     </a>
-                    <a href="<?= BASE_URL ?>/student/register_student.php" class="btn btn-outline-light btn-lg px-4">
+                    <a href="<?= BASE_URL ?>/student/register.php" class="btn btn-outline-light btn-lg px-4">
                         Apply Now
                     </a>
                 </div>
@@ -172,7 +172,7 @@ include BASE_PATH . '/includes/header.php';
                         <p class="text-muted">Budget-friendly options with flexible payment plans</p>
                     </div>
                 </div>
-                <a href="<?= BASE_URL ?>/student/register_student.php" class="btn btn-primary btn-lg mt-3">Apply Now</a>
+                <a href="<?= BASE_URL ?>/student/register.php" class="btn btn-primary btn-lg mt-3">Apply Now</a>
             </div>
         </div>
     </div>
@@ -218,7 +218,7 @@ include BASE_PATH . '/includes/header.php';
         </div>
 
         <div class="text-center mt-5">
-            <a href="<?= BASE_URL ?>/student/register_student.php" class="btn btn-primary btn-lg px-5">Apply Now</a>
+            <a href="<?= BASE_URL ?>/student/register.php" class="btn btn-primary btn-lg px-5">Apply Now</a>
         </div>
     </div>
 </section>

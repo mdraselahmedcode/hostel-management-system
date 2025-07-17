@@ -2,6 +2,10 @@
 require_once __DIR__ . '/../../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/admin/includes/response_helper.php';
+// only admin will get access
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 // Validate the Request Method
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -181,7 +185,7 @@ if ($temporary_address_id) {
 $updateSql = "UPDATE students SET 
     first_name=?, last_name=?, email=?, varsity_id=?, gender=?, contact_number=?, emergency_contact=?, 
     father_name=?, father_contact=?, mother_name=?, mother_contact=?, hostel_id=?, floor_id=?, room_id=?, 
-    is_checked_in=?, check_in_at=?, check_out_at=?, is_verified=?, is_approved=?
+    is_checked_in=?, check_in_at=?, check_out_at=?, is_verified=?, is_approved=?, verification_token=NULL
     WHERE id=?";
 $stmt = $conn->prepare($updateSql);
 $stmt->bind_param(

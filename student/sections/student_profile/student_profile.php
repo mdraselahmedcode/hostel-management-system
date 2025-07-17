@@ -1,34 +1,35 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
-require_once __DIR__ . '/../../../config/db.php';
-require_once BASE_PATH . '/student/includes/header_student.php';
+require_once BASE_PATH . '/config/db.php';
+require_once BASE_PATH . '/config/auth.php'; 
 
-// Check if student is logged in
-if (!isset($_SESSION['student'])) {
-    header('Location: ../../login_student.php');
-    exit;
-}
+
+
+require_student(); 
+
+require_once BASE_PATH . '/student/includes/header_student.php';
 
 $student = $_SESSION['student'];
 
 // Fetch student details with joins
-$stmt = $conn->prepare("SELECT s.*, r.room_number, h.hostel_name, f.floor_number, 
-                        a.country_id, a.state, a.division, a.district, a.sub_district, 
-                        a.village, a.postalcode, a.street, a.house_no, c.country_name
-                        FROM students s
-                        LEFT JOIN rooms r ON s.room_id = r.id
-                        LEFT JOIN hostels h ON s.hostel_id = h.id
-                        LEFT JOIN floors f ON r.floor_id = f.id
-                        LEFT JOIN addresses a ON s.permanent_address_id = a.id
-                        LEFT JOIN countries c ON a.country_id = c.id
-                        WHERE s.id = ?");
+$stmt = $conn->prepare("
+    SELECT s.*, r.room_number, h.hostel_name, f.floor_number, 
+           a.country_id, a.state, a.division, a.district, a.sub_district, 
+           a.village, a.postalcode, a.street, a.house_no, c.country_name
+    FROM students s
+    LEFT JOIN rooms r ON s.room_id = r.id
+    LEFT JOIN hostels h ON s.hostel_id = h.id
+    LEFT JOIN floors f ON r.floor_id = f.id
+    LEFT JOIN addresses a ON s.permanent_address_id = a.id
+    LEFT JOIN countries c ON a.country_id = c.id
+    WHERE s.id = ?
+");
 $stmt->bind_param("i", $student['id']);
 $stmt->execute();
 $profile = $stmt->get_result()->fetch_assoc();
 $stmt->close();
-
 ?>
+
 
 <div class="content container-fluid" >
     

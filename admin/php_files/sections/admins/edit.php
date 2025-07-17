@@ -1,8 +1,10 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+// only admin will get access
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 // Check admin ID in POST
 if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {

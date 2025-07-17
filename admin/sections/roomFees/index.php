@@ -1,8 +1,11 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+require_once BASE_PATH . '/config/auth.php';
+include BASE_PATH . '/includes/slide_message.php';
+
+
+require_admin();
 
 // Fetch hostels for filter dropdown
 $hostels = [];
@@ -51,7 +54,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
         <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-            <a href="<?= BASE_URL . '/admin/dashboard_admin.php' ?>" class="btn btn-secondary mb-3">Back</a>
+            <a href="<?= BASE_URL . '/admin/dashboard.php' ?>" class="btn btn-secondary mb-3">Back</a>
 
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -99,49 +102,48 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                     <?php $serial = 1; ?>
                                     <?php foreach ($roomFees as $fee): ?>
 
-                                            <?php if ($fee['price'] !== null && !empty($fee['billing_cycle']) && !empty($fee['effective_from'])): ?>
-                                                <tr>
-                                                    <td><?= $serial++ ?></td>
-                                                    <td><?= htmlspecialchars($fee['type_name']) ?></td>
-                                                    <td><?= number_format($fee['price'], 2) ?></td>
-                                                    <td><?= ucfirst($fee['billing_cycle']) ?></td>
-                                                    <td><?= date('d M Y', strtotime($fee['effective_from'])) ?></td>
-                                                    <td><?= htmlspecialchars($fee['hostel_name']) ?></td>
-                                                    <td>
-                                                        <a href="<?= BASE_URL ?>/admin/sections/roomFees/edit.php?roomFees_id=<?= $fee['id'] ?>&hostel_id=<?= $fee['hostel_id'] ?>&roomType_id=<?= $fee['roomType_id'] ?>" class="btn btn-sm btn-primary">Edit</a>
-                                                    </td>
-                                                    <td>
-                                                        <a href="javascript:void(0);" class="delete-fee btn btn-sm btn-danger" data-id="<?= $fee['id'] ?>">Delete</a>
-                                                    </td>
-                                                </tr>
-                                            <?php else: ?>
-                                                <tr
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="top"
-                                                    title="Add new fee for <?= htmlspecialchars($fee['type_name']) ?> rooms in <?= htmlspecialchars($fee['hostel_name'] ?? 'Unknown Hostel') ?>">
-                                                    <td><?= $serial++ ?></td>
-                                                    <td><?= htmlspecialchars($fee['type_name']) ?></td>
-                                                    <td><span class="text-muted">Not set</span></td>
-                                                    <td><span class="text-muted">N/A</span></td>
-                                                    <td><span class="text-muted">N/A</span></td>
-                                                    <td><?= htmlspecialchars($fee['hostel_name']) ?></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-secondary" disabled>Edit</button>
-                                                    </td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-secondary" disabled>Delete</button>
-                                                    </td>
-                                                </tr>
-                                            <?php endif; ?>
+                                        <?php if ($fee['price'] !== null && !empty($fee['billing_cycle']) && !empty($fee['effective_from'])): ?>
+                                            <tr>
+                                                <td><?= $serial++ ?></td>
+                                                <td><?= htmlspecialchars($fee['type_name']) ?></td>
+                                                <td><?= number_format($fee['price'], 2) ?></td>
+                                                <td><?= ucfirst($fee['billing_cycle']) ?></td>
+                                                <td><?= date('d M Y', strtotime($fee['effective_from'])) ?></td>
+                                                <td><?= htmlspecialchars($fee['hostel_name']) ?></td>
+                                                <td>
+                                                    <a href="<?= BASE_URL ?>/admin/sections/roomFees/edit.php?roomFees_id=<?= $fee['id'] ?>&hostel_id=<?= $fee['hostel_id'] ?>&roomType_id=<?= $fee['roomType_id'] ?>" class="btn btn-sm btn-primary">Edit</a>
+                                                </td>
+                                                <td>
+                                                    <a href="javascript:void(0);" class="delete-fee btn btn-sm btn-danger" data-id="<?= $fee['id'] ?>">Delete</a>
+                                                </td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <tr
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Add new fee for <?= htmlspecialchars($fee['type_name']) ?> rooms in <?= htmlspecialchars($fee['hostel_name'] ?? 'Unknown Hostel') ?>">
+                                                <td><?= $serial++ ?></td>
+                                                <td><?= htmlspecialchars($fee['type_name']) ?></td>
+                                                <td><span class="text-muted">Not set</span></td>
+                                                <td><span class="text-muted">N/A</span></td>
+                                                <td><span class="text-muted">N/A</span></td>
+                                                <td><?= htmlspecialchars($fee['hostel_name']) ?></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-secondary" disabled>Edit</button>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-secondary" disabled>Delete</button>
+                                                </td>
+                                            </tr>
+                                        <?php endif; ?>
 
 
 
-                                        
+
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </tbody>
                         </table>
-                        <div id="showMessage" class="mt-3"></div>
                     </div>
                 </div>
             </div>
@@ -167,19 +169,13 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 success: function(response) {
                     if (response.success) {
                         button.closest('tr').remove();
-                        $("#showMessage").html('<div class="alert alert-success">' + response.message + '</div>').fadeIn();
-
-                        setTimeout(function() {
-                            $("#showMessage").fadeOut('slow', function() {
-                                $(this).html('').show();
-                            });
-                        }, 3000);
+                        showSlideMessage(response.message, 'success');
                     } else {
-                        $("#showMessage").html('<div class="alert alert-danger">' + response.message + '</div>');
+                        showSlideMessage(response.message || 'Failed to delete fee record.', 'danger');
                     }
                 },
                 error: function() {
-                    $("#showMessage").html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+                    showSlideMessage('An error occurred. Please try again.', 'danger');
                 },
                 complete: function() {
                     button.prop('disabled', false);
@@ -192,5 +188,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         $('[data-bs-toggle="tooltip"]').tooltip();
     });
 </script>
+
 
 <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>

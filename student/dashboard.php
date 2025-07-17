@@ -1,8 +1,11 @@
 <?php 
-session_start(); 
 require_once __DIR__ . '/../config/config.php'; 
 require_once __DIR__ . '/../config/db.php'; 
-require_once BASE_PATH . '/student/includes/header_student.php'; 
+require_once BASE_PATH . '/config/auth.php';
+
+require_student(); 
+
+require_once BASE_PATH . '/student/includes/header_student.php';
 ?>
 
 <style>
@@ -13,7 +16,7 @@ require_once BASE_PATH . '/student/includes/header_student.php';
     
     .main-content-wrapper {
         display: flex;
-        height: calc(100vh - 119px); /* 100vh - header(59.5px) - footer(59.5px) */
+        height: calc(100vh - 119px); 
     }
     
     .main-content {

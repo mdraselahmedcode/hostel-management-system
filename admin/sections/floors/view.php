@@ -1,8 +1,9 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 // Validate floor ID
 $floorId = isset($_GET['id']) ? (int) $_GET['id'] : 0;

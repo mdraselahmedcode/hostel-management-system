@@ -1,8 +1,10 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 // Fetch hostels
 $hostels = [];
@@ -110,7 +112,9 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         // Submit form via AJAX
         $('#addFeesForm').on('submit', function(e) {
             e.preventDefault();
-            const formData = $(this).serialize();
+
+            const form = $(this);
+            const formData = form.serialize();
 
             $.ajax({
                 url: '<?= BASE_URL . '/admin/php_files/sections/roomFees/add.php' ?>',
@@ -119,21 +123,16 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        $('#formMessage').html(`<div class="alert alert-success">${response.message}</div>`);
-                        $('#addFeesForm')[0].reset();
+                        showSlideMessage(response.message, 'success');
+                        form[0].reset();
                         $('#room_type_id').html('<option value="">-- Select Type --</option>');
-
-                        // ✅ Clear success message after 3 seconds
-                        setTimeout(() => {
-                            $('#formMessage').html('');
-                        }, 3000);
                     } else {
-                        $('#formMessage').html(`<div class="alert alert-danger">${response.message}</div>`);
+                        showSlideMessage(response.message || 'Failed to add fee.', 'danger');
                     }
                 },
                 error: function(xhr) {
-                    $('#formMessage').html(`<div class="alert alert-danger">An error occurred. Please try again.</div>`);
                     console.error(xhr.responseText);
+                    showSlideMessage('An error occurred. Please try again.', 'danger');
                 }
             });
         });

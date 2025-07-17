@@ -1,5 +1,12 @@
 <?php
+require_once __DIR__ . '/../../config/config.php';
+require_once BASE_PATH . '/config/db.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_student(); 
+
 $currentPage = basename($_SERVER['PHP_SELF']);
+
 ?>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">

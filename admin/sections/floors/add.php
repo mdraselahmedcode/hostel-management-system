@@ -1,8 +1,10 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 // Fetch hostels to populate the dropdown
 $hostels = [];
@@ -25,8 +27,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h2 class="mb-4">Add New Floor</h2>
-
-                    <div id="formMessage"></div>
 
                     <form id="addFloorForm">
                         <div class="mb-3">
@@ -59,33 +59,35 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 
 <!-- jQuery AJAX script -->
 <script>
-$(document).ready(function() {
-    $('#addFloorForm').on('submit', function(e) {
-        e.preventDefault();
+    $(document).ready(function() {
+        $('#addFloorForm').on('submit', function(e) {
+            e.preventDefault();
 
-        $.ajax({
-            type: 'POST',
-            url: '<?= BASE_URL ?>/admin/php_files/sections/floors/add.php',
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    $('#formMessage').html('<div class="alert alert-success">' + response.message + '</div>');
-                    $('#addFloorForm')[0].reset();
-                    setTimeout(function(){
+            $.ajax({
+                type: 'POST',
+                url: '<?= BASE_URL ?>/admin/php_files/sections/floors/add.php',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        showSlideMessage(response.message, 'success');
+                        $('#addFloorForm')[0].reset();
+
+                        setTimeout(function() {
                             window.location.href = '<?= BASE_URL . "/admin/sections/floors/index.php" ?>';
-                        }, 2000)
-                } else {
-                    $('#formMessage').html('<div class="alert alert-danger">' + response.message + '</div>');
+                        }, 2000);
+                    } else {
+                        showSlideMessage(response.message, 'danger');
+                    }
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                    showSlideMessage('An error occurred while adding the floor.', 'danger');
                 }
-            },
-            error: function(xhr) {
-                console.error(xhr.responseText);
-                $('#formMessage').html('<div class="alert alert-danger">An error occurred while adding the floor.</div>');
-            }
+            });
         });
     });
-});
 </script>
+
 
 <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>

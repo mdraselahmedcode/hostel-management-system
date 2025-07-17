@@ -1,8 +1,10 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php';
+
+require_admin();
 
 // Fetch hostels for dropdown
 $hostels = [];
@@ -19,7 +21,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
         <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-            <a href="<?= BASE_URL . '/admin/dashboard_admin.php' ?>" class="btn btn-secondary mb-3">Back</a>
+            <a href="<?= BASE_URL . '/admin/dashboard.php' ?>" class="btn btn-secondary mb-3">Back</a>
 
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -29,52 +31,49 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         <a href="add.php" class="btn btn-primary">+ Add New Student</a>
                     </div>
 
+                    <!-- Search bar -->
+                    <div class="mb-3">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by Varsity ID, Email, or Phone">
+                    </div>
+
                     <!-- Filters -->
                     <div class="row mb-4">
-                        <!-- Filters -->
-                        <div class="row mb-4">
-                            <div class="col-md-3">
-                                <select id="hostelFilter" class="form-select">
-                                    <option value="all">All Hostels</option>
-                                    <?php foreach ($hostels as $hostel): ?>
-                                        <option value="<?= $hostel['id'] ?>"><?= htmlspecialchars($hostel['hostel_name']) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-
-                            <div class="col-md-3">
-                                <select id="checkedInFilter" class="form-select">
-                                    <option value="all">All Check-In Status</option>
-                                    <option value="checked_in">Checked In</option>
-                                    <option value="not_checked_in">Not Checked In</option>
-                                </select>
-                            </div>
-
-
-                            <div class="col-md-3">
-                                <select id="approvalFilter" class="form-select">
-                                    <option value="all">All Status</option>
-                                    <option value="approved">Approved</option>
-                                    <option value="requested">Requested</option>
-                                </select>
-                            </div>
-
-
-                            <div class="col-md-3">
-                                <select id="verificationFilter" class="form-select">
-                                    <option value="all">All Verification</option>
-                                    <option value="verified">Verified</option>
-                                    <option value="unverified">Unverified</option>
-                                </select>
-                            </div>
+                        <div class="col-md-3">
+                            <select id="hostelFilter" class="form-select">
+                                <option value="all">All Hostels</option>
+                                <?php foreach ($hostels as $hostel): ?>
+                                    <option value="<?= $hostel['id'] ?>"><?= htmlspecialchars($hostel['hostel_name']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
 
+                        <div class="col-md-3">
+                            <select id="checkedInFilter" class="form-select">
+                                <option value="all">All Check-In Status</option>
+                                <option value="checked_in">Checked In</option>
+                                <option value="not_checked_in">Not Checked In</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <select id="approvalFilter" class="form-select">
+                                <option value="all">All Status</option>
+                                <option value="approved">Approved</option>
+                                <option value="requested">Requested</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <select id="verificationFilter" class="form-select">
+                                <option value="all">All Verification</option>
+                                <option value="verified">Verified</option>
+                                <option value="unverified">Unverified</option>
+                            </select>
+                        </div>
                     </div>
 
                     <!-- Students table will be loaded here -->
                     <div id="studentsTable" class="table-responsive"></div>
-
-                    <div id="deleteMessage" class="alert d-none mt-3"></div>
                 </div>
             </div>
 
@@ -87,7 +86,8 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         const approval = $('#approvalFilter').val();
         const hostelId = $('#hostelFilter').val();
         const verification = $('#verificationFilter').val();
-        const checkedIn = $('#checkedInFilter').val(); // new
+        const checkedIn = $('#checkedInFilter').val();
+        const search = $('#searchInput').val().trim();
 
         const url = "<?= BASE_URL . '/admin/php_files/sections/students/fetch_students.php' ?>";
 
@@ -95,22 +95,16 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             approval,
             hostel_id: hostelId,
             verification,
-            checked_in: checkedIn
+            checked_in: checkedIn,
+            search,
+            _: new Date().getTime()  // cache buster
         }, function(html) {
             $('#studentsTable').html(html);
         });
     }
 
     $('#approvalFilter, #hostelFilter, #verificationFilter, #checkedInFilter').on('change', loadStudents);
-
-    function showMessage(type, message) {
-        const alertDiv = $('#deleteMessage');
-        alertDiv.removeClass('alert-success alert-danger d-none')
-            .addClass('alert-' + type)
-            .text(message)
-            .show();
-        setTimeout(() => alertDiv.fadeOut(), 3000);
-    }
+    $('#searchInput').on('input', loadStudents);
 
     $(document).ready(function() {
         loadStudents();
@@ -122,25 +116,23 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 $.ajax({
                     url: '<?= BASE_URL ?>/admin/php_files/sections/students/delete.php',
                     method: 'POST',
-                    data: {
-                        id: id
-                    },
+                    data: { id: id },
+                    dataType: 'json',
                     success: function(response) {
                         if (response.success) {
-                            showMessage('success', response.message);
+                            showSlideMessage(response.message, 'success');
                             loadStudents();
                         } else {
-                            showMessage('danger', response.message);
+                            showSlideMessage(response.message || 'Failed to delete student.', 'danger');
                         }
                     },
                     error: function() {
-                        showMessage('danger', 'Error deleting student');
+                        showSlideMessage('Error deleting student.', 'danger');
                     }
-                })
+                });
             }
         });
     });
 </script>
-
 
 <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>

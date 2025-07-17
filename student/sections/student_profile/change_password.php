@@ -1,13 +1,14 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once __DIR__ . '/../../../config/db.php';
 require_once BASE_PATH . '/student/includes/header_student.php';
 
-if (!isset($_SESSION['student'])) {
-    header('Location: ../../login_student.php');
-    exit;
-}
+require_once BASE_PATH . '/config/auth.php';
+include BASE_PATH . '/includes/slide_message.php';
+
+
+require_student();
+
 ?>
 
 <div class="content container-fluid">
@@ -61,7 +62,6 @@ if (!isset($_SESSION['student'])) {
                                     <button type="submit" class="btn btn-primary">Change Password</button>
                                 </div>
                             </form>
-                            <div id="showMessage" class="mt-3"></div>
                         </div>
                     </div>
                 </div>
@@ -77,25 +77,26 @@ if (!isset($_SESSION['student'])) {
     $('#changePasswordForm').on('submit', function(e) {
         e.preventDefault();
         var formData = $(this).serialize();
+
         $.ajax({
             url: '<?= BASE_URL . '/student/php_files/sections/student_profile/change_password.php' ?>',
             type: 'POST',
             data: formData,
             dataType: 'json',
             success: function(res) {
-                var alertBox = $('#showMessage');
                 if (res.success) {
-                    alertBox.removeClass('alert-danger').addClass('alert alert-success').text(res.message).show();
+                    showSlideMessage(res.message, 'success');
                     $('#changePasswordForm')[0].reset();
                 } else {
-                    alertBox.removeClass('alert-success').addClass('alert alert-danger').text(res.message).show();
+                    showSlideMessage(res.message || 'Password change failed.', 'danger');
                 }
             },
             error: function() {
-                $('#showMessage').removeClass('alert-success').addClass('alert alert-danger').text('An error occurred.').show();
+                showSlideMessage('An error occurred while processing the request.', 'danger');
             }
         });
     });
+
 
     // Show/hide password functionality
     $('.input-group').on('click', '.toggle-password', function() {

@@ -1,10 +1,12 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/includes/header_admin.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php';
 
+require_admin();
+
+require_once BASE_PATH . '/admin/includes/header_admin.php';
 // Check if hostel_id is passed
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     echo "<div class='alert alert-danger'>Invalid hostel ID</div>";
@@ -82,16 +84,16 @@ if (empty($_SESSION['csrf_token'])) {
     .edit-hostel-form {
         background: white;
         border-radius: 10px;
-        box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
         padding: 2rem;
     }
-    
+
     .form-section {
         margin-bottom: 2rem;
         padding-bottom: 1.5rem;
         border-bottom: 1px solid #eee;
     }
-    
+
     .form-section h5 {
         color: #2c3e50;
         font-weight: 600;
@@ -99,30 +101,32 @@ if (empty($_SESSION['csrf_token'])) {
         padding-bottom: 0.5rem;
         border-bottom: 2px solid #f1f1f1;
     }
-    
+
     .form-section h5 i {
         margin-right: 10px;
         color: #3c8dbc;
     }
-    
+
     .form-label {
         font-weight: 500;
         color: #495057;
         margin-bottom: 0.5rem;
     }
-    
-    .form-control, .form-select {
+
+    .form-control,
+    .form-select {
         border-radius: 6px;
         padding: 0.6rem 0.75rem;
         border: 1px solid #ddd;
         transition: all 0.3s ease;
     }
-    
-    .form-control:focus, .form-select:focus {
+
+    .form-control:focus,
+    .form-select:focus {
         border-color: #3c8dbc;
         box-shadow: 0 0 0 0.25rem rgba(60, 141, 188, 0.15);
     }
-    
+
     .btn-submit {
         background: linear-gradient(135deg, #3c8dbc 0%, #367fa9 100%);
         border: none;
@@ -131,20 +135,20 @@ if (empty($_SESSION['csrf_token'])) {
         letter-spacing: 0.5px;
         transition: all 0.3s ease;
     }
-    
+
     .btn-submit:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(60, 141, 188, 0.2);
     }
-    
+
     .back-btn {
         transition: all 0.3s ease;
     }
-    
+
     .back-btn:hover {
         transform: translateX(-3px);
     }
-    
+
     #showMessage {
         position: fixed;
         top: 20px;
@@ -152,7 +156,7 @@ if (empty($_SESSION['csrf_token'])) {
         max-width: 400px;
         z-index: 1000;
     }
-    
+
     @media (max-width: 768px) {
         .edit-hostel-form {
             padding: 1.5rem;
@@ -166,29 +170,27 @@ if (empty($_SESSION['csrf_token'])) {
             <a href="<?= BASE_URL . '/admin/sections/hostels/index.php' ?>" class="btn btn-outline-secondary back-btn mb-4 mt-4">
                 <i class="bi bi-arrow-left me-2"></i>Back to Hostels
             </a>
-            
+
             <div class="edit-hostel-form  mb-5">
                 <h3 class="mb-4 text-primary">
                     <i class="bi bi-building"></i> Edit Hostel: <?= htmlspecialchars($hostel['hostel_name']) ?>
                 </h3>
-                
-                <div id="showMessage"></div>
-                
+
                 <form id="editHostelForm" class="mb-2">
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                     <input type="hidden" name="id" value="<?= $hostel['id'] ?>">
-                    
+
                     <!-- Hostel Information Section -->
                     <div class="form-section">
                         <h5><i class="bi bi-info-circle"></i>Hostel Information</h5>
-                        
+
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label">Hostel Name</label>
-                                <input type="text" name="hostel_name" class="form-control" required 
-                                       value="<?= htmlspecialchars($hostel['hostel_name']) ?>">
+                                <input type="text" name="hostel_name" class="form-control" required
+                                    value="<?= htmlspecialchars($hostel['hostel_name']) ?>">
                             </div>
-                            
+
                             <div class="col-md-3">
                                 <label class="form-label">Type</label>
                                 <select name="hostel_type" class="form-select" required>
@@ -196,19 +198,19 @@ if (empty($_SESSION['csrf_token'])) {
                                     <option value="female" <?= $hostel['hostel_type'] === 'female' ? 'selected' : '' ?>>Female</option>
                                 </select>
                             </div>
-                            
+
                             <div class="col-md-3">
                                 <label class="form-label">Contact Number</label>
-                                <input type="text" name="contact_number" class="form-control" required 
-                                       value="<?= htmlspecialchars($hostel['contact_number']) ?>">
+                                <input type="text" name="contact_number" class="form-control" required
+                                    value="<?= htmlspecialchars($hostel['contact_number']) ?>">
                             </div>
-                            
+
                             <div class="col-md-3">
                                 <label class="form-label">Capacity</label>
                                 <input type="number" name="capacity" class="form-control" required min="1"
-                                       value="<?= htmlspecialchars($hostel['capacity']) ?>">
+                                    value="<?= htmlspecialchars($hostel['capacity']) ?>">
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <label class="form-label">Hostel Incharge</label>
                                 <select name="hostel_incharge_id" class="form-select" required>
@@ -220,19 +222,19 @@ if (empty($_SESSION['csrf_token'])) {
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            
+
                             <div class="col-12">
                                 <label class="form-label">Amenities</label>
-                                <textarea name="amenities" class="form-control" 
-                                          placeholder="WiFi, Laundry, Gym, etc. (comma separated)"><?= htmlspecialchars($hostel['amenities']) ?></textarea>
+                                <textarea name="amenities" class="form-control"
+                                    placeholder="WiFi, Laundry, Gym, etc. (comma separated)"><?= htmlspecialchars($hostel['amenities']) ?></textarea>
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Address Information Section -->
                     <div class="form-section">
                         <h5><i class="bi bi-geo-alt"></i>Address Information</h5>
-                        
+
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label class="form-label">Country</label>
@@ -245,62 +247,62 @@ if (empty($_SESSION['csrf_token'])) {
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label class="form-label">State</label>
-                                <input type="text" name="state" class="form-control" 
-                                       value="<?= htmlspecialchars($hostel['state']) ?>">
+                                <input type="text" name="state" class="form-control"
+                                    value="<?= htmlspecialchars($hostel['state']) ?>">
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label class="form-label">Division</label>
-                                <input type="text" name="division" class="form-control" 
-                                       value="<?= htmlspecialchars($hostel['division']) ?>">
+                                <input type="text" name="division" class="form-control"
+                                    value="<?= htmlspecialchars($hostel['division']) ?>">
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label class="form-label">District</label>
-                                <input type="text" name="district" class="form-control" 
-                                       value="<?= htmlspecialchars($hostel['district']) ?>">
+                                <input type="text" name="district" class="form-control"
+                                    value="<?= htmlspecialchars($hostel['district']) ?>">
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label class="form-label">Sub District</label>
-                                <input type="text" name="sub_district" class="form-control" 
-                                       value="<?= htmlspecialchars($hostel['sub_district']) ?>">
+                                <input type="text" name="sub_district" class="form-control"
+                                    value="<?= htmlspecialchars($hostel['sub_district']) ?>">
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label class="form-label">Village</label>
-                                <input type="text" name="village" class="form-control" 
-                                       value="<?= htmlspecialchars($hostel['village']) ?>">
+                                <input type="text" name="village" class="form-control"
+                                    value="<?= htmlspecialchars($hostel['village']) ?>">
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label class="form-label">Postal Code</label>
-                                <input type="text" name="postalcode" class="form-control" 
-                                       value="<?= htmlspecialchars($hostel['postalcode']) ?>">
+                                <input type="text" name="postalcode" class="form-control"
+                                    value="<?= htmlspecialchars($hostel['postalcode']) ?>">
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label class="form-label">Street</label>
-                                <input type="text" name="street" class="form-control" 
-                                       value="<?= htmlspecialchars($hostel['street']) ?>">
+                                <input type="text" name="street" class="form-control"
+                                    value="<?= htmlspecialchars($hostel['street']) ?>">
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label class="form-label">House No</label>
-                                <input type="text" name="house_no" class="form-control" 
-                                       value="<?= htmlspecialchars($hostel['house_no']) ?>">
+                                <input type="text" name="house_no" class="form-control"
+                                    value="<?= htmlspecialchars($hostel['house_no']) ?>">
                             </div>
-                            
+
                             <div class="col-12">
                                 <label class="form-label">Additional Details</label>
                                 <textarea name="detail" class="form-control"><?= htmlspecialchars($hostel['detail']) ?></textarea>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="text-end mt-4">
                         <button type="submit" class="btn btn-submit text-white">
                             <i class="bi bi-save me-2 mb-2"></i>Update Hostel
@@ -314,10 +316,6 @@ if (empty($_SESSION['csrf_token'])) {
 
 <script>
     $(document).ready(function() {
-        // Initialize toast for notifications
-        const toastLiveExample = document.getElementById('showMessage');
-        const toastBootstrap = toastLiveExample ? bootstrap.Toast.getOrCreateInstance(toastLiveExample) : null;
-
         $('#editHostelForm').on('submit', function(e) {
             e.preventDefault();
 
@@ -332,12 +330,12 @@ if (empty($_SESSION['csrf_token'])) {
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        showAlert('success', response.message);
+                        showSlideMessage(response.message, 'success');
                         setTimeout(function() {
                             window.location.href = "<?= BASE_URL ?>/admin/sections/hostels/index.php";
                         }, 1500);
                     } else {
-                        showAlert('danger', response.message);
+                        showSlideMessage(response.message, 'danger');
                     }
                 },
                 error: function(xhr) {
@@ -348,37 +346,16 @@ if (empty($_SESSION['csrf_token'])) {
                     } catch (e) {
                         console.error('Error parsing response:', e);
                     }
-                    showAlert('danger', errorMsg);
+                    showSlideMessage(errorMsg, 'danger');
                 },
                 complete: function() {
                     submitBtn.prop('disabled', false).html(originalText);
                 }
             });
         });
-
-        function showAlert(type, message) {
-            const alertHtml = `
-                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-                    <div class="d-flex">
-                        <div class="flex-grow-1">${message}</div>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                </div>
-            `;
-            
-            $('#showMessage').html(alertHtml);
-            
-            // Initialize Bootstrap alert for dismissal
-            const alertElement = $('#showMessage .alert');
-            const bsAlert = new bootstrap.Alert(alertElement[0]);
-            
-            // Auto-dismiss after 5 seconds
-            setTimeout(() => {
-                bsAlert.close();
-            }, 5000);
-        }
     });
 </script>
+
 
 <?php
 require_once BASE_PATH . '/admin/includes/footer_admin.php';

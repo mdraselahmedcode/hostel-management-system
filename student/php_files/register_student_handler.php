@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/config.php';
 require_once __DIR__ . '/../../config/db.php';
+require_once BASE_PATH . '/student/php_files/send_email.php';
 require_once BASE_PATH . '/admin/includes/response_helper.php';
 
 header('Content-Type: application/json');
@@ -217,10 +218,31 @@ try {
             }
         }
 
+        // Email Verification Starts
+        // 1. Generate token
+        $token = bin2hex(random_bytes(32));
+
+        // 2. Save it
+        $updateTokenStmt = $conn->prepare("UPDATE students SET verification_token = ? WHERE id = ?");
+        $updateTokenStmt->bind_param("si", $token, $studentId);
+        if (!$updateTokenStmt->execute()) {
+            throw new Exception("Failed to store verification token.");
+        }
+
+        // 3. Send Email
+
+        $emailSent = sendVerificationEmail($_POST['email'], $_POST['first_name'], $token);
+
+        if (!$emailSent) {
+            throw new Exception("Verification email could not be sent.");
+        }
+
+
+
         $conn->commit();
 
         $response['success'] = true;
-        $response['message'] = "Student registered successfully!";
+        $response['message'] = "Student registered successfully! A verification email has been sent. Please check your inbox or spam folder.";
         $response['student_id'] = $studentId;
     } catch (Exception $e) {
         $conn->rollback();

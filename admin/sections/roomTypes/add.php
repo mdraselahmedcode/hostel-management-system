@@ -1,8 +1,11 @@
 <?php
-session_start();
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
-require_once BASE_PATH . '/admin/php_files/auth_check_admin.php';
+include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/config/auth.php'; 
+
+require_admin(); 
+
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 
 // Fetch hostels for dropdown
@@ -54,7 +57,7 @@ if ($hostelResult && $hostelResult->num_rows > 0) {
 
                     <div class="col-md-6">
                         <label for="buffer_limit" class="form-label">Buffer Limit <span class="text-danger">*</span></label>
-                        <input type="number" name="buffer_limit" id="buffer_limit" class="form-control" min="0" required>
+                        <input type="number" name="buffer_limit" id="buffer_limit" class="form-control" min="0">
                         <small class="form-text text-muted">Specify extra capacity allowed beyond the default (if any).</small>
                         <div class="invalid-feedback">Enter a valid buffer limit.</div>
                     </div>
@@ -64,7 +67,7 @@ if ($hostelResult && $hostelResult->num_rows > 0) {
                     <button type="submit" class="btn btn-success px-4">
                         <i class="bi bi-save2 me-1"></i> Save Room Type
                     </button>
-                    <div id="formMessage" class="ms-3"></div>
+                    <!-- Removed #formMessage div -->
                 </div>
             </form>
         </div>
@@ -83,7 +86,6 @@ if ($hostelResult && $hostelResult->num_rows > 0) {
             if (!form.checkValidity()) return;
 
             const formData = $(this).serialize();
-            const messageDiv = $('#formMessage');
 
             $.ajax({
                 url: '<?= BASE_URL ?>/admin/php_files/sections/roomTypes/add.php',
@@ -92,19 +94,15 @@ if ($hostelResult && $hostelResult->num_rows > 0) {
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        messageDiv.html(`<div class="alert alert-success mb-0">${response.message}</div>`);
+                        showSlideMessage(response.message, 'success');
                         form.reset();
                         form.classList.remove('was-validated');
-
-                        setTimeout(() => {
-                            messageDiv.fadeOut('slow', () => messageDiv.empty().show());
-                        }, 3000);
                     } else {
-                        messageDiv.html(`<div class="alert alert-danger mb-0">${response.message}</div>`);
+                        showSlideMessage(response.message || 'Failed to add room type.', 'danger');
                     }
                 },
                 error: function(xhr) {
-                    messageDiv.html(`<div class="alert alert-danger mb-0">An unexpected error occurred.</div>`);
+                    showSlideMessage('An unexpected error occurred.', 'danger');
                     console.error(xhr.responseText);
                 }
             });
