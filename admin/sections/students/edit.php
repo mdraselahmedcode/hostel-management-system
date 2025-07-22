@@ -149,8 +149,8 @@ if ($student['floor_id']) {
     <!-- Main Content -->
     <main class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="<?= BASE_URL . '/admin/sections/students/index.php' ?>" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Back to Students
+            <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back
             </a>
             <h2 class="mb-0 text-primary">
                 <i class="fas fa-user-edit me-2"></i>Edit Student

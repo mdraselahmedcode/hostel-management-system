@@ -291,7 +291,7 @@ include BASE_PATH . '/includes/header.php';
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
-                        showSlideMessage(response.message, 'success');
+                        showSlideMessage(response.message + "<br/>We will contact you later.", 'success');
                         form[0].reset();
                     } else {
                         showSlideMessage(response.message, 'danger');

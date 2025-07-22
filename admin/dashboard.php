@@ -1,10 +1,10 @@
-<?php   
-    require_once __DIR__ . '/../config/db.php';
-    require_once BASE_PATH . '/config/auth.php'; 
+<?php
+require_once __DIR__ . '/../config/db.php';
+require_once BASE_PATH . '/config/auth.php';
 
-    require_admin(); 
+require_admin();
 
-    require_once BASE_PATH . '/admin/includes/header_admin.php';
+require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
 <head>
@@ -20,63 +20,63 @@
         background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
         border-left: 4px solid var(--highlight-blue);
     }
-    
+
     .dashboard-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         background: white;
     }
-    
+
     .dashboard-card .card-body {
         padding: 1.5rem;
     }
-    
+
     .dashboard-card .card-title {
         color: var(--primary-dark);
         font-weight: 600;
         margin-bottom: 0.5rem;
     }
-    
+
     .dashboard-card .card-text {
         color: #6c757d;
         font-size: 0.9rem;
     }
-    
+
     .welcome-card {
         background: white;
         border-radius: 10px;
         border: none;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         border-left: 4px solid var(--highlight-blue);
     }
-    
+
     .welcome-card h1 {
         color: var(--primary-dark);
         font-weight: 700;
         font-size: 2rem;
         margin-bottom: 1.5rem;
     }
-    
+
     .welcome-card p {
         font-size: 1.1rem;
         margin-bottom: 0.5rem;
     }
-    
+
     .welcome-card strong {
         color: var(--primary-dark);
     }
-    
+
     .logout-btn {
         background: var(--highlight-blue);
         border: none;
         padding: 0.5rem 1.5rem;
         font-weight: 500;
     }
-    
+
     .logout-btn:hover {
         background: #367fa9;
     }
-    
+
     .card-icon {
         font-size: 2rem;
         margin-bottom: 1rem;
@@ -84,11 +84,11 @@
     }
 </style>
 
-<div class="content container-fluid mt-5" >
+<div class="content container-fluid mt-5">
     <div class="row full-height">
         <!-- Sidebar -->
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
-        
+
         <!-- Main Content -->
         <main class="col-md-10 ms-sm-auto px-md-4 py-4" style="overflow-y: auto; max-height: calc(100vh - 95px)">
             <!-- Welcome Card -->
@@ -123,7 +123,7 @@
                         </div>
                     </a>
                 </div>
-                
+
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL . '/admin/sections/floors/index.php' ?>" class="text-decoration-none">
                         <div class="card dashboard-card">
@@ -135,7 +135,7 @@
                         </div>
                     </a>
                 </div>
-                
+
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL . '/admin/sections/rooms/index.php' ?>" class="text-decoration-none">
                         <div class="card dashboard-card">
@@ -147,7 +147,7 @@
                         </div>
                     </a>
                 </div>
-                
+
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL . '/admin/sections/roomTypes/index.php' ?>" class="text-decoration-none">
                         <div class="card dashboard-card">
@@ -159,7 +159,7 @@
                         </div>
                     </a>
                 </div>
-                
+
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL . '/admin/sections/roomFees/index.php' ?>" class="text-decoration-none">
                         <div class="card dashboard-card">
@@ -171,7 +171,7 @@
                         </div>
                     </a>
                 </div>
-                
+
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL . '/admin/sections/admins/index.php' ?>" class="text-decoration-none">
                         <div class="card dashboard-card">
@@ -183,7 +183,7 @@
                         </div>
                     </a>
                 </div>
-                
+
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL . '/admin/sections/students/index.php' ?>" class="text-decoration-none">
                         <div class="card dashboard-card">
@@ -191,6 +191,18 @@
                                 <i class="bi bi-person-vcard card-icon"></i>
                                 <h5 class="card-title">Students</h5>
                                 <p class="card-text">Manage student records and information</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                    <a href="<?= BASE_URL . '/admin/sections/payments/index.php' ?>" class="text-decoration-none">
+                        <div class="card dashboard-card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-credit-card-2-front card-icon"></i>
+                                <h5 class="card-title">Payments</h5>
+                                <p class="card-text">View and verify student payment records</p>
                             </div>
                         </div>
                     </a>

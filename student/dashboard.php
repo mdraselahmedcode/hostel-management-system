@@ -90,21 +90,11 @@ require_once BASE_PATH . '/student/includes/header_student.php';
                 </a>
             </div>
             <div class="col">
-                <a href="#" class="text-decoration-none">
+                <a href="<?= BASE_URL ?>/student/sections/payment/payment_view.php" class="text-decoration-none">
                     <div class="card text-center shadow-sm border-0 h-100 hover-card bg-white">
                         <div class="card-body">
                             <i class="bi bi-credit-card fs-1 text-warning mb-2"></i>
-                            <h6 class="card-title">Payment History</h6>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col">
-                <a href="#" class="text-decoration-none">
-                    <div class="card text-center shadow-sm border-0 h-100 hover-card bg-white">
-                        <div class="card-body">
-                            <i class="bi bi-exclamation-circle fs-1 text-danger mb-2"></i>
-                            <h6 class="card-title">Outstanding Dues</h6>
+                            <h6 class="card-title">Payment View</h6>
                         </div>
                     </div>
                 </a>

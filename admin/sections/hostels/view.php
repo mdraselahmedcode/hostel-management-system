@@ -121,8 +121,8 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 <div class="container py-4 mt-4">
     <div class="row">
         <div class="col-lg-10 mx-auto">
-            <a href="<?= BASE_URL ?>/admin/sections/hostels/index.php" class="btn btn-outline-secondary back-btn mb-4 mt-4">
-                <i class="bi bi-arrow-left me-2"></i>Back to Hostel List
+            <a href="javascript:history.back()" class="btn btn-outline-secondary back-btn mb-4 mt-4">
+                <i class="bi bi-arrow-left me-2"></i>Back
             </a>
 
             <div class="card hostel-detail-card">

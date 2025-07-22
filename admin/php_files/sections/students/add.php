@@ -2,6 +2,9 @@
 require_once __DIR__ . '/../../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/admin/includes/response_helper.php';
+include BASE_PATH . '/admin/php_files/sections/students/send_approved_mail.php';
+include BASE_PATH . '/admin/php_files/sections/students/send_checkedin_mail.php';
+
 // only admin will get access
 require_once BASE_PATH . '/config/auth.php';
 
@@ -449,16 +452,32 @@ try {
     }
     $studentStmt->close();
 
+    $newStudentId = $conn->insert_id;
+
+    $emailMessage = '';
+
+    if ($is_approved) {
+        sendStudentApprovalNotification($newStudentId, $hostel_id, $floor_id, $room_id);
+        $emailMessage .= '<br/> Approval email sent to the student.';
+    }
+
+    if ($is_checked_in) {
+        sendStudentCheckInNotification($newStudentId, $hostel_id, $floor_id, $room_id);
+        $emailMessage .= '<br/> Check-in confirmation email sent to the student.';
+    }
+
+
     // commit tracsaction
     $conn->commit();
 
     echo json_encode([
         'success' => true,
-        'message' => 'Student created successfully.',
+        'message' => 'Student created successfully.' . $emailMessage,
         'permanent address id' => $perm_address_id,
         'temporary address id' => $temp_address_id,
         'student id' => $varsity_id
     ]);
+
 } catch (Exception $e) {
     $conn->rollback();
     echo json_encode([

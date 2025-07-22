@@ -27,7 +27,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
 <div class="content container mt-5">
-    <a href="<?= BASE_URL ?>/admin/sections/rooms/index.php" class="btn btn-secondary mt-4 mb-3">← Back</a>
+    <a href="javascript:history.back()" class="btn btn-secondary mt-4 mb-3">← Back</a>
 
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">

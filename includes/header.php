@@ -34,17 +34,6 @@ $currentDir   = basename(dirname($_SERVER['SCRIPT_NAME']));
             color: #fff !important;
         }
 
-        .nav-link.active::after {
-            content: '';
-            position: absolute;
-            width: 20%;
-            bottom: -5px;
-            left: 20;
-            right: 0;
-            height: 3px;
-            background-color: #fff;
-            border-radius: 2px;
-        }
 
         .dropdown-menu {
             border: none;
@@ -110,7 +99,10 @@ $currentDir   = basename(dirname($_SERVER['SCRIPT_NAME']));
                             <li>
                                 <a class="dropdown-item <?= $currentDir === 'admin' && $currentPage === 'login.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/admin/login.php">Login</a>
                             </li>
-                            <li><a class="dropdown-item" href="#">Help</a></li>
+                          
+                            <!-- <li>
+                                <a class="dropdown-item" href="<?= BASE_URL ?>/admin/help.php">Help</a>
+                            </li> -->
                         </ul>
                     </li>
 
@@ -129,7 +121,7 @@ $currentDir   = basename(dirname($_SERVER['SCRIPT_NAME']));
                             <li>
                                 <a class="dropdown-item <?= $currentPage === 'checkStatus.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/checkStatus.php">Check Status</a>
                             </li>
-                            <li><a class="dropdown-item" href="#">Guidelines</a></li>
+                            <li><a class="dropdown-item" href="<?= BASE_URL . '/student/guidelines.php' ?>">Guidelines</a></li>
                         </ul>
                     </li>
 

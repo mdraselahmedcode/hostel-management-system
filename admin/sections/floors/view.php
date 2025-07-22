@@ -64,8 +64,8 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         <main class="col-md-10 ms-sm-auto px-md-4 py-4">
 
             <!-- Back Button -->
-            <a href="index.php" class="btn btn-outline-secondary mb-4">
-                <i class="bi bi-arrow-left"></i> Back to Floors
+            <a href="javascript:history.back()" class="btn btn-outline-secondary mb-4">
+                <i class="bi bi-arrow-left"></i> Back
             </a>
 
             <!-- Floor Info Card -->

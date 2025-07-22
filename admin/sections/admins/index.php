@@ -51,7 +51,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
         <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-            <a href="<?= BASE_URL . '/admin/dashboard.php' ?>" class="btn btn-secondary mb-3 ">Back</a>
+            <a href="javascript:history.back()" class="btn btn-secondary mb-3 ">Back</a>
 
             <div class="card shadow-sm">
                 <div class="card-body">

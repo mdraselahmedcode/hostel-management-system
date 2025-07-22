@@ -2,7 +2,7 @@
 include __DIR__ . '/config/config.php';
 
 require_once BASE_PATH . '/config/auth.php';
-
+include BASE_PATH . '/includes/slide_message.php';
 // Redirect if logged in
 if (is_student_logged_in()) {
     header("Location: " . BASE_URL . "/student/dashboard.php");
@@ -21,7 +21,7 @@ include BASE_PATH . '/includes/header.php';
 <section class="hero-section bg-university text-white py-5" style="background: linear-gradient(rgba(158, 228, 155, 0.7), rgba(0, 0, 0, 0.7)), url('assets/images/university-campus_2.jpg') no-repeat center center; background-size: cover;">
     <div class="container py-5">
         <div class="row align-items-center">
-            <div class="col-lg-7">
+            <div class="col-lg-7 mb-4">
                 <div class="d-flex align-items-center mb-3">
                     <img src="assets/images/provided_logo.jpg" alt="University Logo" class="me-3" style="height: 60px; border-radius: 50%;">
                     <h2 class="mb-0">University Hostel System</h2>
@@ -43,7 +43,7 @@ include BASE_PATH . '/includes/header.php';
             <div class="col-lg-5">
                 <div class="card shadow-lg">
                     <div class="card-body p-4">
-                        <h3 class="fw-bold mb-3 text-center" style="color: rgba(20, 17, 17, 1);">Application Process</h3>
+                        <h3 class="fw-bold mb-3 text-center" style="color: rgba(20, 17, 17, 0.9);">Application Process</h3>
                         <div class="process-steps">
                             <div class="step">
                                 <div class="step-number bg-primary text-white">1</div>
@@ -293,63 +293,93 @@ include BASE_PATH . '/includes/header.php';
 </section>
 
 <!-- Contact Section -->
+
 <section class="py-5">
     <div class="container py-5">
-        <div class="row">
-            <div class="col-lg-5">
-                <h2 class="fw-bold mb-4">Hostel Administration Office</h2>
-                <div class="d-flex mb-4">
-                    <div class="me-4 text-primary">
-                        <i class="fas fa-map-marker-alt fa-2x"></i>
+        <div class="row align-items-stretch">
+            <!-- Left Column -->
+            <div class="col-lg-5 d-flex">
+                <div class="w-100">
+                    <h2 class="fw-bold mb-4">Hostel Administration Office</h2>
+                    <div class="d-flex mb-4">
+                        <div class="me-4 text-primary">
+                            <i class="fas fa-map-marker-alt fa-2x"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold">Location</h4>
+                            <p class="text-muted">University Campus, Hostel Block A<br>Ground Floor, Room 101</p>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="fw-bold">Location</h4>
-                        <p class="text-muted">University Campus, Hostel Block A<br>Ground Floor, Room 101</p>
+                    <div class="d-flex mb-4">
+                        <div class="me-4 text-primary">
+                            <i class="fas fa-clock fa-2x"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold">Office Hours</h4>
+                            <p class="text-muted">Monday - Friday: 9:00 AM - 5:00 PM<br>Saturday: 10:00 AM - 2:00 PM</p>
+                        </div>
                     </div>
-                </div>
-                <div class="d-flex mb-4">
-                    <div class="me-4 text-primary">
-                        <i class="fas fa-clock fa-2x"></i>
-                    </div>
-                    <div>
-                        <h4 class="fw-bold">Office Hours</h4>
-                        <p class="text-muted">Monday - Friday: 9:00 AM - 5:00 PM<br>Saturday: 10:00 AM - 2:00 PM</p>
-                    </div>
-                </div>
-                <div class="d-flex mb-4">
-                    <div class="me-4 text-primary">
-                        <i class="fas fa-phone-alt fa-2x"></i>
-                    </div>
-                    <div>
-                        <h4 class="fw-bold">Contact</h4>
-                        <p class="text-muted">+8801929951023<br>hostel@university.edu</p>
+                    <div class="d-flex mb-4">
+                        <div class="me-4 text-primary">
+                            <i class="fas fa-phone-alt fa-2x"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold">Contact</h4>
+                            <p class="text-muted">+8801929951023<br>hostel@university.edu</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-7">
-                <div class="card shadow-sm">
+
+            <!-- Right Column (Contact Form) -->
+            <div class="col-lg-6 d-flex">
+                <div class="card shadow-sm border-0 w-100">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Send Us a Message</h4>
+                    </div>
                     <div class="card-body p-4">
-                        <h3 class="fw-bold mb-4">Have Questions?</h3>
                         <form id="contactForm">
                             <div class="row">
+                                <!-- Name and Email Side-by-side -->
                                 <div class="col-md-6 mb-3">
-                                    <label for="name" class="form-label">Your Name</label>
-                                    <input type="text" class="form-control" id="name" required>
+                                    <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="email" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="email" required>
+                                    <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+
+                                <!-- Phone and Subject Side-by-side -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="subject" class="form-label">Subject <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="subject" name="subject" required>
+                                        <option value="" selected disabled>Select a subject</option>
+                                        <option value="Admission Query">Admission Query</option>
+                                        <option value="Room Allocation">Room Allocation</option>
+                                        <option value="Payment Issue">Payment Issue</option>
+                                        <option value="Complaint">Complaint</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+
+                                <!-- Message Full Width -->
+                                <div class="col-12 mb-3">
+                                    <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
+                                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                                </div>
+
+                                <!-- Submit Button Full Width -->
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary w-100 py-2">
+                                        <i class="fas fa-paper-plane me-2"></i> Send Message
+                                    </button>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="subject" class="form-label">Subject</label>
-                                <input type="text" class="form-control" id="subject" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="message" class="form-label">Message</label>
-                                <textarea class="form-control" id="message" rows="4" required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Send Message</button>
                         </form>
                     </div>
                 </div>
@@ -357,6 +387,46 @@ include BASE_PATH . '/includes/header.php';
         </div>
     </div>
 </section>
+
+
+
+<script>
+    $(document).ready(function() {
+        $('#contactForm').on('submit', function(e) {
+            e.preventDefault();
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const originalBtnText = submitBtn.html();
+
+            submitBtn.prop('disabled', true).html(
+                '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Sending...'
+            );
+
+            $.ajax({
+                url: '<?= BASE_URL ?>/contact_send_message_handler.php',
+                type: 'POST',
+                data: form.serialize(),
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        showSlideMessage(response.message + "<br/>We will contact you later.", 'success');
+                        form[0].reset();
+                    } else {
+                        showSlideMessage(response.message, 'danger');
+                    }
+                },
+                error: function(xhr) {
+                    showSlideMessage('An error occurred. Please try again later.', 'danger');
+                    console.error(xhr.responseText);
+                },
+                complete: function() {
+                    submitBtn.prop('disabled', false).html(originalBtnText);
+                }
+            });
+        });
+    });
+</script>
+
 
 <?php
 include BASE_PATH . '/includes/footer.php';
@@ -479,37 +549,3 @@ include BASE_PATH . '/includes/footer.php';
         left: -10px;
     }
 </style>
-
-<script>
-    $(document).ready(function() {
-        // Animate stats counting
-        // function animateValue(id, start, end, duration) {
-        //     let obj = document.getElementById(id);
-        //     let range = end - start;
-        //     let current = start;
-        //     let increment = end > start ? 1 : -1;
-        //     let stepTime = Math.abs(Math.floor(duration / range));
-        //     let timer = setInterval(function() {
-        //         current += increment;
-        //         obj.innerHTML = id === 'occupancy-rate' ? current + "%" : current;
-        //         if (current == end) {
-        //             clearInterval(timer);
-        //         }
-        //     }, stepTime);
-        // }
-
-        // Example values - replace with actual data from your database via AJAX
-        // animateValue("room-count", 0, 320, 1000);
-        // animateValue("student-count", 0, 1250, 1000);
-        // animateValue("occupancy-rate", 0, 92, 1000);
-        // animateValue("staff-count", 0, 28, 1000);
-
-        // Contact form submission
-        $('#contactForm').submit(function(e) {
-            e.preventDefault();
-            // Add your form submission logic here
-            alert('Thank you for your message. We will contact you soon.');
-            this.reset();
-        });
-    });
-</script>

@@ -102,7 +102,7 @@ if (empty($_SESSION['csrf_token'])) {
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <!-- Back Button -->
-            <a href="<?= BASE_URL . '/admin/sections/hostels/index.php' ?>" class="btn btn-outline-secondary mb-4 mt-4">
+            <a href="javascript:history.back()" class="btn btn-outline-secondary mb-4 mt-4">
                 <i class="bi bi-arrow-left me-2"></i>Back to Hostels
             </a>
 

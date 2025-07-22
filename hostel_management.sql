@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 16, 2025 at 10:26 PM
+-- Generation Time: Jul 22, 2025 at 11:24 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -60,14 +60,18 @@ INSERT INTO `addresses` (`id`, `country_id`, `state`, `division`, `district`, `s
 (59, 33, '', 'Dhaka', 'dhaka', 'savar', 'khagan', 'I JUST FORGOT IT', 'khagan street', 'h-34', 'here would be some additional details', '2025-06-12 06:14:42', '2025-06-12 06:14:42'),
 (64, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', 'I JUST FORGOT IT', 'khagan street', 'h-34', '', '2025-06-22 19:27:09', '2025-06-22 19:27:09'),
 (65, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', 'I JUST FORGOT IT', 'khagan street', 'h-34', '', '2025-06-22 19:27:09', '2025-06-22 19:27:09'),
-(66, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '3423', 'khagan street', 'h-34', '', '2025-07-15 03:20:00', '2025-07-15 03:20:00'),
+(66, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '3422', 'khagan street', 'h-34', '', '2025-07-15 03:20:00', '2025-07-18 22:13:37'),
 (67, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '3423', 'khagan street', 'h-34', '', '2025-07-15 03:20:00', '2025-07-15 03:20:00'),
 (70, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '3434', 'khagan street', 'h-34', '', '2025-07-16 08:30:35', '2025-07-16 08:30:35'),
 (71, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '3434', 'khagan street', 'h-34', '', '2025-07-16 08:30:35', '2025-07-16 08:30:35'),
 (74, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '4323', 'khagan street', 'h-34', '', '2025-07-16 10:19:02', '2025-07-16 10:19:02'),
 (75, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '4323', 'khagan street', 'h-34', '', '2025-07-16 10:19:02', '2025-07-16 10:19:02'),
 (76, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '6454', 'khagan street', 'h-34', '', '2025-07-16 10:24:17', '2025-07-16 10:24:17'),
-(77, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '6454', 'khagan street', 'h-34', '', '2025-07-16 10:24:17', '2025-07-16 10:24:17');
+(77, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '6454', 'khagan street', 'h-34', '', '2025-07-16 10:24:17', '2025-07-16 10:24:17'),
+(78, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '5432', 'khagan street', 'h-34', '', '2025-07-16 22:33:04', '2025-07-16 22:33:04'),
+(79, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '5432', 'khagan street', 'h-34', '', '2025-07-16 22:33:04', '2025-07-16 22:33:04'),
+(80, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '6342', 'khagan street', 'h-34', 'this is additional detail', '2025-07-17 19:06:51', '2025-07-17 19:06:51'),
+(81, 33, '', 'Dhaka', 'dahka', 'savar', 'khagan', '6342', 'khagan street', 'h-34', 'this is additional detail', '2025-07-17 19:06:51', '2025-07-17 19:06:51');
 
 -- --------------------------------------------------------
 
@@ -207,9 +211,75 @@ CREATE TABLE `hostels` (
 --
 
 INSERT INTO `hostels` (`id`, `hostel_incharge_id`, `address_id`, `hostel_name`, `hostel_type`, `contact_number`, `email`, `capacity`, `amenities`, `created_at`, `updated_at`) VALUES
-(1, 8, NULL, 'Dhanmondi Hostel', 'male', '+8801712345678', 'dhanmondihall123@gmail.com', 200, 'Wi-Fi, Laundry, Security, Mess', '2025-05-23 19:13:00', '2025-07-15 13:02:37'),
+(1, 8, 67, 'Dhanmondi Hostel', 'male', '+8801712345678', 'dhanmondihall123@gmail.com', 200, 'Wi-Fi, Laundry, Security, Mess', '2025-05-23 19:13:00', '2025-07-17 17:47:53'),
 (3, 8, 31, 'shantir Nir', 'female', '01929951023', 'shantirnirhall123@gmail.com', 80, '', '2025-05-30 08:28:03', '2025-07-15 13:02:18'),
 (4, 8, 32, 'Najrul', 'male', '01929951023', 'najrulhall123@gmail.com', 65, 'healthy living space, oppurtunities for play in the ground, free wifi etc', '2025-05-30 08:30:42', '2025-07-15 13:02:12');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_methods`
+--
+
+CREATE TABLE `payment_methods` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `display_name` varchar(100) NOT NULL,
+  `account_number` varchar(50) DEFAULT NULL,
+  `active` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payment_methods`
+--
+
+INSERT INTO `payment_methods` (`id`, `name`, `display_name`, `account_number`, `active`, `created_at`) VALUES
+(1, 'bkash', 'bKash Personal', '01723908423', 1, '2025-07-19 07:09:25'),
+(2, 'nagad', 'Nagad Merchant', '01802893742', 1, '2025-07-19 07:09:25'),
+(3, 'rocket', 'Rocket Personal', '01997274945', 1, '2025-07-19 07:09:25'),
+(4, 'cash', 'Cash Payment', NULL, 1, '2025-07-19 07:09:25'),
+(5, 'bank_transfer', 'Bank Transfer', 'AC-1234567890', 1, '2025-07-19 07:09:25');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_receipts`
+--
+
+CREATE TABLE `payment_receipts` (
+  `id` int(11) NOT NULL,
+  `transaction_id` int(11) NOT NULL,
+  `receipt_path` varchar(255) NOT NULL,
+  `generated_at` datetime NOT NULL,
+  `generated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment_transactions`
+--
+
+CREATE TABLE `payment_transactions` (
+  `id` int(11) NOT NULL,
+  `payment_id` int(11) NOT NULL,
+  `amount` decimal(10,2) NOT NULL,
+  `payment_date` datetime NOT NULL,
+  `payment_method_id` int(11) NOT NULL,
+  `reference_code` varchar(100) DEFAULT NULL,
+  `transaction_id` varchar(100) DEFAULT NULL,
+  `receipt_number` varchar(50) DEFAULT NULL,
+  `sender_mobile` varchar(20) DEFAULT NULL,
+  `sender_name` varchar(100) DEFAULT NULL,
+  `screenshot_path` varchar(255) DEFAULT NULL,
+  `verification_status` enum('pending','verified','rejected') DEFAULT 'pending',
+  `verified_by` int(11) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -335,6 +405,7 @@ CREATE TABLE `students` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `is_checked_in` tinyint(1) DEFAULT 0,
+  `is_checked_out` tinyint(1) DEFAULT 0,
   `check_in_at` datetime DEFAULT NULL,
   `check_out_at` datetime DEFAULT NULL,
   `father_name` varchar(100) DEFAULT NULL,
@@ -343,20 +414,62 @@ CREATE TABLE `students` (
   `mother_contact` varchar(20) DEFAULT NULL,
   `emergency_contact` varchar(20) DEFAULT NULL,
   `blood_group` enum('A+','A-','B+','B-','AB+','AB-','O+','O-','Unknown') DEFAULT 'Unknown',
-  `floor_id` int(11) DEFAULT NULL
+  `floor_id` int(11) DEFAULT NULL,
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_expires` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`id`, `profile_image_url`, `hostel_id`, `room_id`, `permanent_address_id`, `temporary_address_id`, `first_name`, `last_name`, `email`, `password`, `gender`, `contact_number`, `is_verified`, `is_approved`, `verification_token`, `varsity_id`, `department`, `batch_year`, `detail`, `created_at`, `updated_at`, `is_checked_in`, `check_in_at`, `check_out_at`, `father_name`, `mother_name`, `father_contact`, `mother_contact`, `emergency_contact`, `blood_group`, `floor_id`) VALUES
-(14, NULL, 1, 77, 58, 59, 'Sheikh', 'Russell', 'rasel123@gmail.com', '$2y$10$8Ei7jK4S9iKl6jsU.2R.nOWJ8jJDi74GRS2hmDMvQmY0ntXs2rmTy', 'male', '01929951023', NULL, 1, NULL, 'VARSITY004', 'CSE', '2nd', NULL, '2025-06-12 06:14:42', '2025-07-15 04:42:45', 0, NULL, NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '01283012232', 'A+', 1),
-(17, NULL, 1, 83, 64, 65, 'billua', 'mia', 'billu123@gmail.com', '$2y$10$xMtQYjQZvodQ.Usi5Get3OnEMkR2GqtAKFonziU.SigOQQagYMkei', 'male', '01929951028', 1, 1, NULL, 'VARSITY001', 'LAW', '3rd', NULL, '2025-06-22 19:27:09', '2025-06-23 11:54:28', 1, '2025-06-23 01:26:00', NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '01283012232', 'O+', 3),
-(22, NULL, 1, 77, 66, 67, 'Mehtab', 'Islam', 'mehtab123@gmail.com', '$2y$10$7hX.TDIjkUStLZyZfePm0uKjXlBw06V5TZtjArB7NHF6Nmsz7iRRO', 'male', '01929951543', 1, 1, NULL, '01283012312', 'CSE', '2nd', '', '2025-07-15 03:20:00', '2025-07-16 09:49:30', 1, '2025-07-15 11:37:00', NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '012830122323', 'O+', 1),
-(24, NULL, NULL, NULL, 70, 71, 'Mehedi', 'Islam', 'mehedi123@gmail.com', '$2y$10$F./5AG6WdbjyG05Rj5nTF.oSUEF4Uu8cqyX2ZxdvKUvPXKT2DPOiq', 'male', '01924351023', 0, 0, NULL, '01231231', 'LAW', '1st', '', '2025-07-16 08:30:35', '2025-07-16 08:30:35', 0, NULL, NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '01283012232', 'A+', NULL),
-(26, NULL, 1, 83, 74, 75, 'Mamun', 'Khan', 'mamun123@gmail.com', '$2y$10$59EFCYRR6idMrzMpJih.julB2RbGQoiPqIbno7FcE1wPCrYeRIBgC', 'male', '01929541023', 0, 0, NULL, '0321842034', NULL, NULL, NULL, '2025-07-16 10:19:02', '2025-07-16 10:25:40', 0, NULL, NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '01283012232', 'Unknown', 3),
-(27, NULL, 1, 81, 76, 77, 'Shimanto', 'Bissash', 'shimanto123@gmail.com', '$2y$10$GjsjZmcxOpWO4fEUyboBJ.drj3zDx1v.n6zLx02wrFZxM3LF5aX0u', 'male', '01928451023', 0, 0, NULL, '546345345', NULL, NULL, NULL, '2025-07-16 10:24:17', '2025-07-16 10:25:31', 0, NULL, NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '012830122323', 'Unknown', 3);
+INSERT INTO `students` (`id`, `profile_image_url`, `hostel_id`, `room_id`, `permanent_address_id`, `temporary_address_id`, `first_name`, `last_name`, `email`, `password`, `gender`, `contact_number`, `is_verified`, `is_approved`, `verification_token`, `varsity_id`, `department`, `batch_year`, `detail`, `created_at`, `updated_at`, `is_checked_in`, `is_checked_out`, `check_in_at`, `check_out_at`, `father_name`, `mother_name`, `father_contact`, `mother_contact`, `emergency_contact`, `blood_group`, `floor_id`, `reset_token`, `reset_expires`) VALUES
+(17, 'http://localhost/hostel-management-system/student/assets/images/profile_22_1752749533.jpg', 1, 83, 64, 65, 'billu', 'mia', 'billu123@gmail.com', '$2y$10$xMtQYjQZvodQ.Usi5Get3OnEMkR2GqtAKFonziU.SigOQQagYMkei', 'male', '01929951028', 1, 1, NULL, 'VARSITY001', 'LAW', '3rd', NULL, '2025-06-22 19:27:09', '2025-07-19 16:24:23', 1, 0, '2025-06-23 01:26:00', NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '01283012232', 'O+', 3, NULL, NULL),
+(22, 'http://localhost/hostel-management-system/student/assets/images/profile_22_1752749533.jpg', 1, 77, 66, 67, 'Mehtab', 'Islam', 'mehtab123@gmail.com', '$2y$10$7hX.TDIjkUStLZyZfePm0uKjXlBw06V5TZtjArB7NHF6Nmsz7iRRO', 'male', '01929951543', 1, 1, NULL, '01283012312', 'CSE', '2nd', '', '2025-07-15 03:20:00', '2025-07-17 16:16:49', 1, 0, '2025-07-15 11:37:00', NULL, 'borkot uddin', 'Jahara Bagum', '00821903153', '91723123143', '012830122323', 'O+', 1, NULL, NULL),
+(24, NULL, NULL, NULL, 70, 71, 'Mehedi', 'Islam', 'mehedi123@gmail.com', '$2y$10$F./5AG6WdbjyG05Rj5nTF.oSUEF4Uu8cqyX2ZxdvKUvPXKT2DPOiq', 'male', '01924351023', 0, 0, NULL, '01231231', 'LAW', '1st', '', '2025-07-16 08:30:35', '2025-07-16 21:33:00', 0, 0, NULL, NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '01283012232', 'A+', NULL, NULL, NULL),
+(26, NULL, 1, 83, 74, 75, 'Mamun', 'Khan', 'mamun123@gmail.com', '$2y$10$59EFCYRR6idMrzMpJih.julB2RbGQoiPqIbno7FcE1wPCrYeRIBgC', 'male', '01929541023', 0, 0, NULL, '0321842034', 'SE', NULL, NULL, '2025-07-16 10:19:02', '2025-07-17 18:13:20', 0, 0, NULL, NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '01283012232', 'Unknown', 3, NULL, NULL),
+(27, NULL, 1, 81, 76, 77, 'Shimanto', 'Bissash', 'shimanto123@gmail.com', '$2y$10$GjsjZmcxOpWO4fEUyboBJ.drj3zDx1v.n6zLx02wrFZxM3LF5aX0u', 'male', '01928451023', 0, 0, NULL, '546345345', NULL, NULL, NULL, '2025-07-16 10:24:17', '2025-07-16 10:25:31', 0, 0, NULL, NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '012830122323', 'Unknown', 3, NULL, NULL),
+(28, 'http://localhost/hostel-management-system/student/assets/images/profile_28_1752775663.jpg', 1, 83, 78, 79, 'Shekh', 'Russel', 'shekhrussel140@gmail.com', '$2y$10$lX.WBdACdrXleeX1YLjpre9jUkJ9bkG/Z5TBB/ozeoZSGzB8PjBp2', 'male', '01929951023', 1, 1, NULL, '2342342', 'CSE', '3rd', '', '2025-07-16 22:33:04', '2025-07-19 17:04:30', 1, 0, '2025-07-18 00:05:00', NULL, 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '019299510254', 'A+', 3, NULL, NULL),
+(29, NULL, 3, 102, 80, 81, 'Lazina', 'Khatun', 'lazinacse@gmail.com', '$2y$10$Ooxlgkl0xPBnGXYfq2Mx0eOw7xdh4LaBgqclWF1W1eJcCgZ3LWihm', 'female', '01929951054', 1, 1, NULL, '0272210005101075', NULL, NULL, NULL, '2025-07-17 19:06:51', '2025-07-17 19:06:51', 1, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 'borkot uddin', 'Jahara Bagum', '00821903124', '91723123143', '019299510254', 'Unknown', 4, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `student_payments`
+--
+
+CREATE TABLE `student_payments` (
+  `id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `hostel_id` int(11) NOT NULL,
+  `room_id` int(11) NOT NULL,
+  `room_type_id` int(11) NOT NULL,
+  `room_fee_id` int(11) NOT NULL,
+  `year` int(4) NOT NULL,
+  `month` int(2) NOT NULL,
+  `amount_due` decimal(10,2) NOT NULL,
+  `amount_paid` decimal(10,2) DEFAULT 0.00,
+  `payment_status` enum('paid','unpaid','partial','late') NOT NULL DEFAULT 'unpaid',
+  `due_date` date NOT NULL,
+  `late_fee` decimal(10,2) DEFAULT 0.00,
+  `late_fee_applied_date` date DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `updated_by` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `student_payments`
+--
+
+INSERT INTO `student_payments` (`id`, `student_id`, `hostel_id`, `room_id`, `room_type_id`, `room_fee_id`, `year`, `month`, `amount_due`, `amount_paid`, `payment_status`, `due_date`, `late_fee`, `late_fee_applied_date`, `created_at`, `updated_at`, `updated_by`, `created_by`) VALUES
+(53, 17, 1, 83, 4, 16, 2025, 7, '15000.00', '0.00', 'unpaid', '2025-07-24', '50.00', '2025-07-24', '2025-07-22 07:32:19', '2025-07-22 07:32:19', NULL, 7),
+(54, 22, 1, 77, 2, 4, 2025, 7, '16000.00', '0.00', 'unpaid', '2025-07-24', '50.00', '2025-07-24', '2025-07-22 07:32:19', '2025-07-22 07:32:19', NULL, 7),
+(55, 28, 1, 83, 4, 16, 2025, 7, '15000.00', '15000.00', 'paid', '2025-07-24', '50.00', '2025-07-24', '2025-07-22 07:32:19', '2025-07-22 08:47:33', NULL, 7),
+(59, 28, 1, 83, 4, 16, 2025, 8, '15000.00', '15060.00', 'paid', '2025-08-05', '60.00', '2025-08-05', '2025-07-22 07:56:11', '2025-07-22 08:41:46', NULL, 7),
+(60, 17, 1, 83, 4, 16, 2025, 8, '15000.00', '15000.00', 'paid', '2025-08-05', '60.00', '2025-08-05', '2025-07-22 07:56:11', '2025-07-22 08:47:06', NULL, 7),
+(61, 22, 1, 77, 2, 4, 2025, 8, '16000.00', '16060.00', 'paid', '2025-08-05', '60.00', '2025-08-05', '2025-07-22 07:56:11', '2025-07-22 08:41:37', NULL, 7);
 
 --
 -- Indexes for dumped tables
@@ -407,6 +520,30 @@ ALTER TABLE `hostels`
   ADD KEY `address_id` (`address_id`);
 
 --
+-- Indexes for table `payment_methods`
+--
+ALTER TABLE `payment_methods`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `payment_receipts`
+--
+ALTER TABLE `payment_receipts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `transaction_id` (`transaction_id`),
+  ADD KEY `generated_by` (`generated_by`);
+
+--
+-- Indexes for table `payment_transactions`
+--
+ALTER TABLE `payment_transactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `payment_id` (`payment_id`),
+  ADD KEY `verified_by` (`verified_by`),
+  ADD KEY `payment_method_id` (`payment_method_id`);
+
+--
 -- Indexes for table `rooms`
 --
 ALTER TABLE `rooms`
@@ -446,6 +583,18 @@ ALTER TABLE `students`
   ADD KEY `fk_students_temporary_address` (`temporary_address_id`);
 
 --
+-- Indexes for table `student_payments`
+--
+ALTER TABLE `student_payments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `hostel_id` (`hostel_id`),
+  ADD KEY `room_id` (`room_id`),
+  ADD KEY `room_type_id` (`room_type_id`),
+  ADD KEY `room_fee_id` (`room_fee_id`),
+  ADD KEY `created_by` (`created_by`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -453,7 +602,7 @@ ALTER TABLE `students`
 -- AUTO_INCREMENT for table `addresses`
 --
 ALTER TABLE `addresses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
 -- AUTO_INCREMENT for table `admins`
@@ -486,6 +635,24 @@ ALTER TABLE `hostels`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `payment_methods`
+--
+ALTER TABLE `payment_methods`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `payment_receipts`
+--
+ALTER TABLE `payment_receipts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `payment_transactions`
+--
+ALTER TABLE `payment_transactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `rooms`
 --
 ALTER TABLE `rooms`
@@ -507,7 +674,13 @@ ALTER TABLE `room_types`
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+
+--
+-- AUTO_INCREMENT for table `student_payments`
+--
+ALTER TABLE `student_payments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- Constraints for dumped tables
@@ -539,6 +712,21 @@ ALTER TABLE `hostels`
   ADD CONSTRAINT `hostels_ibfk_2` FOREIGN KEY (`address_id`) REFERENCES `addresses` (`id`) ON DELETE SET NULL;
 
 --
+-- Constraints for table `payment_receipts`
+--
+ALTER TABLE `payment_receipts`
+  ADD CONSTRAINT `payment_receipts_ibfk_1` FOREIGN KEY (`transaction_id`) REFERENCES `payment_transactions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `payment_receipts_ibfk_2` FOREIGN KEY (`generated_by`) REFERENCES `admins` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `payment_transactions`
+--
+ALTER TABLE `payment_transactions`
+  ADD CONSTRAINT `payment_transactions_ibfk_1` FOREIGN KEY (`payment_id`) REFERENCES `student_payments` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `payment_transactions_ibfk_2` FOREIGN KEY (`verified_by`) REFERENCES `admins` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `payment_transactions_ibfk_3` FOREIGN KEY (`payment_method_id`) REFERENCES `payment_methods` (`id`);
+
+--
 -- Constraints for table `rooms`
 --
 ALTER TABLE `rooms`
@@ -568,6 +756,17 @@ ALTER TABLE `students`
   ADD CONSTRAINT `fk_students_temporary_address` FOREIGN KEY (`temporary_address_id`) REFERENCES `addresses` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `students_ibfk_1` FOREIGN KEY (`hostel_id`) REFERENCES `hostels` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `students_ibfk_2` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `student_payments`
+--
+ALTER TABLE `student_payments`
+  ADD CONSTRAINT `student_payments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `students` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `student_payments_ibfk_2` FOREIGN KEY (`hostel_id`) REFERENCES `hostels` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `student_payments_ibfk_3` FOREIGN KEY (`room_id`) REFERENCES `rooms` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `student_payments_ibfk_4` FOREIGN KEY (`room_type_id`) REFERENCES `room_types` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `student_payments_ibfk_5` FOREIGN KEY (`room_fee_id`) REFERENCES `room_fees` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `student_payments_ibfk_6` FOREIGN KEY (`created_by`) REFERENCES `admins` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

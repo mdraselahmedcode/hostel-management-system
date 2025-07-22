@@ -35,7 +35,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <div class="content container my-5">
-    <a href="<?= BASE_URL . '/admin/sections/students/index.php' ?>" class="btn btn-secondary mb-3 mt-4 ">Back</a>
+    <a href="javascript:history.back()" class="btn btn-secondary mb-3 mt-4 ">Back</a>
     <h2>Add New Student</h2>
 
 
@@ -123,7 +123,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     <option value="">-- Select Room --</option>
                 </select>
 
-                <label><input type="checkbox" name="is_checked_in" value="1">Checked In</label>
+                <label><input type="checkbox" name="is_checked_in" value="1" class="mb-2"><span style="margin-left: 5px;">Checked In</span></label>
                 <input type="datetime-local" name="check_in_at" class="form-control mb-2">
                 <input type="datetime-local" name="check_out_at" class="form-control mb-2">
             </div>

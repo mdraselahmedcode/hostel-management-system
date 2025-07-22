@@ -1,0 +1,67 @@
+    .payment-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+        border-left: 4px solid var(--highlight-blue);
+    }
+
+    .payment-card .card-header {
+        background-color: white;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        font-weight: 600;
+    }
+
+    .payment-status {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .status-paid {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .status-unpaid {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .status-partial {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .status-late {
+        background-color: #f5e6ff;
+        color: #5e1dad;
+    }
+
+    .payment-actions .btn {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+        margin-right: 5px;
+    }
+
+    .filter-card {
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table th {
+        white-space: nowrap;
+    }
+
+    .badge {
+        font-size: 0.8rem;
+        font-weight: 500;
+        padding: 5px 10px;
+    }

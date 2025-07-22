@@ -2,6 +2,10 @@
 require_once __DIR__ . '/../../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/admin/includes/response_helper.php';
+// include BASE_PATH . '/student/php_files/send_email.php';    
+include BASE_PATH . '/admin/php_files/sections/students/send_approved_mail.php';
+include BASE_PATH . '/admin/php_files/sections/students/send_checkedin_mail.php';
+
 // only admin will get access
 require_once BASE_PATH . '/config/auth.php';
 
@@ -181,6 +185,21 @@ if ($temporary_address_id) {
     $tempAddrStmt->close();
 }
 
+
+// Get current approval and check-in status from DB
+$getStatus = $conn->prepare("SELECT is_approved, is_checked_in FROM students WHERE id = ?");
+$getStatus->bind_param("i", $student_id);
+$getStatus->execute();
+$getStatus->bind_result($current_is_approved, $current_is_checked_in);
+$getStatus->fetch();
+$getStatus->close();
+
+// Determine if email should be sent based on changes
+$shouldSendApprovalEmail = ($current_is_approved == 0 && $is_approved == 1);
+$shouldSendCheckinEmail = ($current_is_checked_in == 0 && $is_checked_in == 1);
+
+
+
 // Update student
 $updateSql = "UPDATE students SET 
     first_name=?, last_name=?, email=?, varsity_id=?, gender=?, contact_number=?, emergency_contact=?, 
@@ -195,15 +214,28 @@ $stmt->bind_param(
     $is_checked_in, $check_in_at, $check_out_at, $is_verified, $is_approved, $student_id
 );
 
+
 if ($stmt->execute()) {
+    $emailMessage = '';
+
+
+    if ($shouldSendApprovalEmail) {
+        sendStudentApprovalNotification($student_id, $hostel_id, $floor_id, $room_id);
+        $emailMessage .= '<br/> Approval email sent to the student.';
+    }
+
+    if ($shouldSendCheckinEmail) {
+        sendStudentCheckInNotification($student_id, $hostel_id, $floor_id, $room_id);
+        $emailMessage .= '<br/> Check-in confirmation email sent to the student.';
+    }
+
+
     echo json_encode([
         'success' => true,
-        'message' => 'Student updated successfully'
-    ]);
-} else {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Failed to update student'
+        'message' => 'Student updated successfully.' . $emailMessage
     ]);
 }
+
+
+
 $stmt->close();

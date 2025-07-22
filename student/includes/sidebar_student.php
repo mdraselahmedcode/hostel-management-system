@@ -96,14 +96,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             </li>
             
             <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'payment_history.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/payment/payment_history.php">
-                    <i class="bi bi-receipt me-2"></i>Payment History
-                </a>
-            </li>
-            
-            <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'outstanding_dues.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/payment/outstanding_dues.php">
-                    <i class="bi bi-credit-card me-2"></i>Outstanding Dues
+                <a class="nav-link <?= $currentPage == 'payment_view.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/payment/payment_view.php">
+                    <i class="bi bi-receipt me-2"></i>Payment View
                 </a>
             </li>
             

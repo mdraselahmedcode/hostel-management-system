@@ -100,8 +100,8 @@ $stmt->close();
                             <h6 class="mb-0">Quick Links</h6>
                         </div>
                         <div class="list-group list-group-flush">
-                            <a href="<?= BASE_URL ?>/student/sections/payment/payment_history.php" class="list-group-item list-group-item-action">
-                                <i class="bi bi-credit-card-fill me-2"></i>Payment History
+                            <a href="<?= BASE_URL ?>/student/sections/payment/payment_view.php" class="list-group-item list-group-item-action">
+                                <i class="bi bi-credit-card-fill me-2"></i>Payment
                             </a>
                             <a href="<?= BASE_URL ?>/student/sections/room/room_change.php" class="list-group-item list-group-item-action">
                                 <i class="bi bi-door-open-fill me-2"></i>Room Change Request

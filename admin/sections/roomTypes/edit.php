@@ -37,8 +37,8 @@ if (!$roomType) {
 ?>
 
 <div class="container mt-5 px-3 mt-5">
-    <a href="<?= BASE_URL ?>/admin/sections/roomTypes/index.php" class="btn btn-outline-secondary mb-4 mt-4">
-        ← Back to Room Types
+    <a href="javascript:history.back()" class="btn btn-outline-secondary mb-4 mt-4">
+        ← Back
     </a>
 
     <div class="card shadow rounded-4 border-0">

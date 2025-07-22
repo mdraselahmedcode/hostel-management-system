@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/config/auth.php';
 
-require_admin(); 
+require_admin();
 
 $currentSection = '';
 $uri = $_SERVER['REQUEST_URI'];
@@ -14,8 +14,10 @@ $sections = [
     'roomTypes' => strpos($uri, '/roomTypes/') !== false,
     'roomFees' => strpos($uri, '/roomFees/') !== false,
     'admins' => strpos($uri, '/admins/') !== false,
-    'students' => strpos($uri, '/students/') !== false
+    'students' => strpos($uri, '/students/') !== false,
+    'payments' => strpos($uri, '/payments/') !== false
 ];
+
 $currentSection = array_search(true, $sections) ?: '';
 ?>
 
@@ -30,18 +32,22 @@ $currentSection = array_search(true, $sections) ?: '';
         /* min-height: 100vh; */
         min-height: calc(100vh - 95px);
     }
+
     .sidebar-sticky {
         position: sticky;
         top: 0;
     }
+
     .sidebar-header {
         padding: 1.5rem 1rem;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
+
     .sidebar-header h5 {
         font-weight: 600;
         letter-spacing: 0.5px;
     }
+
     .nav-link {
         color: #b8c7ce;
         padding: 0.75rem 1.5rem;
@@ -49,33 +55,39 @@ $currentSection = array_search(true, $sections) ?: '';
         border-left: 3px solid transparent;
         transition: all 0.3s ease;
     }
+
     .nav-link:hover {
         color: white;
-        background: rgba(255,255,255,0.05);
-        border-left-color: rgba(255,255,255,0.3);
+        background: rgba(255, 255, 255, 0.05);
+        border-left-color: rgba(255, 255, 255, 0.3);
     }
+
     .nav-link.active {
         color: white;
-        background: rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.1);
         border-left-color: #3c8dbc;
         font-weight: 500;
     }
+
     .nav-link i {
         width: 20px;
         margin-right: 10px;
         text-align: center;
     }
+
     .logout-link {
-        border-top: 1px solid rgba(255,255,255,0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
         margin-top: 1rem;
         padding-top: 1rem;
     }
+
     .logout-link .nav-link {
         color: #ff6b6b;
     }
+
     .logout-link .nav-link:hover {
         color: #ff5252;
-        background: rgba(255,82,82,0.1);
+        background: rgba(255, 82, 82, 0.1);
     }
 </style>
 
@@ -86,63 +98,71 @@ $currentSection = array_search(true, $sections) ?: '';
                 <i class="bi bi-shield-lock me-2"></i>Admin Panel
             </h5>
         </div>
-        
+
         <ul class="nav flex-column px-2">
             <li class="nav-item">
-                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : '' ?>" 
-                   href="<?= BASE_URL ?>/admin/dashboard.php">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) == 'dashboard.php' ? 'active' : '' ?>"
+                    href="<?= BASE_URL ?>/admin/dashboard.php">
                     <i class="bi bi-speedometer2"></i>Dashboard
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentSection === 'hostels' ? 'active' : '' ?>" 
-                   href="<?= BASE_URL ?>/admin/sections/hostels/index.php">
+                <a class="nav-link <?= $currentSection === 'hostels' ? 'active' : '' ?>"
+                    href="<?= BASE_URL ?>/admin/sections/hostels/index.php">
                     <i class="bi bi-building"></i>Hostels
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentSection === 'floors' ? 'active' : '' ?>" 
-                   href="<?= BASE_URL ?>/admin/sections/floors/index.php">
+                <a class="nav-link <?= $currentSection === 'floors' ? 'active' : '' ?>"
+                    href="<?= BASE_URL ?>/admin/sections/floors/index.php">
                     <i class="bi bi-layer-forward"></i>Floors
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentSection === 'rooms' ? 'active' : '' ?>" 
-                   href="<?= BASE_URL ?>/admin/sections/rooms/index.php">
+                <a class="nav-link <?= $currentSection === 'rooms' ? 'active' : '' ?>"
+                    href="<?= BASE_URL ?>/admin/sections/rooms/index.php">
                     <i class="bi bi-door-open"></i>Rooms
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentSection === 'roomTypes' ? 'active' : '' ?>" 
-                   href="<?= BASE_URL ?>/admin/sections/roomTypes/index.php">
+                <a class="nav-link <?= $currentSection === 'roomTypes' ? 'active' : '' ?>"
+                    href="<?= BASE_URL ?>/admin/sections/roomTypes/index.php">
                     <i class="bi bi-grid"></i>Room Types
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentSection === 'roomFees' ? 'active' : '' ?>" 
-                   href="<?= BASE_URL ?>/admin/sections/roomFees/index.php">
+                <a class="nav-link <?= $currentSection === 'roomFees' ? 'active' : '' ?>"
+                    href="<?= BASE_URL ?>/admin/sections/roomFees/index.php">
                     <i class="bi bi-cash-stack"></i>Fees
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentSection === 'admins' ? 'active' : '' ?>" 
-                   href="<?= BASE_URL ?>/admin/sections/admins/index.php">
+                <a class="nav-link <?= $currentSection === 'admins' ? 'active' : '' ?>"
+                    href="<?= BASE_URL ?>/admin/sections/admins/index.php">
                     <i class="bi bi-people"></i>Admins
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentSection === 'students' ? 'active' : '' ?>" 
-                   href="<?= BASE_URL ?>/admin/sections/students/index.php">
+                <a class="nav-link <?= $currentSection === 'students' ? 'active' : '' ?>"
+                    href="<?= BASE_URL ?>/admin/sections/students/index.php">
                     <i class="bi bi-person-vcard"></i>Students
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link <?= $currentSection === 'payments' ? 'active' : '' ?>"
+                    href="<?= BASE_URL ?>/admin/sections/payments/index.php">
+                    <i class="bi bi-credit-card-2-front"></i>Payments
+                </a>
+            </li>
+
             <li class="nav-item logout-link">
                 <a class="nav-link" href="<?= BASE_URL ?>/admin/php_files/logout_admin_handler.php">
                     <i class="bi bi-box-arrow-right"></i>Logout

@@ -86,7 +86,7 @@
 
 
     <div class="content container mt-5">
-        <a href="<?= BASE_URL . '/admin/sections/roomFees/index.php' ?>" class="btn btn-secondary mb-3 mt-4">← Back</a>
+        <a href="javascript:history.back()" class="btn btn-secondary mb-3 mt-4">← Back</a>
         <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
                 <h4>Edit Room Fee</h4>

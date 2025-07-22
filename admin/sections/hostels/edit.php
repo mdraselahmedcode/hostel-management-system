@@ -167,8 +167,8 @@ if (empty($_SESSION['csrf_token'])) {
 <div class="container py-4 mt-4">
     <div class="row">
         <div class="col-lg-10 mx-auto">
-            <a href="<?= BASE_URL . '/admin/sections/hostels/index.php' ?>" class="btn btn-outline-secondary back-btn mb-4 mt-4">
-                <i class="bi bi-arrow-left me-2"></i>Back to Hostels
+            <a href="javascript:history.back()" class="btn btn-outline-secondary back-btn mb-4 mt-4">
+                <i class="bi bi-arrow-left me-2"></i>Back
             </a>
 
             <div class="edit-hostel-form  mb-5">
