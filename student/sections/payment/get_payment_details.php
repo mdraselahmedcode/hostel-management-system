@@ -40,16 +40,19 @@ if (!$payment) {
     exit;
 }
 
-// Get payment transactions
+// Get payment transactions with method name
 $stmt = $conn->prepare("
     SELECT t.*, 
            a.firstname AS verified_by_firstname,
-           a.lastname AS verified_by_lastname
+           a.lastname AS verified_by_lastname,
+           pm.display_name AS payment_method
     FROM payment_transactions t
     LEFT JOIN admins a ON t.verified_by = a.id
+    LEFT JOIN payment_methods pm ON t.payment_method_id = pm.id
     WHERE t.payment_id = ?
     ORDER BY t.payment_date DESC
 ");
+
 $stmt->bind_param("i", $payment_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -127,7 +130,7 @@ $month_name = DateTime::createFromFormat('!m', $payment['month'])->format('F');
                         <tr>
                             <td><?= date('M j, Y H:i', strtotime($txn['payment_date'])) ?></td>
                             <td><?= formatCurrency($txn['amount']) ?></td>
-                            <td><?= ucwords(str_replace('_', ' ', $txn['payment_method'])) ?></td>
+                            <td><?= ucwords(str_replace('_', ' ', $txn['payment_method'] ?? 'N/A')) ?></td>
                             <td><?= $txn['transaction_id'] ?: 'N/A' ?></td>
                             <td>
                                 <?php if ($txn['verified_by_firstname']): ?>

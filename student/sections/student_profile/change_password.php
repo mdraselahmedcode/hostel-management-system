@@ -23,7 +23,7 @@ require_student();
                     <i class="bi bi-arrow-left"></i> Back
                 </a>
             </div>
-            <div class="d-flex mt-5 justify-content-center" style="min-height: calc(100vh - 119px);">
+            <div class="d-flex mt-5 justify-content-center" style="min-height: calc(100vh - 250px);">
                 <div class="w-100 px-3" style="max-width: 500px;">
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">

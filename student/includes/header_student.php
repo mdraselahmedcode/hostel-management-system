@@ -1,7 +1,8 @@
 <!-- ../includes/header.php -->
 <?php
 // include('./php_files/auth_check_admin.php');
-require_once __DIR__ . '/../../config/config.php';  // Adjust path as needed
+require_once __DIR__ . '/../../config/config.php';  
+$currentPage = basename($_SERVER['SCRIPT_NAME']);
 
 ?>
 <!DOCTYPE html>
@@ -18,48 +19,47 @@ require_once __DIR__ . '/../../config/config.php';  // Adjust path as needed
 
 <body>
 
-    <!-- ../includes/header.php -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-header">
-    <div class="container">
-        <a class="navbar-brand" style="cursor: pointer">Hostel Management</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="mainNavbar">
-            <ul class="navbar-nav ms-auto">
-                <!-- <li class="nav-item">
-                    <a class="nav-link" href="<?= BASE_URL . '/index.php' ?>">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/admin/login_admin.php">Admin Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/student/login_student.php">Student Login</a>
-                </li> -->
-            </ul>
+        <div class="container">
+            <a class="navbar-brand" style="cursor: pointer">Hostel Management</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link <?= $currentPage === 'dashboard.php' ? 'active' : '' ?>" href="<?= BASE_URL . '/student/dashboard.php' ?>">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $currentPage === 'student_profile.php' ? 'active' : '' ?>" href="<?= BASE_URL . '/student/sections/student_profile/student_profile.php' ?>">My Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $currentPage === 'room_details.php' ? 'active' : '' ?>" href="<?= BASE_URL . '/student/sections/room/room_details.php' ?>">Room Detail</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $currentPage === 'payment_view.php' ? 'active' : '' ?>" href="<?= BASE_URL . '/student/sections/payment/payment_view.php' ?>">Payment</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
 
 
 
-    
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelector('.navbar-brand')?.addEventListener('click', function () {
-            window.location.href = "<?= BASE_URL ?>/student/dashboard.php";
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('.navbar-brand')?.addEventListener('click', function() {
+                window.location.href = "<?= BASE_URL ?>/student/dashboard.php";
+            });
         });
-    });
-</script>
+    </script>
 
 
-    
+
 
     <!-- Local jQuery -->
     <script src="<?= BASE_URL ?>/vendor/jquery/jquery.min.js"></script>
     <!-- Local Bootstrap Bundle JS -->
     <script src="<?= BASE_URL ?>/vendor/bootstrap/js/bootstrap.bundle.js"></script>
-
-
-    

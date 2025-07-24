@@ -52,15 +52,15 @@ $stmt->close();
 
 // Get payment history with transaction sums
 $stmt = $conn->prepare("
-    SELECT sp.*, 
+    SELECT 
+        sp.*, 
         DATE_FORMAT(sp.due_date, '%M %Y') AS billing_period,
-        (SELECT IFNULL(SUM(pt.amount), 0) 
-         FROM payment_transactions pt 
-         WHERE pt.payment_id = sp.id AND pt.verification_status = 'verified') AS amount_paid
+        sp.amount_paid
     FROM student_payments sp
     WHERE sp.student_id = ? AND sp.year = ?
     ORDER BY sp.year DESC, sp.month DESC
 ");
+
 $stmt->bind_param("ii", $student_id, $selected_year);
 $stmt->execute();
 $payment_result = $stmt->get_result();
@@ -99,9 +99,6 @@ include BASE_PATH . '/student/includes/header_student.php';
         <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <!-- Back Button -->
             <div class="mb-4 mt-3">
-                <button class="btn btn-outline-secondary d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-                    <i class="bi bi-list"></i> Menu
-                </button>
                 <a href="javascript:history.back()" class="btn btn-outline-secondary">
                     <i class="bi bi-arrow-left"></i> Back
                 </a>
@@ -295,39 +292,60 @@ include BASE_PATH . '/student/includes/header_student.php';
                 <h5 class="modal-title">Make Payment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="paymentForm" method="post">
+            <form id="paymentForm" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="payment_id" id="payment_id">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="payment_amount" class="form-label">Amount to Pay</label>
+                        <label for="amount" class="form-label">Amount to Pay</label>
                         <div class="input-group">
                             <span class="input-group-text"><?= CURRENCY_SYMBOL ?></span>
-                            <input type="number" class="form-control" id="payment_amount" name="payment_amount"
-                                min="0" step="0.01" required>
+                            <input type="number" class="form-control" id="amount" name="amount" min="0" step="0.01" required>
                         </div>
                         <small class="text-muted">Outstanding balance: <span id="outstanding_balance"></span></small>
                     </div>
+
                     <div class="mb-3">
                         <label for="payment_method" class="form-label">Payment Method</label>
-                        <select class="form-select" id="payment_method" name="payment_method" required>
-                            <option value="">Select method</option>
+                        <select class="form-select" id="payment_method" name="payment_method_id" required onchange="updateAccountHint(this)">
+                            <option value="" data-account="">Select method</option>
                             <?php
-                            // Fetch active payment methods from database
-                            $methods = $conn->query("SELECT id, display_name FROM payment_methods WHERE active = 1");
-                            while ($method = $methods->fetch_assoc()): ?>
-                                <option value="<?= $method['id'] ?>"><?= htmlspecialchars($method['display_name']) ?></option>
+                            $methods = $conn->query("SELECT id, display_name, account_number FROM payment_methods WHERE active = 1 AND name != 'cash'");
+                            while ($method = $methods->fetch_assoc()):
+                            ?>
+                                <option value="<?= $method['id'] ?>" data-account="<?= htmlspecialchars($method['account_number']) ?>">
+                                    <?= htmlspecialchars($method['display_name']) ?>
+                                </option>
                             <?php endwhile; ?>
                         </select>
+                        <small id="accountHint" class="text-muted d-block mt-1"></small>
                     </div>
+
                     <div class="mb-3">
-                        <label for="transaction_id" class="form-label">Transaction ID (if any)</label>
+                        <label for="reference_code" class="form-label">Reference Code</label>
+                        <input type="text" class="form-control" id="reference_code" name="reference_code" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="transaction_id" class="form-label">Transaction ID (if available)</label>
                         <input type="text" class="form-control" id="transaction_id" name="transaction_id">
                     </div>
+
+                    <div class="mb-3">
+                        <label for="sender_name" class="form-label">Sender Name</label>
+                        <input type="text" class="form-control" id="sender_name" name="sender_name" required >
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="sender_mobile" class="form-label">Sender Mobile Number</label>
+                        <input type="text" class="form-control" id="sender_mobile" name="sender_mobile" required pattern="\d{10,15}">
+                    </div>
+
                     <div class="mb-3">
                         <label for="payment_notes" class="form-label">Notes</label>
                         <textarea class="form-control" id="payment_notes" name="payment_notes" rows="2"></textarea>
                     </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Submit Payment</button>
@@ -336,6 +354,16 @@ include BASE_PATH . '/student/includes/header_student.php';
         </div>
     </div>
 </div>
+
+<script>
+function updateAccountHint(selectEl) {
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    const accountInfo = selectedOption.getAttribute('data-account');
+    const hint = document.getElementById('accountHint');
+    hint.textContent = accountInfo ? `Send to: ${accountInfo}` : '';
+}
+</script>
+
 
 <script>
     $(document).ready(function() {
@@ -364,8 +392,8 @@ include BASE_PATH . '/student/includes/header_student.php';
             const balance = $(this).data('balance');
 
             $('#payment_id').val(paymentId);
-            $('#payment_amount').val(balance.toFixed(2));
-            $('#payment_amount').attr('max', balance);
+            $('#amount').val(balance.toFixed(2));
+            $('#amount').attr('max', balance);
             $('#outstanding_balance').text('<?= CURRENCY_SYMBOL ?>' + balance.toFixed(2));
 
             // Reset form
@@ -379,7 +407,7 @@ include BASE_PATH . '/student/includes/header_student.php';
 
             const formData = {
                 payment_id: $('#payment_id').val(),
-                payment_amount: $('#payment_amount').val(),
+                amount: $('#amount').val(),
                 payment_method_id: $('#payment_method').val(),
                 transaction_id: $('#transaction_id').val(),
                 payment_notes: $('#payment_notes').val(),
@@ -387,7 +415,7 @@ include BASE_PATH . '/student/includes/header_student.php';
                 sender_name: $('#sender_name').val()
             };
 
-            const amount = parseFloat(formData.payment_amount);
+            const amount = parseFloat(formData.amount);
             const balance = parseFloat($('#outstanding_balance').text().replace(/[^0-9.-]+/g, ""));
 
             if (amount > balance) {

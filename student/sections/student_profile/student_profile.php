@@ -32,6 +32,7 @@ $stmt->close();
 ?>
 
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL . '/student/assets/css/student_profile.css' ?>">
 </head>
 
@@ -43,7 +44,7 @@ $stmt->close();
         <?php require_once BASE_PATH . '/student/includes/sidebar_student.php'; ?>
 
         <!-- main content -->
-        <main class="col-md-10 ms-sm-auto px-md-4" style="overflow-y: auto; max-height: calc(100vh - 20vh);">
+        <main class="col-md-10 ms-sm-auto px-md-4" style="overflow-y: auto; max-height: calc(100vh - 115.81px);">
 
             <div class="mb-3 mt-3">
                 <a href="javascript:history.back()" class="btn btn-outline-secondary">
@@ -116,7 +117,7 @@ $stmt->close();
                     </div>
                 </div>
 
-                <div class="col-lg-8">
+                <div class="col-lg-8" style="max-height: 690px; overflow-y: auto">
                     <!-- Main Profile Details -->
                     <div class="card mb-4">
                         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
@@ -213,6 +214,20 @@ $stmt->close();
 
                     <!-- Status Cards -->
                     <div class="row">
+                        <?php
+                        $stmt = $conn->prepare("
+                                SELECT pt.payment_date 
+                                FROM payment_transactions pt
+                                JOIN student_payments sp ON pt.payment_id = sp.id
+                                WHERE sp.student_id = ? AND pt.verification_status = 'verified'
+                                ORDER BY pt.payment_date DESC
+                                LIMIT 1
+                            ");
+                        $stmt->bind_param("i", $student['id']);  // replace $studentId with the logged-in student's ID
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+                        $lastPayment = $result->fetch_assoc();
+                        ?>
                         <div class="col-md-4 mb-3">
                             <div class="card status-card bg-success bg-opacity-10">
                                 <div class="card-body text-center">
@@ -221,7 +236,10 @@ $stmt->close();
                                         <i class="bi bi-check-circle-fill text-success"></i>
                                     </div>
                                     <p class="mb-0">Up to date</p>
-                                    <small class="text-light">Last paid: 15 Oct 2023</small>
+                                    <small class="text-light">
+                                        Last paid:
+                                        <?= $lastPayment ? date('d M Y', strtotime($lastPayment['payment_date'])) : 'No payments yet' ?>
+                                    </small>
                                 </div>
                             </div>
                         </div>

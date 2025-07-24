@@ -524,13 +524,22 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                     </td>
                                     <td>
                                         <div class="d-flex flex-wrap gap-1">
-                                            <button class="btn btn-sm btn-warning edit-payment" title="Edit Payment" data-id="<?= $p['id'] ?>">
-                                                <i class="bi bi-pencil"></i>
-                                            </button>
+                                            <!-- View Payment (Eye Icon) -->
+                                            <a href="<?= BASE_URL ?>/admin/sections/payments/view.php?id=<?= $p['id'] ?>"
+                                                class="btn btn-sm btn-info" title="View Payment Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+
+                                            <!-- View Receipt -->
                                             <a href="<?= BASE_URL ?>/admin/sections/payments/receipt.php?id=<?= $p['id'] ?>"
                                                 class="btn btn-sm btn-outline-primary" title="View Receipt">
                                                 <i class="bi bi-receipt"></i>
                                             </a>
+
+                                            <!-- Edit Payment -->
+                                            <button class="btn btn-sm btn-warning edit-payment" title="Edit Payment" data-id="<?= $p['id'] ?>">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

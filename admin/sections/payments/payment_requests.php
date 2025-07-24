@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/config/auth.php';
+include BASE_PATH . '/includes/slide_message.php';
+
 require_admin();
 
 // Handle verification actions
@@ -18,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['verify'])) {
     ");
 
     $verified_status = $action === 'verify' ? 'verified' : 'rejected';
-    $stmt->bind_param("sii", $verified_status, $_SESSION['admin_id'], $txn_id);
+    $stmt->bind_param("sii", $verified_status, $_SESSION['admin']['id'], $txn_id);
     $stmt->execute();
 
     if ($action == 'verify') {
@@ -97,66 +99,65 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                 </thead>
                                 <tbody>
                                     <?php foreach ($requests as $index => $request): ?>
-                                    <tr>
-                                        <td><?= $index + 1 ?></td>
-                                        <td><?= htmlspecialchars($request['first_name'] . ' ' . $request['last_name']) ?></td>
-                                        <td><?= htmlspecialchars($request['varsity_id']) ?></td>
-                                        <td><?= htmlspecialchars($request['payment_method']) ?></td>
-                                        <td>৳<?= number_format($request['amount'], 2) ?></td>
-                                        <td><?= htmlspecialchars($request['reference_code'] ?? 'N/A') ?></td>
-                                        <td><?= date('d M Y', strtotime($request['payment_date'])) ?></td>
-                                        <td><span class="badge bg-warning text-dark">Pending</span></td>
-                                        <td>
-                                            <div class="d-flex gap-2">
-                                                <form method="POST" class="d-inline">
-                                                    <input type="hidden" name="txn_id" value="<?= $request['id'] ?>">
-                                                    <input type="hidden" name="action" value="verify">
-                                                    <button type="submit" name="verify" class="btn btn-sm btn-success">
+                                        <tr>
+                                            <td><?= $index + 1 ?></td>
+                                            <td><?= htmlspecialchars($request['first_name'] . ' ' . $request['last_name']) ?></td>
+                                            <td><?= htmlspecialchars($request['varsity_id']) ?></td>
+                                            <td><?= htmlspecialchars($request['payment_method']) ?></td>
+                                            <td>৳<?= number_format($request['amount'], 2) ?></td>
+                                            <td><?= htmlspecialchars($request['reference_code'] ?? 'N/A') ?></td>
+                                            <td><?= date('d M Y', strtotime($request['payment_date'])) ?></td>
+                                            <td><span class="badge bg-warning text-dark">Pending</span></td>
+                                            <td>
+                                                <div class="d-flex gap-2">
+                                                    <button
+                                                        class="btn btn-sm btn-success verify-btn"
+                                                        data-id="<?= $request['id'] ?>"
+                                                        data-action="verify">
                                                         <i class="bi bi-check-circle"></i> Verify
                                                     </button>
-                                                </form>
-                                                <form method="POST" class="d-inline">
-                                                    <input type="hidden" name="txn_id" value="<?= $request['id'] ?>">
-                                                    <input type="hidden" name="action" value="reject">
-                                                    <button type="submit" name="verify" class="btn btn-sm btn-danger">
+
+                                                    <button
+                                                        class="btn btn-sm btn-danger verify-btn"
+                                                        data-id="<?= $request['id'] ?>"
+                                                        data-action="reject">
                                                         <i class="bi bi-x-circle"></i> Reject
                                                     </button>
-                                                </form>
-                                                <?php if (!empty($request['screenshot_path'])): ?>
-                                                <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#screenshotModal<?= $index ?>">
-                                                    <i class="bi bi-image"></i> View
-                                                </button>
-                                                <?php endif; ?>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <?php if (!empty($request['screenshot_path'])): ?>
-                                    <!-- Screenshot Modal -->
-                                    <div class="modal fade" id="screenshotModal<?= $index ?>" tabindex="-1">
-                                        <div class="modal-dialog modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Payment Evidence</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body text-center">
-                                                    <img src="<?= BASE_URL ?>/uploads/<?= $request['screenshot_path'] ?>" 
-                                                         class="img-fluid" alt="Payment screenshot">
-                                                    <?php if (!empty($request['notes'])): ?>
-                                                    <div class="mt-3 text-start">
-                                                        <h6>Notes:</h6>
-                                                        <p><?= nl2br(htmlspecialchars($request['notes'])) ?></p>
-                                                    </div>
+                                                    <?php if (!empty($request['screenshot_path'])): ?>
+                                                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#screenshotModal<?= $index ?>">
+                                                            <i class="bi bi-image"></i> View
+                                                        </button>
                                                     <?php endif; ?>
                                                 </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </td>
+                                        </tr>
+
+                                        <?php if (!empty($request['screenshot_path'])): ?>
+                                            <!-- Screenshot Modal -->
+                                            <div class="modal fade" id="screenshotModal<?= $index ?>" tabindex="-1">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title">Payment Evidence</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body text-center">
+                                                            <img src="<?= BASE_URL ?>/uploads/<?= $request['screenshot_path'] ?>"
+                                                                class="img-fluid" alt="Payment screenshot">
+                                                            <?php if (!empty($request['notes'])): ?>
+                                                                <div class="mt-3 text-start">
+                                                                    <h6>Notes:</h6>
+                                                                    <p><?= nl2br(htmlspecialchars($request['notes'])) ?></p>
+                                                                </div>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <?php endif; ?>
+                                        <?php endif; ?>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
@@ -167,5 +168,37 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         </main>
     </div>
 </div>
+
+
+<script>
+    $(document).ready(function() {
+        $('.verify-btn').on('click', function() {
+            const txnId = $(this).data('id');
+            const action = $(this).data('action');
+            const $row = $(this).closest('tr');
+
+            $.ajax({
+                url: '<?= BASE_URL . '/admin/php_files/sections/payments/verify_transaction.php' ?>',
+                type: 'POST',
+                data: {
+                    txn_id: txnId,
+                    action
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showSlideMessage(response.message, 'success');
+                        $row.fadeOut(); // Optionally remove row
+                    } else {
+                        showSlideMessage(response.message, 'error');
+                    }
+                },
+                error: function() {
+                    showSlideMessage('Server error. Please try again.', 'error');
+                }
+            });
+        });
+    });
+</script>
+
 
 <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>
