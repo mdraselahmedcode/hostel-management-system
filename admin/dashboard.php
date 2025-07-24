@@ -9,80 +9,10 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="<?= BASE_URL . '/admin/assets/css/dashboard_admin.css' ?>">
 </head>
 
-<style>
-    .dashboard-card {
-        border: none;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-        height: 100%;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border-left: 4px solid var(--highlight-blue);
-    }
 
-    .dashboard-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-        background: white;
-    }
-
-    .dashboard-card .card-body {
-        padding: 1.5rem;
-    }
-
-    .dashboard-card .card-title {
-        color: var(--primary-dark);
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-    }
-
-    .dashboard-card .card-text {
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
-
-    .welcome-card {
-        background: white;
-        border-radius: 10px;
-        border: none;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        border-left: 4px solid var(--highlight-blue);
-    }
-
-    .welcome-card h1 {
-        color: var(--primary-dark);
-        font-weight: 700;
-        font-size: 2rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .welcome-card p {
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-    }
-
-    .welcome-card strong {
-        color: var(--primary-dark);
-    }
-
-    .logout-btn {
-        background: var(--highlight-blue);
-        border: none;
-        padding: 0.5rem 1.5rem;
-        font-weight: 500;
-    }
-
-    .logout-btn:hover {
-        background: #367fa9;
-    }
-
-    .card-icon {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        color: var(--highlight-blue);
-    }
-</style>
 
 <div class="content container-fluid mt-5">
     <div class="row full-height">
@@ -111,7 +41,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             </div>
 
             <!-- Dashboard Section Cards -->
-            <div class="row">
+            <div class="row" style="">
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL . '/admin/sections/hostels/index.php' ?>" class="text-decoration-none">
                         <div class="card dashboard-card">
@@ -207,6 +137,19 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         </div>
                     </a>
                 </div>
+
+                <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                    <a href="<?= BASE_URL . '/admin/sections/payments/payment_method/index.php' ?>" class="text-decoration-none">
+                        <div class="card dashboard-card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-gear card-icon"></i>
+                                <h5 class="card-title">Payment Methods</h5>
+                                <p class="card-text">Add, edit, or remove accepted payment methods</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
             </div>
         </main>
     </div>

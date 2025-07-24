@@ -2,6 +2,9 @@
 require_once __DIR__ . '/../../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 
+// Only allow admin access
+require_admin();
+
 $status = $_POST['status'] ?? '';
 $hostel = $_POST['hostel'] ?? '';
 $month = $_POST['month'] ?? '';

@@ -65,3 +65,13 @@
         font-weight: 500;
         padding: 5px 10px;
     }
+
+    .input-group .form-control:focus {
+        box-shadow: none;
+        background-color: #fff;
+        border: 1px solid #0d6efd;
+    }
+
+    .input-group .btn:hover {
+        background-color: #0b5ed7;
+    }

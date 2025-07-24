@@ -1,0 +1,127 @@
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        .receipt-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e6ed;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #2c5f9e;
+        }
+        .header h1 {
+            color: #2c5f9e;
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .header p {
+            color: #666;
+            margin: 5px 0 0;
+            font-size: 14px;
+        }
+        .receipt-title {
+            text-align: center;
+            font-size: 22px;
+            color: #333;
+            margin: 15px 0 25px;
+            font-weight: 500;
+        }
+        .receipt-details {
+            margin-bottom: 30px;
+        }
+        .receipt-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .receipt-details th, .receipt-details td {
+            padding: 10px 15px;
+            border: 1px solid #e0e6ed;
+        }
+        .receipt-details th {
+            background-color: #f8fafc;
+            text-align: left;
+            font-weight: 500;
+            color: #4a5568;
+            width: 30%;
+        }
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+        }
+        .payment-table th {
+            background-color: #2c5f9e;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+        .payment-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e6ed;
+        }
+        .payment-table tr:last-child td {
+            border-bottom: none;
+        }
+        .total-row {
+            background-color: #f8fafc;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .signature-section {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature {
+            text-align: center;
+        }
+        .signature-line {
+            border-top: 1px solid #333;
+            width: 200px;
+            margin: 40px auto 0;
+            padding-top: 5px;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #e0e6ed;
+            padding-top: 15px;
+        }
+        .btn-download {
+            display: block;
+            margin: 25px auto 0;
+            padding: 10px 25px;
+            background-color: #2c5f9e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-download:hover {
+            background-color: #1e4b8a;
+        }
+        .receipt-number {
+            text-align: right;
+            font-weight: 500;
+            color: #2c5f9e;
+            margin-bottom: 10px;
+        }
+        .amount {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }

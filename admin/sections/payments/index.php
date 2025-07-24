@@ -27,7 +27,7 @@ $year = isset($_GET['year']) ? filter_var($_GET['year'], FILTER_VALIDATE_INT, [
 ]) : null;
 
 // Build the query with filters
-$query = "SELECT sp.*, s.first_name, s.last_name, s.varsity_id, h.hostel_name, r.room_number 
+$query = "SELECT sp.*, s.first_name, s.last_name, s.varsity_id, s.id AS student_id, h.hostel_name, r.room_number 
           FROM student_payments sp
           JOIN students s ON sp.student_id = s.id
           JOIN hostels h ON sp.hostel_id = h.id
@@ -109,37 +109,43 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             <!-- Page Header -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Payment Management</h1>
-                <!-- Add this below your page header -->
-                <?php if (isset($_GET['status']) || isset($_GET['hostel']) || isset($_GET['month']) || isset($_GET['year']) || !empty($search)): ?>
-                    <div class="alert alert-info mb-3">
-                        <i class="bi bi-funnel"></i> Active Filters:
-                        <?php
-                        $activeFilters = [];
-                        if (!empty($_GET['status'])) $activeFilters[] = "Status: " . ucfirst($_GET['status']);
-                        if (!empty($_GET['hostel'])) {
-                            $hostelName = array_column($hostels, 'hostel_name', 'id')[$_GET['hostel']] ?? 'Unknown';
-                            $activeFilters[] = "Hostel: " . htmlspecialchars($hostelName);
-                        }
-                        if (!empty($_GET['month'])) $activeFilters[] = "Month: " . date('F', mktime(0, 0, 0, $_GET['month'], 1));
-                        if (!empty($_GET['year'])) $activeFilters[] = "Year: " . $_GET['year'];
-                        if (!empty($search)) $activeFilters[] = "Student ID: " . htmlspecialchars($search);
-                        echo implode(', ', $activeFilters);
-                        ?>
-                    </div>
-                <?php endif; ?>
-                <!-- Add this near your filter button -->
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <!-- Add this search form -->
-
-                    <div class="btn-group me-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">
-                            <i class="bi bi-funnel"></i> Filter
-                        </button>
-                        <?php if (isset($_GET['status']) || isset($_GET['hostel']) || isset($_GET['month']) || isset($_GET['year']) || !empty($search)): ?>
-                            <a href="?" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-x-circle"></i> Clear Filters
-                            </a>
-                        <?php endif; ?>
+                <div class="d-flex flex-column flex-md-row gap-2 align-items-start align-items-md-center">
+                    <a href="<?= BASE_URL . '/admin/sections/payments/payment_report_generation.php' ?>" class="btn btn-sm btn-success">
+                        <i class="bi bi-file-earmark-text me-1"></i> Generate Report
+                    </a>
+    
+                    <!-- Add this below your page header -->
+                    <?php if (isset($_GET['status']) || isset($_GET['hostel']) || isset($_GET['month']) || isset($_GET['year']) || !empty($search)): ?>
+                        <div class="alert alert-info mb-3">
+                            <i class="bi bi-funnel"></i> Active Filters:
+                            <?php
+                            $activeFilters = [];
+                            if (!empty($_GET['status'])) $activeFilters[] = "Status: " . ucfirst($_GET['status']);
+                            if (!empty($_GET['hostel'])) {
+                                $hostelName = array_column($hostels, 'hostel_name', 'id')[$_GET['hostel']] ?? 'Unknown';
+                                $activeFilters[] = "Hostel: " . htmlspecialchars($hostelName);
+                            }
+                            if (!empty($_GET['month'])) $activeFilters[] = "Month: " . date('F', mktime(0, 0, 0, $_GET['month'], 1));
+                            if (!empty($_GET['year'])) $activeFilters[] = "Year: " . $_GET['year'];
+                            if (!empty($search)) $activeFilters[] = "Student ID: " . htmlspecialchars($search);
+                            echo implode(', ', $activeFilters);
+                            ?>
+                        </div>
+                    <?php endif; ?>
+                    <!-- Add this near your filter button -->
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <!-- Add this search form -->
+    
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#filterModal">
+                                <i class="bi bi-funnel"></i> Filter
+                            </button>
+                            <?php if (isset($_GET['status']) || isset($_GET['hostel']) || isset($_GET['month']) || isset($_GET['year']) || !empty($search)): ?>
+                                <a href="?" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-x-circle"></i> Clear Filters
+                                </a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -260,10 +266,11 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 </div>
             </div>
 
-            <!-- Search by student id -->
             <!-- Search by student ID -->
-            <div class="row mb-3">
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+            <!-- Search and Payment Request Header -->
+            <div class="row mb-3 align-items-center">
+                <!-- Search by student ID -->
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6">
                     <form class="d-flex" method="GET" action="">
                         <!-- Hidden filters -->
                         <input type="hidden" name="status" value="<?= htmlspecialchars($_GET['status'] ?? '') ?>">
@@ -271,19 +278,41 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         <input type="hidden" name="month" value="<?= htmlspecialchars($_GET['month'] ?? '') ?>">
                         <input type="hidden" name="year" value="<?= htmlspecialchars($_GET['year'] ?? '') ?>">
 
-                        <!-- Input Group -->
-                        <div class="input-group input-group-sm shadow-sm rounded">
+                        <!-- Stylish Input Group -->
+                        <div class="input-group shadow-sm rounded">
                             <input
                                 type="text"
-                                class="form-control border-end-0"
+                                class="form-control border-0 bg-light px-3 py-2"
                                 name="search"
-                                placeholder="Student ID"
-                                value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
-                            <button class="btn btn-outline-secondary" type="submit">
+                                placeholder="Search by Student ID"
+                                value="<?= htmlspecialchars($_GET['search'] ?? '') ?>"
+                                style="font-size: 0.95rem;">
+                            <button class="btn btn-primary px-3" type="submit">
                                 <i class="bi bi-search"></i>
                             </button>
                         </div>
                     </form>
+                </div>
+
+                <!-- Payment Request Button with Badge -->
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-6 ms-auto text-end">
+                    <?php
+                    // Count pending payment verification requests
+                    $pending_count = $conn->query("
+                        SELECT COUNT(*) AS count 
+                        FROM payment_transactions 
+                        WHERE verification_status = 'pending'
+                    ")->fetch_assoc()['count'];
+                    ?>
+                    <a href="payment_requests.php" class="btn btn-warning position-relative">
+                        <i class="bi bi-cash-coin"></i> Payment Requests
+                        <?php if ($pending_count > 0): ?>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <?= $pending_count ?>
+                                <span class="visually-hidden">pending requests</span>
+                            </span>
+                        <?php endif; ?>
+                    </a>
                 </div>
             </div>
 
@@ -294,12 +323,17 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     <i class="bi bi-credit-card me-2"></i>Payment Records
                     <?php if (is_admin_logged_in()): ?>
                         <div class="mt-2 mt-md-0 d-flex flex-column flex-md-row gap-2 justify-content-md-end">
-                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#updateGeneratePaymentsModal">
-                                Update Payments
-                            </button>
+
                             <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#generatePaymentsModal">
                                 <i class="bi bi-plus-circle"></i> Generate Payments
                             </button>
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#updateGeneratePaymentsModal">
+                                Update Payments
+                            </button>
+                            <a class="btn btn-sm btn-info" href='<?= BASE_URL . '/admin/sections/payments/payment_method/index.php' ?>' >
+                                Manage Payment Methods
+                            </a>
+
                         </div>
                     <?php endif; ?>
 
@@ -455,11 +489,11 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                             <a href="<?= BASE_URL ?>/admin/sections/payments/view.php?id=<?= $payment['id'] ?>" class="btn btn-sm btn-primary" title="View Details">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <?php if ($payment['payment_status'] !== 'paid'): ?>
+                                            <!-- <?php if ($payment['payment_status'] !== 'paid'): ?>
                                                 <a href="verify.php?id=<?= $payment['id'] ?>" class="btn btn-sm btn-success" title="Verify Payment">
                                                     <i class="bi bi-check-circle"></i>
                                                 </a>
-                                            <?php endif; ?>
+                                            <?php endif; ?> -->
                                             <a href="receipt.php?id=<?= $payment['id'] ?>" class="btn btn-sm btn-info" title="Generate Receipt">
                                                 <i class="bi bi-receipt"></i>
                                             </a>

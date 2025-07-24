@@ -1,4 +1,7 @@
 <?php 
+
+
+
 require_once __DIR__ . '/../../../../config/config.php';
 include BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/config/auth.php';
@@ -53,7 +56,7 @@ $skipped = [];
 $admin_id = $_SESSION['admin']['id'] ?? 1;
 
 while ($student = $active_students->fetch_assoc()) {
-    // Check if payment already exists
+    // Check if payment already exists for this month/year
     $check = $conn->prepare("
         SELECT id FROM student_payments 
         WHERE student_id = ? AND year = ? AND month = ?
@@ -63,20 +66,92 @@ while ($student = $active_students->fetch_assoc()) {
     $result = $check->get_result();
 
     if ($result->num_rows === 0) {
-        // Insert new payment
+        // Calculate balance from previous payments (all months before current one)
+        $balance = 0.00;
+        $balStmt = $conn->prepare("
+            SELECT 
+                SUM(amount_due - amount_paid) AS balance
+            FROM student_payments
+            WHERE student_id = ? AND (year < ? OR (year = ? AND month < ?))
+        ");
+        $balStmt->bind_param("iiii", $student['student_id'], $year, $year, $month);
+        $balStmt->execute();
+        $balResult = $balStmt->get_result();
+        $balRow = $balResult->fetch_assoc();
+        if ($balRow && $balRow['balance'] !== null) {
+            $balance = (float)$balRow['balance'];
+        }
+        $balStmt->close();
+
+        $initial_amount_paid = 0.00;
+        $initial_payment_status = 'unpaid';
+
+        if ($balance < 0) {
+            $overpaid_amount = abs($balance);
+
+            // Fetch previous payments with overpayment to update them
+            $prevPaymentsStmt = $conn->prepare("
+                SELECT id, amount_due, amount_paid
+                FROM student_payments
+                WHERE student_id = ? AND (year < ? OR (year = ? AND month < ?))
+                ORDER BY year ASC, month ASC
+            ");
+            $prevPaymentsStmt->bind_param("iiii", $student['student_id'], $year, $year, $month);
+            $prevPaymentsStmt->execute();
+            $prevPaymentsResult = $prevPaymentsStmt->get_result();
+
+            while ($row = $prevPaymentsResult->fetch_assoc()) {
+                $payment_id_to_update = $row['id'];
+                $due = (float)$row['amount_due'];
+                $paid = (float)$row['amount_paid'];
+                $payment_balance = $due - $paid;
+
+                if ($payment_balance < 0) {
+                    // This payment has overpayment
+                    $update_amount_paid = $due; // Set paid = due (balance 0)
+                    $update_payment_status = 'paid';
+
+                    // Update this payment
+                    $updateStmt = $conn->prepare("
+                        UPDATE student_payments
+                        SET amount_paid = ?, payment_status = ?, updated_at = NOW()
+                        WHERE id = ?
+                    ");
+                    $updateStmt->bind_param("dsi", $update_amount_paid, $update_payment_status, $payment_id_to_update);
+                    $updateStmt->execute();
+                    $updateStmt->close();
+
+                    // Reduce the overpaid_amount by the amount fixed here
+                    $overpaid_amount -= abs($payment_balance);
+
+                    // If fully cleared the overpaid amount, break
+                    if ($overpaid_amount <= 0) break;
+                }
+            }
+            $prevPaymentsStmt->close();
+
+            // Now apply the overpaid_amount (capped by current month price) as amount_paid in new payment
+            $initial_amount_paid = min(abs($balance), $student['price']);
+            if ($initial_amount_paid >= $student['price']) {
+                $initial_payment_status = 'paid';
+            } else {
+                $initial_payment_status = 'partial';
+            }
+        }
+
+        // Insert new payment record with calculated amount_paid and payment_status
         $insert = $conn->prepare("
             INSERT INTO student_payments (
                 student_id, hostel_id, room_id, room_type_id, room_fee_id,
-                year, month, amount_due, late_fee, late_fee_applied_date, payment_status, due_date,
-                created_at, updated_at, created_by
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unpaid', ?, NOW(), NOW(), ?)
+                year, month, amount_due, amount_paid, late_fee, late_fee_applied_date,
+                payment_status, due_date, created_at, updated_at, created_by
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?)
         ");
 
-        // Make sure null values are passed properly
         $late_fee_applied_date_param = $late_fee_applied_date ?: null;
 
         $insert->bind_param(
-            "iiiiiiddsssi",
+            "iiiiiiiiddsssi",
             $student['student_id'],
             $student['hostel_id'],
             $student['room_id'],
@@ -84,9 +159,11 @@ while ($student = $active_students->fetch_assoc()) {
             $student['room_fee_id'],
             $year,
             $month,
-            $student['price'],             
+            $student['price'],
+            $initial_amount_paid,
             $late_fee,
-            $late_fee_applied_date_param, 
+            $late_fee_applied_date_param,
+            $initial_payment_status,
             $due_date,
             $admin_id
         );

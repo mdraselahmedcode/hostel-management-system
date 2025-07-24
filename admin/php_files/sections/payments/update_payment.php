@@ -89,6 +89,65 @@ $stmt->bind_param(
 );
 
 if ($stmt->execute()) {
+    // After updating current payment, check if there is overpayment
+    $overpayment = $amount_paid - $amount_due;
+
+    if ($overpayment > 0) {
+        // Get student_id for this payment
+        $getStudentStmt = $conn->prepare("SELECT student_id, year, month FROM student_payments WHERE id = ?");
+        $getStudentStmt->bind_param("i", $payment_id);
+        $getStudentStmt->execute();
+        $result = $getStudentStmt->get_result();
+        $paymentData = $result->fetch_assoc();
+        $getStudentStmt->close();
+
+        if ($paymentData) {
+            $student_id = $paymentData['student_id'];
+            $year = $paymentData['year'];
+            $month = $paymentData['month'];
+
+            // Find previous payments with negative balances
+            $prevPaymentsStmt = $conn->prepare("
+                SELECT id, amount_due, amount_paid
+                FROM student_payments
+                WHERE student_id = ? AND (year < ? OR (year = ? AND month < ?))
+                ORDER BY year ASC, month ASC
+            ");
+            $prevPaymentsStmt->bind_param("iiii", $student_id, $year, $year, $month);
+            $prevPaymentsStmt->execute();
+            $prevPaymentsResult = $prevPaymentsStmt->get_result();
+
+            $remainingOverpayment = $overpayment;
+
+            while ($row = $prevPaymentsResult->fetch_assoc()) {
+                $payment_id_to_update = $row['id'];
+                $due = (float)$row['amount_due'];
+                $paid = (float)$row['amount_paid'];
+                $payment_balance = $due - $paid;
+
+                if ($payment_balance < 0) {
+                    // This payment has overpayment
+                    $update_amount_paid = $due; // Set paid = due (balance 0)
+                    $update_payment_status = 'paid';
+
+                    $updateStmt = $conn->prepare("
+                        UPDATE student_payments
+                        SET amount_paid = ?, payment_status = ?, updated_at = NOW()
+                        WHERE id = ?
+                    ");
+                    $updateStmt->bind_param("dsi", $update_amount_paid, $update_payment_status, $payment_id_to_update);
+                    $updateStmt->execute();
+                    $updateStmt->close();
+
+                    $remainingOverpayment -= abs($payment_balance);
+
+                    if ($remainingOverpayment <= 0) break;
+                }
+            }
+            $prevPaymentsStmt->close();
+        }
+    }
+
     echo json_encode(['success' => true, 'message' => 'Payment updated successfully']);
 } else {
     echo json_encode(['success' => false, 'message' => 'Failed to update payment: ' . $stmt->error]);

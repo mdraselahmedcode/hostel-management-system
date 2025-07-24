@@ -317,7 +317,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 contentType: false,
                 dataType: 'json',
                 success: function(response) {
-                    console.log(response);
+                    // console.log(response);
 
                     if (response.success) {
                         showSlideMessage(response.message || 'Student added successfully.', 'success');

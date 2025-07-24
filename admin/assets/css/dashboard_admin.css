@@ -1,0 +1,70 @@
+    .dashboard-card {
+        border: none;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        height: 100%;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-left: 4px solid var(--highlight-blue);
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        background: white;
+    }
+
+    .dashboard-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .dashboard-card .card-title {
+        color: var(--primary-dark);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-card .card-text {
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+
+    .welcome-card {
+        background: white;
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid var(--highlight-blue);
+    }
+
+    .welcome-card h1 {
+        color: var(--primary-dark);
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .welcome-card p {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-card strong {
+        color: var(--primary-dark);
+    }
+
+    .logout-btn {
+        background: var(--highlight-blue);
+        border: none;
+        padding: 0.5rem 1.5rem;
+        font-weight: 500;
+    }
+
+    .logout-btn:hover {
+        background: #367fa9;
+    }
+
+    .card-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: var(--highlight-blue);
+    }

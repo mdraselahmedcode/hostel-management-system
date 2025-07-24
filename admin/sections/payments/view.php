@@ -7,8 +7,10 @@ include BASE_PATH . '/includes/slide_message.php';
 require_admin();
 
 $payment_id = $_GET['id'] ?? 0;
-$selected_month = $_GET['month'] ?? null; // Initialize month filter
-$selected_year = $_GET['year'] ?? null;   // Initialize year filter
+// $student_id = $_GET['student_id'] ?? 0;
+
+$selected_month = $_GET['month'] ?? null;
+$selected_year = $_GET['year'] ?? null;
 
 // Get current payment details
 $payment_query = "SELECT sp.*, s.first_name, s.last_name, s.varsity_id, s.contact_number, 
@@ -79,6 +81,29 @@ if (count($params) > 1) {
 $stmt->execute();
 $all_payments = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+
+
+// transaction data fetching
+$transactions = [];
+if ($payment_id) {
+    $stmt = $conn->prepare("
+        SELECT t.*, pm.name, pm.display_name, pm.account_number, pm.active, pm.created_at
+        FROM payment_transactions t
+        JOIN payment_methods pm ON t.payment_method_id = pm.id
+        WHERE t.payment_id = ?
+        ORDER BY t.payment_date DESC
+    ");
+    $stmt->bind_param("i", $payment_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $transactions = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+}
+
+
+
+
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
@@ -101,6 +126,38 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         #editPaymentModal .form-select {
             margin-bottom: 1rem;
         }
+
+        .payment-status {
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            font-size: 0.875rem;
+        }
+
+        .payment-status.paid {
+            color: #fff;
+            background-color: #28a745;
+            /* green */
+        }
+
+        .payment-status.unpaid {
+            color: #fff;
+            background-color: #dc3545;
+            /* red */
+        }
+
+        .payment-status.partial {
+            color: #212529;
+            background-color: #ffc107;
+            /* yellow */
+        }
+
+        .payment-status.late {
+            color: #fff;
+            background-color: #6c757d;
+            /* gray */
+        }
     </style>
 </head>
 <div class="content container-fluid mt-5">
@@ -111,7 +168,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Payment Details</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="<?= BASE_URL ?>/admin/sections/payments/index.php" class="btn btn-sm btn-outline-secondary">
+                    <a href="javascript:history.back()" class="btn btn-sm btn-outline-secondary">
                         <i class="bi bi-arrow-left"></i> Back to Payments
                     </a>
                 </div>
@@ -119,17 +176,58 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 
             <div class="row">
                 <!-- Current payment details -->
-                <div class="col-md-6">
+                <div class="col-md-6" style="max-height: 450px; overflow-y: auto">
                     <div class="card mb-4">
-                        <div class="card-header">
-                            <h5>Payment Information</h5>
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Payment Information</h5>
+                            <span class="badge bg-primary px-3 py-2 fs-6 shadow-sm">
+                                <?= date('F Y', mktime(0, 0, 0, $payment['month'], 1, $payment['year'])) ?>
+                            </span>
                         </div>
                         <div class="card-body">
                             <table class="table table-sm">
                                 <tr>
-                                    <th>Student:</th>
-                                    <td><?= htmlspecialchars($payment['first_name'] . ' ' . $payment['last_name']) ?></td>
+                                    <th>Status:</th>
+                                    <td>
+                                        <?php
+                                        $statusClass = '';
+                                        switch ($payment['payment_status']) {
+                                            case 'paid':
+                                                $statusClass = 'paid';
+                                                break;
+                                            case 'unpaid':
+                                                $statusClass = 'unpaid';
+                                                break;
+                                            case 'partial':
+                                                $statusClass = 'partial';
+                                                break;
+                                            case 'late':
+                                                $statusClass = 'late';
+                                                break;
+                                        }
+
+                                        $dueDateObj = new DateTime($payment['due_date']);
+                                        $lateFeeAppliedDateObj = $payment['late_fee_applied_date'] ? new DateTime($payment['late_fee_applied_date']) : new DateTime('9999-12-31');
+                                        $today = new DateTime();
+                                        $lateFeeApplies = in_array($payment['payment_status'], ['unpaid', 'partial']) && $today > $dueDateObj && $today >= $lateFeeAppliedDateObj;
+                                        ?>
+                                        <span class="payment-status <?= $statusClass ?>">
+                                            <?= ucfirst($payment['payment_status']) ?>
+                                            <?= $lateFeeApplies && $payment['late_fee'] > 0 ? ' (Late)' : '' ?>
+                                        </span>
+                                    </td>
                                 </tr>
+                                <tr>
+                                    <th>Student:</th>
+                                    <td style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span><?= htmlspecialchars($payment['first_name'] . ' ' . $payment['last_name']) ?></span>
+                                        <a href="<?= BASE_URL . '/admin/sections/students/view.php' ?>?id=<?= urlencode($payment['student_id']) ?>" class="btn btn-sm btn-outline-primary">
+                                            View Profile
+                                        </a>
+                                    </td>
+                                </tr>
+
+
                                 <tr>
                                     <th>Varsity ID:</th>
                                     <td><?= htmlspecialchars($payment['varsity_id']) ?></td>
@@ -150,6 +248,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                     <th>Period:</th>
                                     <td><?= date('F Y', mktime(0, 0, 0, $payment['month'], 1, $payment['year'])) ?></td>
                                 </tr>
+
                                 <tr>
                                     <th>Due Date:</th>
                                     <td><?= date('d M Y', strtotime($payment['due_date'])) ?></td>
@@ -188,15 +287,8 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                     <td>৳<?= number_format($balance, 2) ?></td>
                                 </tr>
 
-                                <tr>
-                                    <th>Status:</th>
-                                    <td>
-                                        <span class="payment-status status-<?= $payment['payment_status'] ?>">
-                                            <?= ucfirst($payment['payment_status']) ?>
-                                            <?= $late_fee_applies && $payment['late_fee'] > 0 ? '(Late)' : '' ?>
-                                        </span>
-                                    </td>
-                                </tr>
+
+
                                 <tr>
                                     <th>Last Updated By:</th>
                                     <td>
@@ -213,13 +305,81 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 </div>
 
                 <!-- Payment transactions -->
-                <div class="col-md-6">
+                <div class="col-md-6" style="max-height: 450px; overflow-y: auto">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5>Payment Transactions</h5>
-                            <a href="add_transaction.php?payment_id=<?= $payment['id'] ?>" class="btn btn-sm btn-primary">
+                            <!-- Add Payment Button -->
+                            <a href="#" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addPaymentModal" data-payment-id="<?= $payment['id'] ?>" data-student-id="<?= $student_id ?>">
                                 <i class="bi bi-plus"></i> Add Payment
                             </a>
+
+                            <!-- Add Payment Modal -->
+                            <div class="modal fade" id="addPaymentModal" tabindex="-1" aria-labelledby="addPaymentModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <form id="addPaymentForm">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Add Payment</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <input type="hidden" name="payment_id" id="modal_payment_id">
+                                                <input type="hidden" name="student_id" id="modal_student_id">
+
+                                                <div class="mb-3">
+                                                    <label for="amount" class="form-label">Amount</label>
+                                                    <input type="number" name="amount" class="form-control" required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="payment_date" class="form-label">Payment Date</label>
+                                                    <input type="datetime-local" name="payment_date" class="form-control" required>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="payment_method_id" class="form-label">Payment Method</label>
+                                                    <select name="payment_method_id" class="form-select" required>
+                                                        <option value="">Select method</option>
+                                                        <?php
+                                                        // You must fetch payment methods from DB
+                                                        $methods = $conn->query("SELECT id, display_name FROM payment_methods WHERE active = 1");
+                                                        while ($row = $methods->fetch_assoc()):
+                                                        ?>
+                                                            <option value="<?= $row['id'] ?>"><?= htmlspecialchars($row['display_name']) ?></option>
+                                                        <?php endwhile; ?>
+                                                    </select>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="verification_status" class="form-label">Verification Status</label>
+                                                    <select name="verification_status" class="form-select" required>
+                                                        <option value="">Select status</option>
+                                                        <option value="pending">Pending</option>
+                                                        <option value="verified">Verified</option>
+                                                        <option value="rejected">Rejected</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="reference_code" class="form-label">Reference Code (optional)</label>
+                                                    <input type="text" name="reference_code" class="form-control">
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="notes" class="form-label">Notes</label>
+                                                    <textarea name="notes" class="form-control" rows="3"></textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-success">Submit</button>
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                         <div class="card-body">
                             <?php if (!empty($transactions)): ?>
@@ -238,7 +398,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                             <?php foreach ($transactions as $txn): ?>
                                                 <tr>
                                                     <td><?= date('d M Y', strtotime($txn['payment_date'])) ?></td>
-                                                    <td><?= htmlspecialchars($txn['payment_method']) ?></td>
+                                                    <td><?= htmlspecialchars($txn['name']) ?></td>
                                                     <td>৳<?= number_format($txn['amount'], 2) ?></td>
                                                     <td>
                                                         <span class="badge bg-<?=
@@ -306,7 +466,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         </form>
                     </div>
                 </div>
-                <div class="card-body table-responsive">
+                <div class="card-body table-responsive" style="max-height: 150px; overflow-y: auto">
                     <table class="table table-striped table-sm">
                         <thead>
                             <tr>
@@ -329,8 +489,25 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                 $lateFeeApplies = in_array($p['payment_status'], ['unpaid', 'partial']) && $today > $dueDateObj && $today >= $lateFeeAppliedDateObj;
                                 $actualDue = $p['amount_due'] + ($lateFeeApplies ? $p['late_fee'] : 0);
                                 $balance = $actualDue - $p['amount_paid'];
-                                $statusClass = 'status-' . $p['payment_status'];
                                 $period = date('F Y', mktime(0, 0, 0, $p['month'], 1, $p['year']));
+
+                                switch ($p['payment_status']) {
+                                    case 'paid':
+                                        $statusClass = 'paid';
+                                        break;
+                                    case 'unpaid':
+                                        $statusClass = 'unpaid';
+                                        break;
+                                    case 'partial':
+                                        $statusClass = 'partial';
+                                        break;
+                                    case 'late':
+                                        $statusClass = 'late';
+                                        break;
+                                    default:
+                                        $statusClass = '';
+                                        break;
+                                }
                             ?>
                                 <tr>
                                     <td><?= $period ?></td>
@@ -339,23 +516,29 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                     <td>৳<?= number_format($p['late_fee'], 2) ?></td>
                                     <td>৳<?= number_format($p['amount_paid'], 2) ?></td>
                                     <td>৳<?= number_format($balance, 2) ?></td>
-                                    <td><span class="payment-status <?= $statusClass ?>">
+                                    <td>
+                                        <span class="payment-status <?= $statusClass ?>">
                                             <?= ucfirst($p['payment_status']) ?>
                                             <?= $lateFeeApplies ? ' (Late)' : '' ?>
-                                        </span></td>
+                                        </span>
+                                    </td>
                                     <td>
-                                        <a href="view.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-primary" title="View Details">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-warning edit-payment" title="Edit Payment" data-id="<?= $p['id'] ?>">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
+                                        <div class="d-flex flex-wrap gap-1">
+                                            <button class="btn btn-sm btn-warning edit-payment" title="Edit Payment" data-id="<?= $p['id'] ?>">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <a href="<?= BASE_URL ?>/admin/sections/payments/receipt.php?id=<?= $p['id'] ?>"
+                                                class="btn btn-sm btn-outline-primary" title="View Receipt">
+                                                <i class="bi bi-receipt"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
+
             </div>
 
         </main>
@@ -507,6 +690,43 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 error: function() {
                     showSlideMessage('Error updating payment', 'danger');
                     $submitBtn.prop('disabled', false).text('Save Changes');
+                }
+            });
+        });
+
+
+        // Add payment
+        // Set payment ID and student ID in modal
+        $('#addPaymentModal').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const paymentId = button.data('payment-id');
+            const studentId = button.data('student-id'); // ✅ get student ID
+
+            $('#modal_payment_id').val(paymentId);
+            $('#modal_student_id').val(studentId); // ✅ set student ID
+        });
+
+
+        // Handle form submission
+        $('#addPaymentForm').on('submit', function(e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+
+            $.ajax({
+                url: '<?= BASE_URL ?>/admin/php_files/sections/payments/add_transaction.php',
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success) {
+                        showSlideMessage('Payment added successfully')
+                        location.reload(); // Optional: Refresh the page or update part of it
+                    } else {
+                        showSlideMessage(res.message || 'Failed to add Payment', 'danger');
+                    }
+                },
+                error: function() {
+                    showSlideMessage('Server error occured.', 'danger');
                 }
             });
         });
