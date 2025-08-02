@@ -49,6 +49,7 @@ $sql = "
         students.*,
         hostels.hostel_name,
         rooms.room_number,
+        room_types.type_name AS room_type,
         floors.floor_number,
         floors.floor_name,
         perm_addr.*, 
@@ -69,6 +70,7 @@ $sql = "
     FROM students
     LEFT JOIN hostels ON students.hostel_id = hostels.id
     LEFT JOIN rooms ON students.room_id = rooms.id
+    LEFT JOIN room_types ON rooms.room_type_id = room_types.id
     LEFT JOIN floors ON rooms.floor_id = floors.id
     LEFT JOIN addresses AS perm_addr ON students.permanent_address_id = perm_addr.id
     LEFT JOIN countries AS perm_country ON perm_addr.country_id = perm_country.id
@@ -229,7 +231,13 @@ $payment_id = $student['payment_id'];
                         <dd class="col-sm-7"><?= htmlspecialchars($student['hostel_name'] ?? 'N/A') ?></dd>
 
                         <dt class="col-sm-5">Room Number</dt>
-                        <dd class="col-sm-7"><?= htmlspecialchars($student['room_number'] ?? 'N/A') ?></dd>
+                        <dd class="col-sm-7">
+                            <?= htmlspecialchars(
+                                !empty($student['room_number']) && !empty($student['room_type'])
+                                    ? $student['room_number'] . ' (' . $student['room_type'] . ')'
+                                    : 'N/A'
+                            ) ?>
+                        </dd>
 
                         <dt class="col-sm-5">Floor</dt>
                         <dd class="col-sm-7"><?= htmlspecialchars($student['floor_number'] ?? 'N/A') ?> (<?= htmlspecialchars($student['floor_name'] ?? 'N/A') ?>)</dd>

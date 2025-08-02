@@ -15,10 +15,10 @@ $sections = [
     'roomFees' => strpos($uri, '/roomFees/') !== false,
     'admins' => strpos($uri, '/admins/') !== false,
     'students' => strpos($uri, '/students/') !== false,
+    'complaints' => strpos($uri, '/complaints/') !== false,
     'payments' => strpos($uri, '/payments/index.php') !== false, 
     'payment_methods' => strpos($uri, '/payment_method/') !== false,
-    'payment_report' => strpos($uri, '/payment_report_generation.php') !== false ,
-    'payment_request' => strpos($uri, '/payment_requests.php.php') !== false 
+    'payment_report' => strpos($uri, '/payment_report_generation.php') !== false 
 ];
 
 $currentSection = array_search(true, $sections) ?: '';
@@ -97,6 +97,13 @@ $currentSection = array_search(true, $sections) ?: '';
             </li>
 
             <li class="nav-item">
+                <a class="nav-link <?= $currentSection === 'complaints' ? 'active' : '' ?>"
+                    href="<?= BASE_URL ?>/admin/sections/complaints/index.php">
+                    <i class="bi bi-person-vcard"></i>Complaints
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link <?= $currentSection === 'payment_methods' ? 'active' : '' ?>"
                     href="<?= BASE_URL ?>/admin/sections/payments/payment_method/index.php">
                     <i class="bi bi-credit-card"></i>Payment Methods
@@ -110,16 +117,11 @@ $currentSection = array_search(true, $sections) ?: '';
                 </a>
             </li>
 
-            <!-- <li class="nav-item">
-                <a class="nav-link <?= $currentSection === 'payment_request' ? 'active' : '' ?>"
-                    href="<?= BASE_URL ?>/admin/sections/payments/payment_requests.php">
-                    <i class="bi bi-credit-card-2-front"></i>Payment Request
-                </a>
-            </li> -->
+
 
             <li class="nav-item">
                 <a class="nav-link <?= $currentSection === 'payment_report' ? 'active' : '' ?>"
-                    href="<?= BASE_URL ?>/admin/sections/payments/payment_report_generation.php">
+                    href="<?= BASE_URL ?>/admin/sections/payments/generate_payment_report.php">
                     <i class="bi bi-file-earmark-text"></i>Generate Report
                 </a>
             </li>
@@ -128,7 +130,7 @@ $currentSection = array_search(true, $sections) ?: '';
 
 
             <li class="nav-item logout-link">
-                <a class="nav-link" href="<?= BASE_URL ?>/admin/php_files/logout_admin_handler.php">
+                <a class="nav-link py-2" href="<?= BASE_URL ?>/admin/php_files/logout_admin_handler.php">
                     <i class="bi bi-box-arrow-right"></i>Logout
                 </a>
             </li>

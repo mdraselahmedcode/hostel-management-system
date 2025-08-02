@@ -64,11 +64,10 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
 
         <main class="col-md-10 ms-sm-auto px-md-4 py-4">
-            <a href="javascript:history.back()" class="btn btn-secondary mb-3">Back</a>
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="bi bi-credit-card"></i> Edit Payment Method</h2>
-                <a href="payment_methods.php" class="btn btn-outline-secondary">
+                <a href="<?= BASE_URL . '/admin/sections/payments/payment_method/index.php' ?>" class="btn btn-outline-secondary mb-3 mt-4">
                     <i class="bi bi-arrow-left"></i> Back to List
                 </a>
             </div>

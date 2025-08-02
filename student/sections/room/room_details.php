@@ -3,9 +3,11 @@ require_once __DIR__ . '/../../../config/config.php';
 require_once __DIR__ . '/../../../config/db.php';
 require_once BASE_PATH . '/student/includes/header_student.php';
 
-require_once BASE_PATH . '/config/auth.php'; 
+require_once BASE_PATH . '/config/auth.php';
 
-require_student(); 
+$currentSection = 'room_details'; // for room_details.php
+
+require_student();
 
 $student_id = $_SESSION['student']['id'];
 
@@ -102,9 +104,9 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">My Accommodation Details</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#roomChangeModal">
+                    <a href="<?= BASE_URL ?>/student/sections/room_change_request/create.php" class="btn btn-sm btn-outline-secondary">
                         <i class="bi bi-house-gear"></i> Request Room Change
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -115,7 +117,7 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
                         <div class="card shadow-sm h-100">
                             <div class="card-header bg-primary text-white">
                                 <h5 class="mb-0">
-                                    <i class="bi bi-door-open"></i> Room <?= htmlspecialchars($room_details['room_number']) ?> 
+                                    <i class="bi bi-door-open"></i> Room <?= htmlspecialchars($room_details['room_number']) ?>
                                     <span class="badge bg-light text-dark float-end"><?= htmlspecialchars($room_details['room_type']) ?></span>
                                 </h5>
                             </div>
@@ -123,22 +125,22 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="room-info">
-                                            <p><strong><i class="bi bi-building"></i> Hostel:</strong> 
+                                            <p><strong><i class="bi bi-building"></i> Hostel:</strong>
                                                 <?= htmlspecialchars($room_details['hostel_name']) ?>
                                                 <span class="badge bg-info text-dark"><?= htmlspecialchars(ucfirst($room_details['hostel_type'])) ?></span>
                                             </p>
-                                            <p><strong><i class="bi bi-layer-forward"></i> Floor:</strong> 
+                                            <p><strong><i class="bi bi-layer-forward"></i> Floor:</strong>
                                                 <?= htmlspecialchars($room_details['floor_name']) ?> (Floor <?= htmlspecialchars($room_details['floor_number']) ?>)
                                             </p>
-                                            <p><strong><i class="bi bi-people"></i> Occupancy:</strong> 
-                                                <span class="text-success"><?= $current_occupancy ?></span> / 
+                                            <p><strong><i class="bi bi-people"></i> Occupancy:</strong>
+                                                <span class="text-success"><?= $current_occupancy ?></span> /
                                                 <?= htmlspecialchars($room_details['max_capacity']) ?> students
                                             </p>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="room-contact">
-                                            <p><strong><i class="bi bi-telephone"></i> Hostel Contact:</strong> 
+                                            <p><strong><i class="bi bi-telephone"></i> Hostel Contact:</strong>
                                                 <a href="tel:<?= htmlspecialchars($room_details['contact_number']) ?>">
                                                     <?= htmlspecialchars($room_details['contact_number']) ?>
                                                 </a>
@@ -150,7 +152,7 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-md-4">
                         <div class="card shadow-sm h-100">
                             <div class="card-header bg-primary text-white">
@@ -159,11 +161,11 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
                             <div class="card-body text-center">
                                 <?php if ($current_fee): ?>
                                     <h3 class="text-primary"><?= number_format($current_fee['price'], 2) ?> BDT</h3>
-                                    <p class="mb-1"><strong>Billing Cycle:</strong> 
+                                    <p class="mb-1"><strong>Billing Cycle:</strong>
                                         <span class="badge bg-info"><?= htmlspecialchars(ucfirst($current_fee['billing_cycle'])) ?></span>
                                     </p>
                                     <p class="text-muted"><small>Effective from <?= date('M d, Y', strtotime($current_fee['effective_from'])) ?></small></p>
-                                    <a href="<?= BASE_URL . '/student/sections/payment/payment_history.php' ?>" class="btn btn-sm btn-outline-primary mt-2">
+                                    <a href="<?= BASE_URL . '/student/sections/payment/payment_view.php' ?>" class="btn btn-sm btn-outline-primary mt-2">
                                         View Payment History
                                     </a>
                                 <?php else: ?>
@@ -173,7 +175,7 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Roommates Section -->
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-primary text-white">
@@ -188,13 +190,13 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
                                             <div class="card-body text-center">
                                                 <div class="position-relative d-inline-block">
                                                     <?php if ($mate['profile_image_url']): ?>
-                                                        <img src="<?= htmlspecialchars($mate['profile_image_url']) ?>" 
-                                                             class="rounded-circle mb-3" 
-                                                             width="100" height="100" 
-                                                             alt="<?= htmlspecialchars($mate['first_name']) ?>">
+                                                        <img src="<?= htmlspecialchars($mate['profile_image_url']) ?>"
+                                                            class="rounded-circle mb-3"
+                                                            width="100" height="100"
+                                                            alt="<?= htmlspecialchars($mate['first_name']) ?>">
                                                     <?php else: ?>
-                                                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mb-3" 
-                                                             style="width: 100px; height: 100px;">
+                                                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mb-3"
+                                                            style="width: 100px; height: 100px;">
                                                             <i class="bi bi-person-circle" style="font-size: 3rem;"></i>
                                                         </div>
                                                     <?php endif; ?>
@@ -224,7 +226,7 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
                         <?php endif; ?>
                     </div>
                 </div>
-                
+
                 <!-- Fee History (if available) -->
                 <?php if (!empty($fee_history)): ?>
                     <div class="card shadow-sm">
@@ -255,7 +257,7 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
                         </div>
                     </div>
                 <?php endif; ?>
-                
+
             <?php else: ?>
                 <div class="alert alert-warning">
                     <div class="d-flex align-items-center">
@@ -271,69 +273,31 @@ if ($room_details && $room_details['room_hostel_id'] && $room_details['room_type
     </div>
 </div>
 
-<!-- Room Change Modal -->
-<div class="modal fade" id="roomChangeModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Request Room Change</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="roomChangeForm">
-                    <div class="mb-3">
-                        <label for="reason" class="form-label">Reason for Change</label>
-                        <select class="form-select" id="reason" name="reason" required>
-                            <option value="">Select a reason</option>
-                            <option value="roommate issues">Roommate Issues</option>
-                            <option value="too noisy">Too Noisy</option>
-                            <option value="prefer different location">Prefer Different Location</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="details" class="form-label">Additional Details</label>
-                        <textarea class="form-control" id="details" name="details" rows="3"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="preferredRoom" class="form-label">Preferred Room (Optional)</label>
-                        <input type="text" class="form-control" id="preferredRoom" name="preferred_room">
-                    </div>
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary">Submit Request</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 
 <style>
-    .room-info p, .room-contact p {
+    .room-info p,
+    .room-contact p {
         margin-bottom: 0.8rem;
     }
+
     .card {
         border-radius: 10px;
         border: none;
     }
+
     .card-header {
         border-radius: 10px 10px 0 0 !important;
     }
+
     .badge {
         font-weight: 500;
     }
 </style>
 
 <script>
-$(document).ready(function() {
-    // Room change form submission
-    $('#roomChangeForm').on('submit', function(e) {
-        e.preventDefault();
-        // Add AJAX submission logic here
-        alert('Room change request submitted!');
-        $('#roomChangeModal').modal('hide');
+    $(document).ready(function() {
+    
     });
-});
 </script>
 
 <?php require_once BASE_PATH . '/student/includes/footer_student.php'; ?>

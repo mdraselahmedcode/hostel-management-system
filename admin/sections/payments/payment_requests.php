@@ -6,6 +6,9 @@ include BASE_PATH . '/includes/slide_message.php';
 
 require_admin();
 
+// Varsity ID Search
+$varsityIdFilter = $_GET['varsity_id'] ?? '';
+
 // Handle verification actions
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['verify'])) {
     $txn_id = (int)$_POST['txn_id'];
@@ -49,19 +52,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['verify'])) {
     exit();
 }
 
-// Get pending payment requests
-$requests = $conn->query("
+// Build SQL for pending requests
+$sql = "
     SELECT pt.*, 
            pm.display_name AS payment_method,
-           s.first_name, s.last_name, s.varsity_id,
-           sp.amount_due, sp.amount_paid, sp.payment_status
+           s.first_name, s.last_name, s.varsity_id, s.contact_number AS mobile,
+           sp.amount_due, sp.amount_paid, sp.payment_status, sp.month, sp.year
     FROM payment_transactions pt
     JOIN payment_methods pm ON pt.payment_method_id = pm.id
     JOIN student_payments sp ON pt.payment_id = sp.id
     JOIN students s ON sp.student_id = s.id
     WHERE pt.verification_status = 'pending'
-    ORDER BY pt.payment_date DESC
-")->fetch_all(MYSQLI_ASSOC);
+";
+
+if (!empty($varsityIdFilter)) {
+    $escaped = $conn->real_escape_string($varsityIdFilter);
+    $sql .= " AND s.varsity_id LIKE '%$escaped%'";
+}
+
+$sql .= " ORDER BY pt.payment_date DESC";
+$requests = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
 
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
@@ -76,8 +86,34 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             </a>
 
             <div class="card shadow-sm">
-                <div class="card-body">
+                <div class="card-body" style="max-height: 700px; overflow-y: auto;">
                     <h2 class="mb-4"><i class="bi bi-cash-coin"></i> Payment Verification Requests</h2>
+
+                    <!-- Search Form -->
+                    <div class="mb-4">
+                        <form method="GET">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-sm-12 col-md-5 col-lg-4">
+                                    <input type="text"
+                                        name="varsity_id"
+                                        class="form-control"
+                                        placeholder="Search by Varsity ID"
+                                        value="<?= htmlspecialchars($varsityIdFilter) ?>">
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-search"></i> Search
+                                    </button>
+                                </div>
+                                <div class="col-auto">
+                                    <a href="payment_requests.php" class="btn btn-secondary w-100">
+                                        <i class="bi bi-arrow-counterclockwise"></i> Reset
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
 
                     <?php if (empty($requests)): ?>
                         <div class="alert alert-info">No pending payment verification requests</div>
@@ -87,12 +123,14 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                 <thead class="table-light">
                                     <tr>
                                         <th>#</th>
+                                        <th>Period</th>
+                                        <th>Payment Date</th>
                                         <th>Student</th>
                                         <th>Varsity ID</th>
+                                        <th>Mobile</th>
                                         <th>Payment Method</th>
                                         <th>Amount</th>
                                         <th>Reference</th>
-                                        <th>Payment Date</th>
                                         <th>Status</th>
                                         <th>Actions</th>
                                     </tr>
@@ -101,33 +139,45 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                     <?php foreach ($requests as $index => $request): ?>
                                         <tr>
                                             <td><?= $index + 1 ?></td>
+                                            <td><?= date('F Y', mktime(0, 0, 0, $request['month'], 1, $request['year'])) ?></td>
+                                            <td><?= date('d M Y', strtotime($request['payment_date'])) ?></td>
                                             <td><?= htmlspecialchars($request['first_name'] . ' ' . $request['last_name']) ?></td>
                                             <td><?= htmlspecialchars($request['varsity_id']) ?></td>
+                                            <td><?= htmlspecialchars($request['sender_mobile'] ?? $request['mobile'] ?? 'N/A') ?></td>
                                             <td><?= htmlspecialchars($request['payment_method']) ?></td>
                                             <td>৳<?= number_format($request['amount'], 2) ?></td>
                                             <td><?= htmlspecialchars($request['reference_code'] ?? 'N/A') ?></td>
-                                            <td><?= date('d M Y', strtotime($request['payment_date'])) ?></td>
                                             <td><span class="badge bg-warning text-dark">Pending</span></td>
                                             <td>
                                                 <div class="d-flex gap-2">
                                                     <button
                                                         class="btn btn-sm btn-success verify-btn"
                                                         data-id="<?= $request['id'] ?>"
-                                                        data-action="verify">
+                                                        data-action="verify"
+                                                        title="Verify Payment Request">
                                                         <i class="bi bi-check-circle"></i> Verify
                                                     </button>
 
                                                     <button
                                                         class="btn btn-sm btn-danger verify-btn"
                                                         data-id="<?= $request['id'] ?>"
-                                                        data-action="reject">
+                                                        data-action="reject"
+                                                        title="Reject Payment Request">
                                                         <i class="bi bi-x-circle"></i> Reject
                                                     </button>
+
                                                     <?php if (!empty($request['screenshot_path'])): ?>
-                                                        <button class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#screenshotModal<?= $index ?>">
+                                                        <button class="btn btn-sm btn-info " data-bs-toggle="modal" data-bs-target="#screenshotModal<?= $index ?>">
                                                             <i class="bi bi-image"></i> View
                                                         </button>
                                                     <?php endif; ?>
+
+                                                    <a href="<?= BASE_URL ?>/admin/sections/payments/view.php?id=<?= $request['payment_id'] ?>"
+                                                        class="btn btn-sm btn-info d-inline-flex align-items-center gap-1 small"
+                                                        title="View Payments">
+                                                        <i class="bi bi-eye"></i>
+                                                        <span>View Payments</span>
+                                                    </a>
                                                 </div>
                                             </td>
                                         </tr>
@@ -142,8 +192,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                         </div>
                                                         <div class="modal-body text-center">
-                                                            <img src="<?= BASE_URL ?>/uploads/<?= $request['screenshot_path'] ?>"
-                                                                class="img-fluid" alt="Payment screenshot">
+                                                            <img src="<?= BASE_URL ?>/uploads/<?= $request['screenshot_path'] ?>" class="img-fluid" alt="Payment screenshot">
                                                             <?php if (!empty($request['notes'])): ?>
                                                                 <div class="mt-3 text-start">
                                                                     <h6>Notes:</h6>
@@ -169,7 +218,6 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
     </div>
 </div>
 
-
 <script>
     $(document).ready(function() {
         $('.verify-btn').on('click', function() {
@@ -187,7 +235,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 success: function(response) {
                     if (response.success) {
                         showSlideMessage(response.message, 'success');
-                        $row.fadeOut(); // Optionally remove row
+                        $row.fadeOut();
                     } else {
                         showSlideMessage(response.message, 'error');
                     }
@@ -199,6 +247,5 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         });
     });
 </script>
-
 
 <?php require_once BASE_PATH . '/admin/includes/footer_admin.php'; ?>

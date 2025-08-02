@@ -3,11 +3,15 @@ require_once __DIR__ . '/../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/config/auth.php';
 
-require_student(); 
+require_student();
 
-$currentPage = basename($_SERVER['PHP_SELF']);
+// Get the current folder name (section) from the URL path to identify active link correctly
+// $currentSection = basename(dirname($_SERVER['SCRIPT_NAME']));
+
+// $currentPage = basename($_SERVER['SCRIPT_NAME']);
 
 ?>
+
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
@@ -18,9 +22,11 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
         transition: all 0.3s ease;
     }
+
     .sidebar:hover {
         box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
     }
+
     .sidebar-sticky {
         position: sticky;
         top: 0;
@@ -29,13 +35,16 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         padding-top: 1rem;
         scrollbar-width: thin;
     }
+
     .sidebar-sticky::-webkit-scrollbar {
         width: 5px;
     }
+
     .sidebar-sticky::-webkit-scrollbar-thumb {
         background-color: rgba(0, 0, 0, 0.1);
         border-radius: 10px;
     }
+
     .nav-link {
         border-radius: 8px;
         margin: 0.25rem 0.75rem;
@@ -47,20 +56,24 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         position: relative;
         overflow: hidden;
     }
+
     .nav-link:hover {
         background-color: rgba(13, 110, 253, 0.08);
         color: #0d6efd;
         transform: translateX(4px);
     }
+
     .nav-link:hover i {
         color: #0d6efd;
     }
+
     .nav-link.active {
         background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
         color: white !important;
         font-weight: 500;
         box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
     }
+
     .nav-link.active::before {
         content: '';
         position: absolute;
@@ -71,6 +84,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         background-color: #ffffff;
         border-radius: 0 3px 3px 0;
     }
+
     .nav-link i {
         width: 24px;
         text-align: center;
@@ -78,29 +92,36 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         transition: all 0.2s ease;
         margin-right: 12px;
     }
+
     .sidebar-header {
         padding: 1.25rem 1.5rem;
         margin-bottom: 1rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     }
+
     .sidebar-header h5 {
         font-weight: 600;
         letter-spacing: 0.5px;
     }
+
     .logout-link {
         border-top: 1px solid rgba(0, 0, 0, 0.05);
         padding-top: 1rem;
         margin-top: 1rem;
     }
+
     .logout-link .nav-link {
         color: #dc3545;
     }
+
     .logout-link .nav-link:hover {
         background-color: rgba(220, 53, 69, 0.1);
     }
+
     .nav-item {
         position: relative;
     }
+
     .nav-item:not(.logout-link)::after {
         content: '';
         display: block;
@@ -108,6 +129,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
         margin: 5px 1rem;
     }
+
     .nav-item:last-child::after {
         display: none;
     }
@@ -120,50 +142,50 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                 <i class="bi bi-person-vcard me-2"></i>Student Panel
             </h5>
         </div>
-        
+
         <ul class="nav flex-column px-2">
             <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'dashboard.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/dashboard.php">
+                <a class="nav-link <?= $currentSection == 'dashboard' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/dashboard.php">
                     <i class="bi bi-speedometer2"></i>Dashboard
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'student_profile.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/student_profile/student_profile.php">
+                <a class="nav-link <?= $currentSection == 'student_profile' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/student_profile/student_profile.php">
                     <i class="bi bi-person-circle"></i>My Profile
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'room_details.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/room/room_details.php">
+                <a class="nav-link <?= $currentSection == 'room_details' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/room/room_details.php">
                     <i class="bi bi-house-door"></i>Room Details
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'change_password.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/student_profile/change_password.php">
+                <a class="nav-link <?= $currentSection == 'change_password' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/student_profile/change_password.php">
                     <i class="bi bi-shield-lock"></i>Change Password
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'room_change.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/room/room_change.php">
+                <a class="nav-link <?= $currentSection == 'room_change_request' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/room_change_request/index.php">
                     <i class="bi bi-arrow-left-right"></i>Room Change
                 </a>
             </li>
-            
+
             <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'payment_view.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/payment/payment_view.php">
-                    <i class="bi bi-receipt"></i>Payment View
-                </a>
-            </li>
-            
-            <li class="nav-item">
-                <a class="nav-link <?= $currentPage == 'complaints.php' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/complaints/complaints.php">
+                <a class="nav-link <?= $currentSection == 'complaints' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/complaints/index.php">
                     <i class="bi bi-megaphone"></i>Complaints
                 </a>
             </li>
-            
+
+            <li class="nav-item">
+                <a class="nav-link <?= $currentSection == 'payment' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/payment/payment_view.php">
+                    <i class="bi bi-receipt"></i>Payment View
+                </a>
+            </li>
+
             <li class="nav-item logout-link">
                 <a class="nav-link" href="<?= BASE_URL ?>/student/php_files/logout_student_handler.php">
                     <i class="bi bi-box-arrow-right"></i>Logout

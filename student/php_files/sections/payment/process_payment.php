@@ -1,11 +1,10 @@
 <?php
-
-
-require_once __DIR__ . '/../../../config/config.php';
+require_once __DIR__ . '/../../../../config/config.php';
 require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/config/auth.php';
 
 header('Content-Type: application/json');
+
 
 // Ensure time matches your local time (e.g., Dhaka)
 date_default_timezone_set('Asia/Dhaka');
@@ -16,7 +15,7 @@ if (!is_student_logged_in()) {
     exit;
 }
 
-$requiredFields = ['payment_id', 'amount', 'payment_method_id', 'sender_mobile'];
+$requiredFields = ['payment_id', 'amount', 'payment_method_id', 'reference_code', 'sender_mobile', 'sender_name'];
 $errors = [];
 
 // Validate required fields
@@ -46,6 +45,19 @@ $sender_mobile      = $_POST['sender_mobile'] ?? null;
 $sender_name        = $_POST['sender_name'] ?? null;
 $notes              = $_POST['notes'] ?? null;
 
+// var_dump(
+//     'Payment Id: ' . $payment_id . "<br/>" . 
+//     'amount: ' . $amount . "<br/>" . 
+//     'Payment method id: ' . $payment_method_id . "<br/>" . 
+//     'Reference code: ' . $reference_code . "<br/>" . 
+//     'Transaction id: ' . $transaction_id . "</br>" . 
+//     'Receipt number: ' . $receipt_number . "</br>" . 
+//     'Sender number: ' . $sender_mobile . "</br>" . 
+//     'Sender name: ' . $sender_name . "<br/>" . 
+//     'Notes: ' . $notes . "<br/>"
+// );
+// die(); 
+
 
 $payment_date = date('Y-m-d H:i:s'); // Example: 2025-07-24 23:58:00
 
@@ -72,15 +84,20 @@ try {
         reference_code, transaction_id, receipt_number,
         sender_mobile, sender_name, screenshot_path,
         verification_status, verified_by, notes
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NULL, ?)");
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    $verification_status = 'pending';
+    $verified_by = NULL;
 
     $stmt->bind_param(
-        'idsisssssss',
+        'idsisssssssss',
         $payment_id, $amount, $payment_date, $payment_method_id,
         $reference_code, $transaction_id, $receipt_number,
         $sender_mobile, $sender_name, $screenshot_path,
-        $notes
+        $verification_status, $verified_by, $notes
     );
+
+
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Transaction saved successfully and pending verification.']);

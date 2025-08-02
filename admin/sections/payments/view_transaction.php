@@ -32,6 +32,8 @@ $result = $stmt->get_result();
 $transaction = $result->fetch_assoc();
 $stmt->close();
 
+$receipt_number = 'TXN-' . str_pad($txn_id, 6, '0', STR_PAD_LEFT);
+
 if (!$transaction) {
     header('Location: ' . BASE_URL . '/admin/sections/payments/index.php');
     exit();
@@ -96,8 +98,9 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                             <div class="table-responsive">
                                 <table class="table table-borderless">
                                     <tr>
+                                        
                                         <th class="w-25">Receipt Number</th>
-                                        <td><?= !empty($transaction['receipt_number']) ? htmlspecialchars($transaction['receipt_number']) : '<span class="text-muted">—</span>' ?></td>
+                                        <td><?= !empty($receipt_number) ? htmlspecialchars($receipt_number) : '<span class="text-muted">—</span>' ?></td>
                                     </tr>
                                     <tr>
                                         <th>Sender</th>

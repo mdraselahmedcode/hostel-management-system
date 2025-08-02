@@ -29,18 +29,21 @@ $payment = $result->fetch_assoc();
 
 echo json_encode([
     'success' => true,
-    'data' => [
+    'payment' => [  // match your JS naming convention if you want
         'id' => $payment['id'],
-        'amount_due' => $payment['amount_due'],
-        'month' => $payment['month'],
-        'amount_paid' => $payment['amount_paid'],
-        'late_fee' => $payment['late_fee'],
+        'amount_due' => (float)$payment['amount_due'],
+        'amount_paid' => (float)$payment['amount_paid'],
+        'balance' => (float)$payment['balance'],
+        'o_p_balance_added' => (float)$payment['o_p_balance_added'],
+        'late_fee' => (float)$payment['late_fee'],
         'due_date' => $payment['due_date'],
         'late_fee_applied_date' => $payment['late_fee_applied_date'],
-        'payment_status' => $payment['payment_status']
+        'is_late_fee_taken' => (bool)$payment['is_late_fee_taken'],
+        'payment_status' => $payment['payment_status'],
+        'month' => (int)$payment['month'],
+        'year' => (int)$payment['year'],
     ]
 ]);
 
 $stmt->close();
 $conn->close();
-?>

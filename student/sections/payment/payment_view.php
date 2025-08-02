@@ -4,15 +4,39 @@ include BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/config/auth.php';
 require_once BASE_PATH . '/student/sections/payment/helpers.php';
 include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/admin/php_files/sections/payments/updateLateStatus.php';
 
 if (!is_student_logged_in()) {
     header('Location: ' . BASE_URL . '/student/login.php');
     exit;
 }
 
+
+
+
 $student_id = $_SESSION['student']['id'];
 $current_year = date('Y');
 $selected_year = isset($_GET['year']) ? (int)$_GET['year'] : $current_year;
+
+//  update is late status
+updateLateStatus($student_id);
+
+// Get last verified payment transaction for the student
+$stmt = $conn->prepare("
+    SELECT pt.amount, pt.payment_date
+    FROM payment_transactions pt
+    JOIN student_payments sp ON pt.payment_id = sp.id
+    WHERE sp.student_id = ? AND pt.verification_status = 'verified'
+    ORDER BY pt.payment_date DESC
+    LIMIT 1
+");
+$stmt->bind_param("i", $student_id);
+$stmt->execute();
+$last_payment_result = $stmt->get_result();
+$last_payment = $last_payment_result->fetch_assoc();
+$stmt->close();
+
+
 
 // Get student info with hostel and room details
 $stmt = $conn->prepare("
@@ -50,13 +74,21 @@ $room_fee_result = $stmt->get_result();
 $room_fee = $room_fee_result->fetch_assoc();
 $stmt->close();
 
-// Get payment history with transaction sums
+
 $stmt = $conn->prepare("
     SELECT 
         sp.*, 
         DATE_FORMAT(sp.due_date, '%M %Y') AS billing_period,
-        sp.amount_paid
+        sp.amount_paid,
+        rf.price AS room_fee,
+        rf.billing_cycle,
+        s.id AS student_id,
+        s.first_name AS first_name,
+        s.last_name AS last_name,
+        s.contact_number
     FROM student_payments sp
+    JOIN room_fees rf ON sp.room_fee_id = rf.id
+    JOIN students s ON sp.student_id = s.id
     WHERE sp.student_id = ? AND sp.year = ?
     ORDER BY sp.year DESC, sp.month DESC
 ");
@@ -70,15 +102,24 @@ $total_due = 0;
 $total_paid = 0;
 $total_outstanding = 0;
 $total_late_fee = 0;
+$late_fee_paid = 0;
+
+
 
 while ($payment = $payment_result->fetch_assoc()) {
     $amount_paid = (float) $payment['amount_paid'];
     $payments[] = $payment;
 
+    $student_name = $payment['first_name'] . ' ' . $payment['last_name'];
+    $student_mobile = $payment['contact_number'];
+
     $total_due += $payment['amount_due'];
     $total_paid += $amount_paid;
-    $total_outstanding += ($payment['amount_due'] - $amount_paid);
-    $total_late_fee += $payment['late_fee'];
+    // $total_outstanding += ($payment['amount_due'] - $amount_paid);
+    $total_outstanding += $payment['balance'];
+    // $total_late_fee += $payment['late_fee'];
+    $total_late_fee += ($payment['late_fee'] > 0 && $payment['is_late'] == 1) ? $payment['late_fee'] : 0;
+    $late_fee_paid += ($payment['late_fee'] > 0 && $payment['is_late'] == 1 && $payment['is_late_fee_taken']) ? $payment['late_fee'] : 0;
 }
 $stmt->close();
 
@@ -151,9 +192,9 @@ include BASE_PATH . '/student/includes/header_student.php';
                             <div class="col-md-4">
                                 <h5>Last Payment</h5>
                                 <p>
-                                    <?php if ($total_paid > 0): ?>
-                                        <?= date('M j, Y') ?>
-                                        <span class="badge bg-success"><?= formatCurrency($total_paid) ?> paid</span>
+                                    <?php if ($last_payment): ?>
+                                        <?= date('M j, Y', strtotime($last_payment['payment_date'])) ?>
+                                        <span class="badge bg-success"><?= formatCurrency($last_payment['amount']) ?> paid</span>
                                     <?php else: ?>
                                         No payments yet
                                     <?php endif; ?>
@@ -194,7 +235,10 @@ include BASE_PATH . '/student/includes/header_student.php';
                     <div class="card bg-warning text-dark h-100">
                         <div class="card-body">
                             <h5 class="card-title">Late Fees</h5>
-                            <h3 class="card-text"><?= formatCurrency($total_late_fee) ?></h3>
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h3 class="card-text"><?= formatCurrency($total_late_fee) ?></h3>
+                                <muted>Paid: <?= number_format((float)$late_fee_paid, 2) ?></muted>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -203,15 +247,19 @@ include BASE_PATH . '/student/includes/header_student.php';
             <!-- Payment Table -->
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <div class="table-responsive">
+                    <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
                         <table class="table table-hover">
                             <thead class="table-light">
                                 <tr>
                                     <th>Billing Period</th>
                                     <th>Due Date</th>
+                                    <th>L.F. Applied Date</th>
+                                    <th>Room Fee</th>
+                                    <th>Late Fee</th>
                                     <th>Amount Due</th>
                                     <th>Amount Paid</th>
                                     <th>Balance</th>
+                                    <th>Carried Over</th>
                                     <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -223,22 +271,49 @@ include BASE_PATH . '/student/includes/header_student.php';
                                     </tr>
                                 <?php else: ?>
                                     <?php foreach ($payments as $payment):
-                                        $balance = $payment['amount_due'] - $payment['amount_paid'];
-                                        $is_overdue = $payment['payment_status'] == 'late' ||
-                                            ($payment['payment_status'] == 'unpaid' && strtotime($payment['due_date']) < time());
+                                        $balance = $payment['balance'];
+                                        $is_overdue = $payment['payment_status'] === 'unpaid' && strtotime($payment['due_date']) < time();
+
+                                        // Row color logic
+                                        $row_class = 'table-default';
+                                        if ($payment['payment_status'] === 'paid') {
+                                            $row_class = 'table-success';
+                                        } elseif ($payment['payment_status'] === 'partial') {
+                                            $row_class = 'table-info';
+                                        } elseif ($payment['payment_status'] === 'unpaid' && $is_overdue) {
+                                            $row_class = 'table-danger';
+                                        }
                                     ?>
-                                        <tr class="<?= $is_overdue ? 'table-danger' : '' ?>">
+
+                                        <tr class="<?= $row_class ?>">
                                             <td><?= $payment['billing_period'] ?></td>
                                             <td><?= date('M j, Y', strtotime($payment['due_date'])) ?></td>
+                                            <td><?= date('M j, Y', strtotime($payment['late_fee_applied_date'])) ?></td>
+                                            <td><?= number_format((float)$payment['room_fee'], 2) ?></td>
+                                            <td>
+                                                <?php
+                                                if ($payment['late_fee'] > 0 && $payment['is_late'] == 1) {
+                                                    echo $payment['late_fee'];
+                                                } else {
+                                                    echo '—';
+                                                }
+                                                ?>
+                                            </td>
                                             <td><?= formatCurrency($payment['amount_due']) ?></td>
                                             <td><?= formatCurrency($payment['amount_paid']) ?></td>
                                             <td><?= formatCurrency($balance) ?></td>
+                                            <td><?= formatCurrency($payment['o_p_balance_added']) ?></td>
                                             <td>
                                                 <span class="badge bg-<?= getStatusBadge($payment['payment_status']) ?>">
                                                     <?= ucfirst($payment['payment_status']) ?>
                                                 </span>
                                                 <?php if ($payment['late_fee'] > 0): ?>
-                                                    <small class="text-danger">(+<?= formatCurrency($payment['late_fee']) ?> late fee)</small>
+                                                    <?php
+                                                    $text_color = $payment['is_late_fee_taken'] ? 'success shadow-sm' : 'danger';
+                                                    ?>
+                                                    <small class="text-<?= $text_color ?> ">
+                                                        <?= $payment['is_late'] ? formatCurrency($payment['late_fee']) . ' late fee' : '' ?>
+                                                    </small>
                                                 <?php endif; ?>
                                             </td>
                                             <td>
@@ -253,6 +328,11 @@ include BASE_PATH . '/student/includes/header_student.php';
                                                     data-payment-id="<?= $payment['id'] ?>">
                                                     <i class="fas fa-eye me-1"></i> Details
                                                 </button>
+                                                <!-- View Receipt -->
+                                                <a href="<?= BASE_URL ?>/admin/sections/payments/monthly_payment_report.php?id=<?= $payment['id'] ?>"
+                                                    class="btn btn-sm btn-outline-primary" title="View Monthly Report">
+                                                    <i class="bi bi-receipt"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -287,7 +367,7 @@ include BASE_PATH . '/student/includes/header_student.php';
 <!-- Make Payment Modal -->
 <div class="modal fade" id="makePaymentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content" style="max-height: 700px; overflow-y: auto;">
             <div class="modal-header">
                 <h5 class="modal-title">Make Payment</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -299,7 +379,7 @@ include BASE_PATH . '/student/includes/header_student.php';
                         <label for="amount" class="form-label">Amount to Pay</label>
                         <div class="input-group">
                             <span class="input-group-text"><?= CURRENCY_SYMBOL ?></span>
-                            <input type="number" class="form-control" id="amount" name="amount" min="0" step="0.01" required>
+                            <input type="number" class="form-control" id="amount" name="amount" min="0" step="0.01">
                         </div>
                         <small class="text-muted">Outstanding balance: <span id="outstanding_balance"></span></small>
                     </div>
@@ -332,12 +412,12 @@ include BASE_PATH . '/student/includes/header_student.php';
 
                     <div class="mb-3">
                         <label for="sender_name" class="form-label">Sender Name</label>
-                        <input type="text" class="form-control" id="sender_name" name="sender_name" required >
+                        <input type="text" class="form-control" id="sender_name" name="sender_name" value="<?= htmlspecialchars($student_name) ?>" required>
                     </div>
 
                     <div class="mb-3">
                         <label for="sender_mobile" class="form-label">Sender Mobile Number</label>
-                        <input type="text" class="form-control" id="sender_mobile" name="sender_mobile" required pattern="\d{10,15}">
+                        <input type="text" class="form-control" id="sender_mobile" name="sender_mobile" value="<?= $student_mobile ?>" required pattern="\d{10,15}">
                     </div>
 
                     <div class="mb-3">
@@ -355,13 +435,14 @@ include BASE_PATH . '/student/includes/header_student.php';
     </div>
 </div>
 
+
 <script>
-function updateAccountHint(selectEl) {
-    const selectedOption = selectEl.options[selectEl.selectedIndex];
-    const accountInfo = selectedOption.getAttribute('data-account');
-    const hint = document.getElementById('accountHint');
-    hint.textContent = accountInfo ? `Send to: ${accountInfo}` : '';
-}
+    function updateAccountHint(selectEl) {
+        const selectedOption = selectEl.options[selectEl.selectedIndex];
+        const accountInfo = selectedOption.getAttribute('data-account');
+        const hint = document.getElementById('accountHint');
+        hint.textContent = accountInfo ? `Send to: ${accountInfo}` : '';
+    }
 </script>
 
 
@@ -389,15 +470,16 @@ function updateAccountHint(selectEl) {
         // Make payment - updated to include payment method validation
         $('.make-payment').click(function() {
             const paymentId = $(this).data('payment-id');
-            const balance = $(this).data('balance');
+            const balance = parseFloat($(this).data('balance')) || 0;
+
+            // // Reset form
+            $('#paymentForm')[0].reset();
 
             $('#payment_id').val(paymentId);
             $('#amount').val(balance.toFixed(2));
-            $('#amount').attr('max', balance);
-            $('#outstanding_balance').text('<?= CURRENCY_SYMBOL ?>' + balance.toFixed(2));
+            $('#amount').attr('max', balance.toFixed(2));
+            $('#outstanding_balance').text('<?= CURRENCY_SYMBOL ?>' + balance);
 
-            // Reset form
-            $('#paymentForm')[0].reset();
             $('#makePaymentModal').modal('show');
         });
 
@@ -409,6 +491,7 @@ function updateAccountHint(selectEl) {
                 payment_id: $('#payment_id').val(),
                 amount: $('#amount').val(),
                 payment_method_id: $('#payment_method').val(),
+                reference_code: $('#reference_code').val(),
                 transaction_id: $('#transaction_id').val(),
                 payment_notes: $('#payment_notes').val(),
                 sender_mobile: $('#sender_mobile').val(),
@@ -435,14 +518,14 @@ function updateAccountHint(selectEl) {
 
             // For mobile payments, validate sender info
             const paymentMethod = $('#payment_method option:selected').text().toLowerCase();
-            if ((paymentMethod.includes('bkash') || paymentMethod.includes('nagad') || paymentMethod.includes('rocket')) && 
+            if ((paymentMethod.includes('bkash') || paymentMethod.includes('nagad') || paymentMethod.includes('rocket')) &&
                 (!formData.sender_mobile || !formData.sender_name)) {
                 showSlideMessage('Please provide sender mobile number and name for mobile payments', 'danger');
                 return false;
             }
 
             $.ajax({
-                url: '<?= BASE_URL ?>/student/sections/payment/process_payment.php',
+                url: '<?= BASE_URL ?>/student/php_files/sections/payment/process_payment.php',
                 type: 'POST',
                 data: formData,
                 dataType: 'json',

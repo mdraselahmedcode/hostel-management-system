@@ -18,6 +18,8 @@ if ($hostelResult && $hostelResult->num_rows > 0) {
 // Filters
 $selectedHostelId = isset($_GET['hostel_id']) ? (int) $_GET['hostel_id'] : 0;
 $selectedFloorId = isset($_GET['floor_id']) ? (int) $_GET['floor_id'] : 0;
+$searchRoomNumber = isset($_GET['room_number']) ? trim($_GET['room_number']) : '';
+
 
 // Fetch floors if hostel is selected
 $floors = [];
@@ -51,6 +53,12 @@ $sql = "
     WHERE 1
 ";
 
+if (!empty($searchRoomNumber)) {
+    $safeRoomNumber = $conn->real_escape_string($searchRoomNumber);
+    $sql .= " AND rooms.room_number LIKE '%$safeRoomNumber%'";
+}
+
+
 if ($selectedHostelId > 0) {
     $sql .= " AND hostels.id = $selectedHostelId";
 }
@@ -79,11 +87,21 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 <div class="card-body">
                     <h2 class="mb-4">Manage Rooms</h2>
 
-                    <a href="<?= BASE_URL . '/admin/sections/rooms/add.php' ?>" class="btn btn-success mb-3">+ Add New Room</a>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="<?= BASE_URL . '/admin/sections/rooms/add.php' ?>" class="btn btn-success mb-3">+ Add New Room</a>
+                        <a href="<?= BASE_URL . '/admin/sections/rooms/room_change_request/index.php' ?>" class="btn btn-primary text-light mb-3">Room Change Requests</a>
+                    </div>
 
                     <!-- Filter Form -->
                     <form method="get" class="mb-3">
+                        
                         <div class="row">
+                            <!-- Room Number Search -->
+                            <div class="col-md-4">
+                                <input type="text" name="room_number" class="form-control" placeholder="Search by Room Number"
+                                    value="<?= isset($_GET['room_number']) ? htmlspecialchars($_GET['room_number']) : '' ?>">
+                            </div>
+
                             <!-- Hostel Dropdown -->
                             <div class="col-md-4">
                                 <select name="hostel_id" class="form-select" onchange="this.form.submit()">

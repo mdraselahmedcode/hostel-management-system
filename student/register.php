@@ -183,8 +183,8 @@ $hostels = $hostelQuery->fetch_all(MYSQLI_ASSOC);
         </div>
         <div class="text-center mt-3">
             <p class="text-muted">
-                Need help? <a href="contact.php">Contact support</a> or
-                <a href="faq.php#application-process">read our FAQ</a>
+                Need help? <a href="<?= BASE_URL . '/contact.php' ?>">Contact support</a> or
+                <a href="<?= BASE_URL . '/student/guidelines.php' ?>">read our FAQ</a>
             </p>
         </div>
     </form>

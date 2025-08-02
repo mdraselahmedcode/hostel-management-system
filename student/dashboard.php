@@ -2,8 +2,12 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/db.php';
 require_once BASE_PATH . '/config/auth.php';
+
+
 require_student();
 require_once BASE_PATH . '/student/includes/header_student.php';
+
+$currentSection = 'dashboard';
 ?>
 
 <style>
@@ -137,7 +141,7 @@ require_once BASE_PATH . '/student/includes/header_student.php';
                 </a>
             </div>
             <div class="col">
-                <a href="<?= BASE_URL ?>/student/sections/room/room_change.php" class="text-decoration-none">
+                <a href="<?= BASE_URL ?>/student/sections/room_change_request/index.php" class="text-decoration-none">
                     <div class="card text-center shadow-sm border-0 h-100 hover-card bg-white">
                         <div class="card-body">
                             <i class="bi bi-arrow-repeat fs-1 text-info"></i>
@@ -147,7 +151,7 @@ require_once BASE_PATH . '/student/includes/header_student.php';
                 </a>
             </div>
             <div class="col">
-                <a href="<?= BASE_URL ?>/student/sections/complaints/complaints.php" class="text-decoration-none">
+                <a href="<?= BASE_URL ?>/student/sections/complaints/index.php" class="text-decoration-none">
                     <div class="card text-center shadow-sm border-0 h-100 hover-card bg-white">
                         <div class="card-body">
                             <i class="bi bi-exclamation-triangle fs-1 text-danger"></i>

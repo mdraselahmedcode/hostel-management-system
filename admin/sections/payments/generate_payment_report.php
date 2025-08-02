@@ -39,6 +39,7 @@ if (isset($_GET['export'])) {
             sp.amount_due,
             sp.amount_paid,
             sp.late_fee,
+            sp.is_late,
             sp.payment_status,
             sp.due_date,
             sp.created_at,
@@ -74,12 +75,12 @@ if (isset($_GET['export'])) {
 
         fputcsv($output, [
         $studentName,
-        '="' . $payment['varsity_id'] . '"',  // ✅ This preserves leading 0s in Excel
+        '="' . $payment['varsity_id'] . '"',  
         $payment['hostel_name'],
         $roomDisplay,
         $payment['amount_due'],
         $payment['amount_paid'],
-        $payment['late_fee'] > 0 ? $payment['late_fee'] : '',
+        ($payment['late_fee'] > 0 && $payment['is_late']) ? $payment['late_fee'] : '',
         ucfirst($payment['payment_status']),
         date('d M Y', strtotime($payment['due_date'])),
         date('d M Y', strtotime($payment['created_at'])),
@@ -113,6 +114,7 @@ $query = "SELECT
             sp.payment_status,
             sp.due_date,
             sp.late_fee,
+            sp.is_late,
             sp.late_fee_applied_date,
             sp.created_at,
             CONCAT(s.first_name, ' ', s.last_name) AS student_name,
@@ -175,15 +177,15 @@ $stmt->close();
 
 // Get summary statistics
 $summary_query = "SELECT 
-                    COUNT(*) AS total_payments,
-                    SUM(amount_paid) AS total_collected,
-                    SUM(CASE WHEN payment_status = 'paid' THEN 1 ELSE 0 END) AS paid_count,
-                    SUM(CASE WHEN payment_status = 'unpaid' THEN 1 ELSE 0 END) AS unpaid_count,
-                    SUM(CASE WHEN payment_status = 'partial' THEN 1 ELSE 0 END) AS partial_count,
-                    SUM(CASE WHEN payment_status = 'late' THEN 1 ELSE 0 END) AS late_count,
-                    SUM(late_fee) AS total_late_fees
-                  FROM student_payments
-                  WHERE month = ? AND year = ?";
+                        COUNT(*) AS total_payments,
+                        SUM(amount_paid) AS total_collected,
+                        SUM(CASE WHEN payment_status = 'paid' THEN 1 ELSE 0 END) AS paid_count,
+                        SUM(CASE WHEN payment_status = 'unpaid' THEN 1 ELSE 0 END) AS unpaid_count,
+                        SUM(CASE WHEN payment_status = 'partial' THEN 1 ELSE 0 END) AS partial_count,
+                        SUM(CASE WHEN payment_status = 'late' THEN 1 ELSE 0 END) AS late_count,
+                        SUM(CASE WHEN is_late_fee_taken = 1 THEN late_fee ELSE 0 END) AS total_late_fees
+                    FROM student_payments
+                    WHERE month = ? AND year = ?";
 
 if ($hostel_id && is_numeric($hostel_id)) {
     $summary_query .= " AND hostel_id = ?";
@@ -362,7 +364,7 @@ $hostels = $conn->query("SELECT id, hostel_name FROM hostels ORDER BY hostel_nam
                 <div class="card summary-card h-100">
                     <div class="card-body">
                         <h6 class="card-subtitle mb-2 text-muted">Late Fees</h6>
-                        <h3 class="card-title">Tk<?= number_format($summary['total_late_fees'], 2) ?></h3>
+                        <h3 class="card-title">Tk <?= number_format($summary['total_late_fees'], 2) ?></h3>
                     </div>
                 </div>
             </div>
@@ -431,9 +433,10 @@ $hostels = $conn->query("SELECT id, hostel_name FROM hostels ORDER BY hostel_nam
                                 <th>Late Fee</th>
                                 <th>Status</th>
                                 <th>Due Date</th>
+                                <th>L.F. Applied Date</th>
                                 <th>Payment Date</th>
                                 <th>Collected By</th>
-                                <th>Action</th>
+                                <!-- <th>Action</th> -->
                             </tr>
                         </thead>
                         <tbody>
@@ -452,23 +455,30 @@ $hostels = $conn->query("SELECT id, hostel_name FROM hostels ORDER BY hostel_nam
                                         <td>Tk <?= number_format($payment['amount_due'], 2) ?></td>
                                         <td>Tk <?= number_format($payment['amount_paid'], 2) ?></td>
                                         <td>
-                                            <?= $payment['late_fee'] > 0 ?
-                                                'Tk ' . number_format($payment['late_fee'], 2) : '-' ?>
+                                            <?php 
+                                                if ($payment['late_fee'] > 0 && $payment['is_late'] === 1) {
+                                                   echo 'Tk ' . number_format($payment['late_fee'], 2);
+                                                } else {
+                                                    echo '—';
+                                                }
+                                            ?>
                                         </td>
+
                                         <td>
                                             <span class="status-badge status-<?= $payment['payment_status'] ?>">
                                                 <?= ucfirst($payment['payment_status']) ?>
                                             </span>
                                         </td>
                                         <td><?= date('d M Y', strtotime($payment['due_date'])) ?></td>
+                                        <td><?= date('d M Y', strtotime($payment['late_fee_applied_date'])) ?></td>
                                         <td><?= date('d M Y', strtotime($payment['created_at'])) ?></td>
-                                        <td><?= $payment['collected_by'] ?? '-' ?></td>
-                                        <td>
+                                        <td><?= $payment['collected_by'] ?? '—' ?></td>
+                                        <!-- <td>
                                             <a href="<?= BASE_URL ?> /admin/sections/payments/receipt.php?id=<?= $payment['id'] ?>"
                                                 class="btn btn-sm btn-outline-primary" title="View Receipt">
                                                 <i class="bi bi-receipt"></i>
                                             </a>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>

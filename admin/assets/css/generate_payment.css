@@ -1,0 +1,41 @@
+        .report-header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .summary-card {
+            border-left: 4px solid #0d6efd;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-paid {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-unpaid {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-partial {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-late {
+            background-color: #e0e7ff;
+            color: #4338ca;
+        }

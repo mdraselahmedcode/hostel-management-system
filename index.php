@@ -325,7 +325,7 @@ include BASE_PATH . '/includes/header.php';
                         </div>
                         <div>
                             <h4 class="fw-bold">Contact</h4>
-                            <p class="text-muted">+8801929951023<br>hostel@university.edu</p>
+                            <p class="text-muted">+8801929951023<br>cityhostel@university.edu</p>
                         </div>
                     </div>
                 </div>

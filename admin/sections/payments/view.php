@@ -3,7 +3,11 @@ require_once __DIR__ . '/../../../config/config.php';
 include BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/config/auth.php';
 include BASE_PATH . '/includes/slide_message.php';
+require_once BASE_PATH . '/admin/php_files/sections/payments/updateLateStatus.php';
 
+date_default_timezone_set("Asia/Dhaka");
+
+// Only allow admin access
 require_admin();
 
 $payment_id = $_GET['id'] ?? 0;
@@ -14,13 +18,15 @@ $selected_year = $_GET['year'] ?? null;
 
 // Get current payment details
 $payment_query = "SELECT sp.*, s.first_name, s.last_name, s.varsity_id, s.contact_number, 
-                  h.hostel_name, r.room_number, rt.type_name as room_type,
-                  a.firstname AS updated_by_firstname, a.lastname AS updated_by_last_name
+                  h.hostel_name, h.hostel_type, r.room_number, rt.type_name as room_type,
+                  a.firstname AS updated_by_firstname, a.lastname AS updated_by_last_name,
+                  f.id AS floor_id, f.floor_number AS floor_number, f.floor_name AS floor_name
                   FROM student_payments sp
                   JOIN students s ON sp.student_id = s.id
                   JOIN hostels h ON sp.hostel_id = h.id
                   JOIN rooms r ON sp.room_id = r.id
                   JOIN room_types rt ON sp.room_type_id = rt.id
+                  JOIN floors f ON r.floor_id = f.id
                   LEFT JOIN admins a ON sp.updated_by = a.id
                   WHERE sp.id = ?";
 
@@ -31,21 +37,38 @@ $payment = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
 if (!$payment) {
-    echo "Payment record not found.";
+    $error = urlencode("Payment not found");
+    header("Location: " . BASE_URL . "/admin/sections/payments/index.php");
     exit;
 }
 
+//  update is late status
+updateLateStatus($payment['student_id']);
+
+
+
 $student_id = $payment['student_id'];
 
-// Build query for all payments with optional month/year filter
 $all_payments_query = "
-    SELECT sp.*, h.hostel_name, r.room_number, rt.type_name AS room_type
+    SELECT 
+        sp.*, 
+        h.hostel_name, 
+        r.room_number, 
+        rt.type_name AS room_type, 
+        s.first_name, 
+        s.last_name,
+        rf.id AS room_fee_id,
+        rf.price AS room_fee_price
     FROM student_payments sp
     JOIN hostels h ON sp.hostel_id = h.id
     JOIN rooms r ON sp.room_id = r.id
     JOIN room_types rt ON sp.room_type_id = rt.id
+    JOIN students s ON sp.student_id = s.id
+    JOIN room_fees rf ON rf.room_type_id = sp.room_type_id AND rf.hostel_id = sp.hostel_id
     WHERE sp.student_id = ?
 ";
+
+
 
 // Add month/year filter conditions if specified
 $conditions = [];
@@ -88,9 +111,11 @@ $stmt->close();
 $transactions = [];
 if ($payment_id) {
     $stmt = $conn->prepare("
-        SELECT t.*, pm.name, pm.display_name, pm.account_number, pm.active, pm.created_at
+        SELECT t.*, pm.name, pm.display_name, pm.account_number, pm.active, pm.created_at,
+        sp.o_p_balance_added AS o_p_balance_added
         FROM payment_transactions t
         JOIN payment_methods pm ON t.payment_method_id = pm.id
+        JOIN student_payments sp ON t.payment_id = sp.id
         WHERE t.payment_id = ?
         ORDER BY t.payment_date DESC
     ");
@@ -104,61 +129,12 @@ if ($payment_id) {
 
 
 
+
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
 <head>
-    <style>
-        /* Add this to your payment_index.css or in a style tag */
-        .btn-sm.edit-payment {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.875rem;
-            line-height: 1.5;
-            border-radius: 0.2rem;
-        }
-
-        /* Modal styling */
-        #editPaymentModal .modal-body {
-            padding: 1.5rem;
-        }
-
-        #editPaymentModal .form-control,
-        #editPaymentModal .form-select {
-            margin-bottom: 1rem;
-        }
-
-        .payment-status {
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 4px;
-            display: inline-block;
-            font-size: 0.875rem;
-        }
-
-        .payment-status.paid {
-            color: #fff;
-            background-color: #28a745;
-            /* green */
-        }
-
-        .payment-status.unpaid {
-            color: #fff;
-            background-color: #dc3545;
-            /* red */
-        }
-
-        .payment-status.partial {
-            color: #212529;
-            background-color: #ffc107;
-            /* yellow */
-        }
-
-        .payment-status.late {
-            color: #fff;
-            background-color: #6c757d;
-            /* gray */
-        }
-    </style>
+    <link rel="stylesheet" href="<?= BASE_URL . '/admin/assets/css/payment_view.css'?>">
 </head>
 <div class="content container-fluid mt-5">
     <div class="row full-height">
@@ -168,7 +144,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Payment Details</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <a href="javascript:history.back()" class="btn btn-sm btn-outline-secondary">
+                    <a href="<?= BASE_URL . '/admin/sections/payments/index.php' ?>" class="btn btn-sm btn-outline-secondary">
                         <i class="bi bi-arrow-left"></i> Back to Payments
                     </a>
                 </div>
@@ -176,7 +152,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
 
             <div class="row">
                 <!-- Current payment details -->
-                <div class="col-md-6" style="max-height: 450px; overflow-y: auto">
+                <div class="col-md-6" style="max-height: 300px; overflow-y: auto">
                     <div class="card mb-4">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">Payment Information</h5>
@@ -219,10 +195,10 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                 </tr>
                                 <tr>
                                     <th>Student:</th>
-                                    <td style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span><?= htmlspecialchars($payment['first_name'] . ' ' . $payment['last_name']) ?></span>
+                                    <td style="display: flex; justify-content: start; align-items: center;">
                                         <a href="<?= BASE_URL . '/admin/sections/students/view.php' ?>?id=<?= urlencode($payment['student_id']) ?>" class="btn btn-sm btn-outline-primary">
-                                            View Profile
+                                        <span><?= htmlspecialchars($payment['first_name'] . ' ' . $payment['last_name']) ?></span>
+                                            <!-- View Profile -->
                                         </a>
                                     </td>
                                 </tr>
@@ -238,8 +214,13 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                 </tr>
                                 <tr>
                                     <th>Hostel:</th>
-                                    <td><?= htmlspecialchars($payment['hostel_name']) ?></td>
+                                    <td><?= htmlspecialchars($payment['hostel_name'] . ' (' . $payment['hostel_type'] . ') ') ?></td>
                                 </tr>
+                                <tr>
+                                    <th>Floor Number:</th>
+                                    <td><?= htmlspecialchars($payment['floor_name'] . ' (' . $payment['floor_number'] . ') ') ?></td>
+                                </tr>
+
                                 <tr>
                                     <th>Room:</th>
                                     <td><?= htmlspecialchars($payment['room_number'] . ' (' . $payment['room_type'] . ')') ?></td>
@@ -249,45 +230,41 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                     <td><?= date('F Y', mktime(0, 0, 0, $payment['month'], 1, $payment['year'])) ?></td>
                                 </tr>
 
-                                <tr>
-                                    <th>Due Date:</th>
-                                    <td><?= date('d M Y', strtotime($payment['due_date'])) ?></td>
-                                </tr>
-                                <tr>
-                                    <th>Late Fee Apply Date:</th>
-                                    <td><?= $payment['late_fee_applied_date'] ? date('d M Y', strtotime($payment['late_fee_applied_date'])) : '-' ?></td>
-                                </tr>
-                                <tr>
-                                    <th>Late Fee:</th>
-                                    <td>৳<?= number_format($payment['late_fee'], 2) ?></td>
-                                </tr>
-
                                 <?php
-                                $today = new DateTime();
-                                $late_fee_date = $payment['late_fee_applied_date'] ? new DateTime($payment['late_fee_applied_date']) : null;
-                                $late_fee_applies = $late_fee_date && $today >= $late_fee_date;
+                                    $today = new DateTime();
 
-                                $actual_due = $payment['amount_due'];
-                                if ($late_fee_applies) {
-                                    $actual_due += $payment['late_fee'];
-                                }
-                                $balance = $actual_due - $payment['amount_paid'];
+                                    $actual_due = $payment['amount_due'];
+                                    
+                                    $late_fee_applied = 0;
+                                    if ($payment['is_late']) {
+                                        $late_fee_applied = $payment['late_fee']; 
+                                    }
                                 ?>
 
                                 <tr>
                                     <th>Amount Due:</th>
                                     <td>৳<?= number_format($actual_due, 2) ?></td>
                                 </tr>
+
+                                <tr>
+                                    <th>Due Date:</th>
+                                    <td><?= date('d M Y', strtotime($payment['due_date'])) ?></td>
+                                </tr>
+
+                                <tr>
+                                    <th>Late Fee Applied:</th>
+                                    <td>৳<?= number_format($late_fee_applied, 2) ?> </td> 
+                                </tr>
+                                
+                                <tr>
+                                    <th>Balance:</th>
+                                    <td>৳<?= number_format($payment['balance'], 2) ?></td>
+                                </tr>
+
                                 <tr>
                                     <th>Amount Paid:</th>
                                     <td>৳<?= number_format($payment['amount_paid'], 2) ?></td>
                                 </tr>
-                                <tr>
-                                    <th>Balance:</th>
-                                    <td>৳<?= number_format($balance, 2) ?></td>
-                                </tr>
-
-
 
                                 <tr>
                                     <th>Last Updated By:</th>
@@ -305,7 +282,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 </div>
 
                 <!-- Payment transactions -->
-                <div class="col-md-6" style="max-height: 450px; overflow-y: auto">
+                <div class="col-md-6" style="max-height: 300px; overflow-y: auto">
                     <div class="card">
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5>Payment Transactions</h5>
@@ -332,9 +309,34 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                                     <input type="number" name="amount" class="form-control" required>
                                                 </div>
 
-                                                <div class="mb-3">
-                                                    <label for="payment_date" class="form-label">Payment Date</label>
-                                                    <input type="datetime-local" name="payment_date" class="form-control" required>
+                                                <div class="row">
+                                                    <!-- ✅ Month Field -->
+                                                    <div class="mb-3 col-md-6">
+                                                        <label for="month" class="form-label">Month</label>
+                                                        <select name="month" class="form-select" required>
+                                                            <option value="">Select Month</option>
+                                                            <?php
+                                                            foreach (range(1, 12) as $m):
+                                                                $monthName = date('F', mktime(0, 0, 0, $m, 1));
+                                                            ?>
+                                                                <option value="<?= $m ?>"><?= $monthName ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    </div>
+
+                                                    <!-- ✅ Year Field -->
+                                                    <div class="mb-3 col-md-6">
+                                                        <label for="year" class="form-label">Year</label>
+                                                        <select name="year" class="form-select" required>
+                                                            <option value="">Select Year</option>
+                                                            <?php
+                                                            $currentYear = date('Y');
+                                                            foreach (range($currentYear - 5, $currentYear + 2) as $year): // Adjust range as needed
+                                                            ?>
+                                                                <option value="<?= $year ?>"><?= $year ?></option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                    </div>
                                                 </div>
 
                                                 <div class="mb-3">
@@ -360,6 +362,13 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                                         <option value="rejected">Rejected</option>
                                                     </select>
                                                 </div>
+
+                                                <!-- Add Phone Number Field -->
+                                                <div class="mb-3">
+                                                    <label for="phone_number" class="form-label">Phone Number</label>
+                                                    <input type="text" name="phone_number" id="phone_number" class="form-control" pattern="^\d{10,15}$" title="Enter a valid phone number">
+                                                </div>
+
 
                                                 <div class="mb-3">
                                                     <label for="reference_code" class="form-label">Reference Code (optional)</label>
@@ -390,6 +399,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                                 <th>Date</th>
                                                 <th>Method</th>
                                                 <th>Amount</th>
+                                                <th>Carried Over</th>
                                                 <th>Status</th>
                                                 <th>Actions</th>
                                             </tr>
@@ -401,6 +411,9 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                                     <td><?= htmlspecialchars($txn['name']) ?></td>
                                                     <td>৳<?= number_format($txn['amount'], 2) ?></td>
                                                     <td>
+                                                        ৳<?= number_format($txn['o_p_balance_added'], 2) ?>
+                                                    </td>
+                                                    <td>
                                                         <span class="badge bg-<?=
                                                                                 $txn['verification_status'] == 'verified' ? 'success' : ($txn['verification_status'] == 'pending' ? 'warning' : 'danger')
                                                                                 ?>">
@@ -411,13 +424,27 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                                         <a href="view_transaction.php?id=<?= $txn['id'] ?>" class="btn btn-sm btn-info" title="View">
                                                             <i class="bi bi-eye"></i>
                                                         </a>
+
+                                                        <!-- View Receipt -->
+                                                        <a href="<?= BASE_URL ?>/admin/sections/payments/receipt.php?payment_id=<?= $payment['id'] ?>&transaction_id=<?= $txn['id'] ?>"
+                                                            class="btn btn-sm btn-outline-primary" title="View Receipt">
+                                                            <i class="bi bi-receipt"></i>
+                                                        </a>
+
+                                                        <!-- Verify Transaction -->
                                                         <?php if ($txn['verification_status'] == 'pending'): ?>
-                                                            <a href="verify_transaction.php?id=<?= $txn['id'] ?>" class="btn btn-sm btn-success" title="Verify">
+                                                            <button
+                                                                class="btn btn-sm btn-success verify-btn"
+                                                                data-id="<?= $txn['id'] ?>"
+                                                                data-action="verify"
+                                                                title="Verify Payment Request">
                                                                 <i class="bi bi-check-circle"></i>
-                                                            </a>
+                                                            </button>
                                                         <?php endif; ?>
+
                                                     </td>
                                                 </tr>
+
                                             <?php endforeach; ?>
                                         </tbody>
                                     </table>
@@ -434,7 +461,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
             <div class="card mt-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <div>
-                        <h5>All Payments for <?= htmlspecialchars($payment['first_name'] . ' ' . $payment['last_name']) ?></h5>
+                        <h5>All Payments for <span class="text-success shadow-sm px-2 ms-2"><?= htmlspecialchars($payment['first_name'] . ' ' . $payment['last_name']) ?></span></h5>
                     </div>
                     <div>
                         <form method="get" class="form-inline">
@@ -466,30 +493,41 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         </form>
                     </div>
                 </div>
-                <div class="card-body table-responsive" style="max-height: 150px; overflow-y: auto">
+                <div class="card-body table-responsive" style="max-height: 300px; overflow-y: auto">
                     <table class="table table-striped table-sm">
                         <thead>
                             <tr>
                                 <th>Period</th>
                                 <th>Due Date</th>
-                                <th>Amount Due</th>
+                                <th>Room Fee</th>
                                 <th>Late Fee</th>
+                                <th>Is Late</th>
+                                <th>Amount Due</th>
+                                <th>L.F. Applied Date</th>
+                                <th>Late Fee Paid</th>
                                 <th>Amount Paid</th>
                                 <th>Balance</th>
+                                <th>Carried Over</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             <?php foreach ($all_payments as $p):
                                 $dueDateObj = new DateTime($p['due_date']);
                                 $lateFeeAppliedDateObj = $p['late_fee_applied_date'] ? new DateTime($p['late_fee_applied_date']) : new DateTime('9999-12-31');
                                 $today = new DateTime();
-
-                                $lateFeeApplies = in_array($p['payment_status'], ['unpaid', 'partial']) && $today > $dueDateObj && $today >= $lateFeeAppliedDateObj;
-                                $actualDue = $p['amount_due'] + ($lateFeeApplies ? $p['late_fee'] : 0);
-                                $balance = $actualDue - $p['amount_paid'];
+                                $balance = $p['balance'];  // added later
                                 $period = date('F Y', mktime(0, 0, 0, $p['month'], 1, $p['year']));
+
+                                // Check if payment is late (only if due date is in the past)
+                                $lateFeeApplies_for_status = in_array($p['payment_status'], ['unpaid', 'partial']) && $today > $dueDateObj && $today >= $lateFeeAppliedDateObj;
+
+                                // Only consider late fee taken status if due date is past
+                                $lateFeeApplies_for_is_late_fee_taken = ($today > $dueDateObj && $today >= $lateFeeAppliedDateObj);
+
+                                $is_late_fee_taken = ($p['is_late_fee_taken'] && $p['is_late'] && $p['payment_status'] === 'paid') ? 'Yes' : '—';
 
                                 switch ($p['payment_status']) {
                                     case 'paid':
@@ -512,34 +550,52 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                                 <tr>
                                     <td><?= $period ?></td>
                                     <td><?= $dueDateObj->format('d M Y') ?></td>
-                                    <td>৳<?= number_format($actualDue, 2) ?></td>
-                                    <td>৳<?= number_format($p['late_fee'], 2) ?></td>
+                                    <!-- <td>৳<?= number_format($actualDue, 2) ?></td> -->
+                                    <td>৳<?= number_format($p['room_fee_price'], 2) ?></td>
+                                    <td>
+                                        <?php if ($p['late_fee'] > 0 && $p['is_late']): ?>
+                                            ৳<?= number_format($p['late_fee'], 2) ?>
+                                        <?php else: ?>
+                                            —
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?= $p['is_late'] ? 'Yes' : 'No' ?></td>
+                                    <td>৳<?= number_format($p['amount_due'], 2) ?></td>
+                                    <td><?= $lateFeeAppliedDateObj->format('d M Y') ?></td>
+                                    <td><?=
+                                        $is_late_fee_taken
+                                        ?></td>
                                     <td>৳<?= number_format($p['amount_paid'], 2) ?></td>
                                     <td>৳<?= number_format($balance, 2) ?></td>
+                                    <td>৳<?= number_format($p['o_p_balance_added'], 2) ?></td>
                                     <td>
                                         <span class="payment-status <?= $statusClass ?>">
                                             <?= ucfirst($p['payment_status']) ?>
-                                            <?= $lateFeeApplies ? ' (Late)' : '' ?>
+                                            <?= $lateFeeApplies_for_status ? ' (Late)' : '' ?>
                                         </span>
                                     </td>
                                     <td>
                                         <div class="d-flex flex-wrap gap-1">
                                             <!-- View Payment (Eye Icon) -->
-                                            <a href="<?= BASE_URL ?>/admin/sections/payments/view.php?id=<?= $p['id'] ?>"
-                                                class="btn btn-sm btn-info" title="View Payment Details">
+                                            <a href="<?= BASE_URL ?>/admin/sections/payments/view.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-info" title="View Payment Details">
                                                 <i class="bi bi-eye"></i>
                                             </a>
 
-                                            <!-- View Receipt -->
-                                            <a href="<?= BASE_URL ?>/admin/sections/payments/receipt.php?id=<?= $p['id'] ?>"
-                                                class="btn btn-sm btn-outline-primary" title="View Receipt">
-                                                <i class="bi bi-receipt"></i>
-                                            </a>
 
                                             <!-- Edit Payment -->
                                             <button class="btn btn-sm btn-warning edit-payment" title="Edit Payment" data-id="<?= $p['id'] ?>">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
+
+                                            <!-- Delete Payment -->
+                                            <button class="btn btn-sm btn-danger delete-payment" title="Delete Payment" data-id="<?= $p['id'] ?>">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+
+                                            <!-- View Receipt -->
+                                            <a href="<?= BASE_URL ?>/admin/sections/payments/monthly_payment_report.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-primary" title="Monthly Payment Report">
+                                                <i class="bi bi-receipt"></i>
+                                            </a>
                                         </div>
                                     </td>
                                 </tr>
@@ -563,7 +619,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 <h5 class="modal-title" id="editPaymentModalLabel">Edit Payment Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="editPaymentForm">
+            <form id="editPaymentForm" style="max-height: 60vh; overflow-y: auto;">
                 <div class="modal-body">
                     <input type="hidden" name="payment_id" id="edit_payment_id">
 
@@ -578,30 +634,19 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                     </div>
 
                     <div class="mb-3">
+                        <label for="edit_balance" class="form-label">Balance</label>
+                        <input type="number" class="form-control" id="edit_balance" name="balance" step="0.01" min="0" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_op_balance" class="form-label">O/P Balance Added</label>
+                        <input type="number" class="form-control" id="edit_op_balance" name="o_p_balance_added" step="0.01" min="0">
+                    </div>
+
+                    <div class="mb-3">
                         <label for="edit_late_fee" class="form-label">Late Fee</label>
                         <input type="number" class="form-control" id="edit_late_fee" name="late_fee" step="0.01" min="0">
                     </div>
-
-                    <!-- ✅ Month Input Field -->
-                    <div class="mb-3">
-                        <label for="edit_month" class="form-label">Month</label>
-                        <select id="edit_month" name="month" class="form-select">
-                            <option value="1">January</option>
-                            <option value="2">February</option>
-                            <option value="3">March</option>
-                            <option value="4">April</option>
-                            <option value="5">May</option>
-                            <option value="6">June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
-                    </div>
-
-
 
                     <div class="mb-3">
                         <label for="edit_due_date" class="form-label">Due Date</label>
@@ -613,6 +658,11 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                         <input type="date" class="form-control" id="edit_late_fee_applied_date" name="late_fee_applied_date">
                     </div>
 
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="edit_is_late_fee_taken" name="is_late_fee_taken">
+                        <label class="form-check-label" for="edit_is_late_fee_taken">Late Fee Taken</label>
+                    </div>
+
                     <div class="mb-3">
                         <label for="edit_payment_status" class="form-label">Payment Status</label>
                         <select class="form-select" id="edit_payment_status" name="payment_status" required>
@@ -621,6 +671,37 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                             <option value="partial">Partial</option>
                             <option value="late">Late</option>
                         </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_month" class="form-label">Month</label>
+                        <select id="edit_month" name="month" class="form-select" required>
+                            <option value="">Select Month</option>
+                            <?php
+                            $months = [
+                                1 => 'January',
+                                2 => 'February',
+                                3 => 'March',
+                                4 => 'April',
+                                5 => 'May',
+                                6 => 'June',
+                                7 => 'July',
+                                8 => 'August',
+                                9 => 'September',
+                                10 => 'October',
+                                11 => 'November',
+                                12 => 'December'
+                            ];
+                            foreach ($months as $num => $name) {
+                                echo "<option value=\"$num\">$name</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="edit_year" class="form-label">Year</label>
+                        <input type="number" class="form-control" id="edit_year" name="year" min="2000" max="2100" required>
                     </div>
                 </div>
 
@@ -632,6 +713,7 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
         </div>
     </div>
 </div>
+
 
 
 
@@ -651,15 +733,21 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 dataType: 'json',
                 success: function(response) {
                     if (response.success) {
+                        const data = response.payment; // updated key
+
                         // Populate the modal with payment data
-                        $('#edit_payment_id').val(response.data.id);
-                        $('#edit_amount_due').val(response.data.amount_due);
-                        $('#edit_amount_paid').val(response.data.amount_paid);
-                        $('#edit_late_fee').val(response.data.late_fee);
-                        $('#edit_month').val(response.data.month);
-                        $('#edit_due_date').val(response.data.due_date);
-                        $('#edit_late_fee_applied_date').val(response.data.late_fee_applied_date);
-                        $('#edit_payment_status').val(response.data.payment_status);
+                        $('#edit_payment_id').val(data.id);
+                        $('#edit_amount_due').val(data.amount_due);
+                        $('#edit_amount_paid').val(data.amount_paid);
+                        $('#edit_balance').val(data.balance);
+                        $('#edit_op_balance').val(data.o_p_balance_added);
+                        $('#edit_late_fee').val(data.late_fee);
+                        $('#edit_due_date').val(data.due_date);
+                        $('#edit_late_fee_applied_date').val(data.late_fee_applied_date);
+                        $('#edit_is_late_fee_taken').prop('checked', data.is_late_fee_taken);
+                        $('#edit_payment_status').val(data.payment_status);
+                        $('#edit_month').val(data.month);
+                        $('#edit_year').val(data.year);
 
                         // Show the modal
                         $('#editPaymentModal').modal('show');
@@ -672,6 +760,47 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 }
             });
         });
+
+
+
+        // Handle delete button click
+        $('.delete-payment').click(function() {
+            const paymentId = $(this).data('id');
+            const $button = $(this); // Store reference to the clicked button
+            const $row = $button.closest('tr'); // Store reference to the row
+
+            // Confirmation prompt
+            const confirmDelete = confirm('Are you sure you want to delete this payment?');
+
+            if (!confirmDelete) return; // Cancel if user clicked "Cancel"
+
+            // Proceed with deletion
+            $.ajax({
+                url: '<?= BASE_URL . '/admin/php_files/sections/payments/single_payment_delete.php' ?>',
+                type: 'POST',
+                data: {
+                    id: paymentId
+                },
+                dataType: 'json',
+                success: function(response) {
+                    if (response.success) {
+                        showSlideMessage(response.message, 'success');
+
+                        // Smooth fade out, then remove the row
+                        $row.fadeOut(300, function() {
+                            $(this).remove();
+                            location.reload(); // Reload the page to reflect changes
+                        });
+                    } else {
+                        showSlideMessage(response.message || 'Failed to delete payment', 'danger');
+                    }
+                },
+                error: function() {
+                    showSlideMessage('Error deleting payment', 'danger');
+                }
+            });
+        });
+
 
         // Handle form submission
         $('#editPaymentForm').submit(function(e) {
@@ -728,8 +857,10 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 dataType: 'json',
                 success: function(res) {
                     if (res.success) {
-                        showSlideMessage('Payment added successfully')
-                        location.reload(); // Optional: Refresh the page or update part of it
+                        showSlideMessage(res.message, 'success');
+                        setTimeout(function() {
+                            location.reload(); // Optional: Refresh the page or update part of it
+                        }, 1500);
                     } else {
                         showSlideMessage(res.message || 'Failed to add Payment', 'danger');
                     }
@@ -739,6 +870,35 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 }
             });
         });
+
+
+        $('.verify-btn').on('click', function() {
+            const txnId = $(this).data('id');
+            const action = $(this).data('action');
+
+            $.ajax({
+                url: '<?= BASE_URL . '/admin/php_files/sections/payments/verify_transaction.php' ?>',
+                type: 'POST',
+                data: {
+                    txn_id: txnId,
+                    action
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showSlideMessage(response.message, 'success');
+                        setTimeout(() => {
+                            location.reload(); // Reload the page to reflect changes
+                        }, 1500);
+                    } else {
+                        showSlideMessage(response.message || 'Failed to verify Payment', 'danger');
+                    }
+                },
+                error: function() {
+                    showSlideMessage('Server error. Please try again.', 'error');
+                }
+            });
+        });
+
     });
 </script>
 

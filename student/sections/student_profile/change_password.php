@@ -6,6 +6,7 @@ require_once BASE_PATH . '/student/includes/header_student.php';
 require_once BASE_PATH . '/config/auth.php';
 include BASE_PATH . '/includes/slide_message.php';
 
+$currentSection = 'change_password';
 
 require_student();
 
@@ -24,7 +25,7 @@ require_student();
                 </a>
             </div>
             <div class="d-flex mt-5 justify-content-center" style="min-height: calc(100vh - 250px);">
-                <div class="w-100 px-3" style="max-width: 500px;">
+                <div class="w-100 px-3" style="max-width: 700px;">
                     <div class="card shadow-sm">
                         <div class="card-header bg-primary text-white">
                             <h5 class="mb-0">Change Password</h5>

@@ -29,6 +29,40 @@ $stmt->bind_param("i", $student['id']);
 $stmt->execute();
 $profile = $stmt->get_result()->fetch_assoc();
 $stmt->close();
+
+
+
+// Fetch pending complaints count and last update time
+$complaintStmt = $conn->prepare("
+    SELECT 
+        COUNT(*) AS pending_count,
+        MAX(updated_at) AS last_update
+    FROM complaints
+    WHERE student_id = ? AND status = 'pending'
+");
+$complaintStmt->bind_param("i", $student['id']);
+$complaintStmt->execute();
+$complaintResult = $complaintStmt->get_result()->fetch_assoc();
+$complaintStmt->close();
+
+// Format last update
+$lastUpdateText = 'No complaints yet';
+if ($complaintResult['last_update']) {
+    $lastUpdateTime = new DateTime($complaintResult['last_update']);
+    $now = new DateTime();
+    $interval = $now->diff($lastUpdateTime);
+
+    if ($interval->d >= 1) {
+        $lastUpdateText = $interval->d . ' day' . ($interval->d > 1 ? 's' : '') . ' ago';
+    } elseif ($interval->h >= 1) {
+        $lastUpdateText = $interval->h . ' hour' . ($interval->h > 1 ? 's' : '') . ' ago';
+    } elseif ($interval->i >= 1) {
+        $lastUpdateText = $interval->i . ' minute' . ($interval->i > 1 ? 's' : '') . ' ago';
+    } else {
+        $lastUpdateText = 'Just now';
+    }
+}
+
 ?>
 
 <head>
@@ -104,10 +138,10 @@ $stmt->close();
                             <a href="<?= BASE_URL ?>/student/sections/payment/payment_view.php" class="list-group-item list-group-item-action">
                                 <i class="bi bi-credit-card-fill me-2"></i>Payment
                             </a>
-                            <a href="<?= BASE_URL ?>/student/sections/room/room_change.php" class="list-group-item list-group-item-action">
+                            <a href="<?= BASE_URL ?>/student/sections/room_change_request/index.php" class="list-group-item list-group-item-action">
                                 <i class="bi bi-door-open-fill me-2"></i>Room Change Request
                             </a>
-                            <a href="<?= BASE_URL ?>/student/sections/complaints/complaints.php" class="list-group-item list-group-item-action">
+                            <a href="<?= BASE_URL ?>/student/sections/complaints/create.php" class="list-group-item list-group-item-action">
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>Submit Complaint
                             </a>
                             <a href="<?= BASE_URL ?>/student/sections/student_profile/change_password.php" class="list-group-item list-group-item-action">
@@ -231,46 +265,48 @@ $stmt->close();
                         <div class="col-md-4 mb-3">
                             <div class="card status-card bg-success bg-opacity-10">
                                 <div class="card-body text-center">
-                                    <h6 class="card-title">Payment Status</h6>
+                                    <h6 class="card-title text-light shadow-sm">Payment Status</h6>
                                     <div class="status-icon">
                                         <i class="bi bi-check-circle-fill text-success"></i>
                                     </div>
                                     <p class="mb-0">Up to date</p>
-                                    <small class="text-light">
+                                    <span class="text-light shadow-sm">
                                         Last paid:
                                         <?= $lastPayment ? date('d M Y', strtotime($lastPayment['payment_date'])) : 'No payments yet' ?>
-                                    </small>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="card status-card bg-info bg-opacity-10">
                                 <div class="card-body text-center">
-                                    <h6 class="card-title">Room Status</h6>
+                                    <h6 class="card-title text-light shadow-md">Room Status</h6>
                                     <div class="status-icon">
                                         <i class="bi bi-house-check-fill text-info"></i>
                                     </div>
                                     <p class="mb-0">
                                         <?= ($profile['is_checked_in'] ?? 0) ? 'Active' : 'Not Checked In' ?>
                                     </p>
-                                    <small class="text-light">
+                                    <span class="text-light shadow-md">
                                         Checked in:
                                         <?= !empty($profile['check_in_at']) && $profile['check_in_at'] !== '0000-00-00 00:00:00'
                                             ? date('d M Y', strtotime($profile['check_in_at']))
                                             : 'N/A' ?>
-                                    </small>
+                                    </span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <div class="card status-card bg-warning bg-opacity-10">
                                 <div class="card-body text-center">
-                                    <h6 class="card-title">Complaints</h6>
+                                    <h6 class="card-title text-light shadow-md">Complaints</h6>
                                     <div class="status-icon">
                                         <i class="bi bi-exclamation-triangle-fill text-warning"></i>
                                     </div>
-                                    <p class="mb-0">1 Pending</p>
-                                    <small class="text-light">Last update: 2 days ago</small>
+                                    <p class="mb-0">
+                                        <?= htmlspecialchars($complaintResult['pending_count']) ?> Pending
+                                    </p>
+                                    <span class="text-light shadow-md">Last update: <?= htmlspecialchars($lastUpdateText) ?></span>
                                 </div>
                             </div>
                         </div>

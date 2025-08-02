@@ -118,8 +118,3 @@ $conn->close();
 
 
 
-// if ($_SESSION['admin']['admin_type_name'] === 'superadmin') {
-//     // Allow full access
-// } elseif ($_SESSION['admin']['admin_type_name'] === 'moderator') {
-//     // Limited access
-// }

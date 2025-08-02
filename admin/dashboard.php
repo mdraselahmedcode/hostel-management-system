@@ -127,6 +127,19 @@ require_once BASE_PATH . '/admin/includes/header_admin.php';
                 </div>
 
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+                    <a href="<?= BASE_URL . '/admin/sections/complaints/index.php' ?>" class="text-decoration-none">
+                        <div class="card dashboard-card">
+                            <div class="card-body text-center">
+                                <i class="bi bi-exclamation-diamond card-icon"></i>
+                                <h5 class="card-title">Complaints</h5>
+                                <p class="card-text">View and resolve submitted complaints</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+
+                <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                     <a href="<?= BASE_URL . '/admin/sections/payments/index.php' ?>" class="text-decoration-none">
                         <div class="card dashboard-card">
                             <div class="card-body text-center">

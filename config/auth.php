@@ -29,6 +29,14 @@ function require_admin($redirectTo = '/admin/login.php') {
     }
 }
 
+function require_student_or_admin($redirectTo = '/login.php') {
+    if (!is_student_logged_in() && !is_admin_logged_in()) {
+        header("Location: " . BASE_URL . $redirectTo);
+        exit;
+    }
+}
+
+
 function require_admin_type($expectedType, $redirectTo = '/unauthorized.php') {
     if (!is_admin_logged_in() || get_admin_type() !== $expectedType) {
         header("Location: " . BASE_URL . $redirectTo);

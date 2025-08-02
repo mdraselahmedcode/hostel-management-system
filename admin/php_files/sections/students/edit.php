@@ -141,6 +141,24 @@ if ($checkUnique->num_rows > 0) {
 }
 $checkUnique->close();
 
+
+// First, get the selected hostel's gender
+$hostelQuery = $conn->prepare("SELECT hostel_type FROM hostels WHERE id = ?");
+$hostelQuery->bind_param("i", $hostel_id);
+$hostelQuery->execute();
+$hostelResult = $hostelQuery->get_result();
+$hostel = $hostelResult->fetch_assoc();
+
+if ($hostel && $hostel['hostel_type'] !== $gender) {
+    // Handle the mismatch (abort or show error)
+    echo json_encode([
+        'success' => false,
+        'message' => "Gender mismatch: Cannot assign $gender student to a {$hostel['hostel_type']} hostel."
+    ]);
+    exit;
+}
+
+
 // Validate hostel, floor, room hierarchy
 $checkRoom = $conn->prepare("
     SELECT rooms.id FROM rooms

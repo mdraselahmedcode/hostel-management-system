@@ -5,6 +5,7 @@ require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/config/auth.php';
 require_once BASE_PATH . '/student/includes/header_student.php';
 
+$currentSection = 'room_change';
 require_student();
 ?>
 
