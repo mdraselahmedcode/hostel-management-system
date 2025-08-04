@@ -62,33 +62,58 @@ You can explore the functionalities as a **student** or **admin** through the li
 
 ## 📸 Screenshots
 
-> *(Add actual images in a `screenshots/` folder or use image URLs directly)*
+### Landing Page
+
+![Landing Page](screenshots/index.png)
+
+### Check Status After Hostel Apply
+
+![Check Status](screenshots/check_status.png)
 
 ### 👨‍🎓 Student Dashboard
 
-![Student Dashboard](screenshots/student-dashboard.png)
+![Student Dashboard](screenshots/student_dashboard.png)
 
 ### 🧾 Payment Section
 
-![Payment](screenshots/student-payment.png)
+![Payment](screenshots/student_payment.png)
+![Payment Detail](screenshots/student_payment_detail.png)
 
 ### 📢 Complaint Section
 
-![Complaints](screenshots/student-complaint.png)
+![Complaints](screenshots/student_complaints.png)
+
+### Room Change Request
+
+![Room Change Request](screenshots/student_room_change_request.png)
+
+### xProfile
+
+![Profile](screenshots/student_profile.png)
+
+### Room Detail
+
+![Room Detail](screenshots/student_room_detail.png)
+
+### Monthly payment Report
+
+![Monthly Payment Report](screenshots/student_monthly_payment_report.png)
+
 
 ---
 
 ### 👨‍💼 Admin Dashboard
 
-![Admin Dashboard](screenshots/admin-dashboard.png)
+![Admin Dashboard](screenshots/admin_dashboard.png)
 
-### 🏢 Room & Hostel Management
+### 🏢 Payment Generation
 
-![Room Management](screenshots/admin-room.png)
+![Payment Generation](screenshots/admin_payment_section.png)
+![Admin Payment Activity](screenshots/admin_payment_inside.png)
 
 ### 💰 Payment Generation & Report
 
-![Payment Generation](screenshots/admin-payment-generation.png)
+![Payment Generation](screenshots/admin_payment_report_generation.png)
 
 ---
 
