@@ -62,7 +62,6 @@ You can explore the functionalities as a **student** or **admin** through the li
 
 ## 📸 Screenshots
 
-> *(Add actual images in a `screenshots/` folder or use image URLs directly)*
 
 ### 👨‍🎓 Student Dashboard
 
@@ -70,7 +69,8 @@ You can explore the functionalities as a **student** or **admin** through the li
 
 ### 🧾 Payment Section
 
-![Payment](screenshots/student-payment.png)
+![Payment](screenshots/student_payment.png)
+![Payment](screenshots/student_payment_detail.png)
 
 ### 📢 Complaint Section
 
