@@ -10,6 +10,21 @@ A web-based Hostel Management System designed to streamline hostel admission, ro
 
 You can explore the functionalities as a **student** or **admin** through the live demo.
 
+🚀 Live Demo
+🔗 View Live Project
+🧭 Recommended Browser: Microsoft Edge (for best compatibility and performance)
+
+🧪 Demo Credentials
+👨‍🎓 Student
+Email: shekhrussel140@gmail.com
+
+Password: password
+
+👩‍💼 Admin
+Email: mili123@gmail.com
+
+Password: password
+
 ---
 
 ## 📌 Features
