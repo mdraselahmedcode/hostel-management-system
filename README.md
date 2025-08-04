@@ -115,6 +115,16 @@ You can explore the functionalities as a **student** or **admin** through the li
 
 ![Payment Generation](screenshots/admin_payment_report_generation.png)
 
+### Complaints
+
+![Managing Complaints](screenshots/admin_complaint_manage_01.png)
+![Chatting with the Student](screenshots/admin_managing_complaints.png)
+
+### Managing Students
+
+![Managing Students](screenshots/admin_students_view.png)
+
+
 ---
 
 ## 🗃️ Project Setup
