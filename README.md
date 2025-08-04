@@ -74,8 +74,11 @@ You can explore the functionalities as a **student** or **admin** through the li
 
 ### 📢 Complaint Section
 
-![Complaints](screenshots/student-complaint.png)
+![Complaints](screenshots/student_complaints.png)
 
+### Room Change Request
+
+![Complaints](screenshots/student_room_change_request.png)
 ---
 
 ### 👨‍💼 Admin Dashboard
