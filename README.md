@@ -124,23 +124,19 @@ You can explore the functionalities as a **student** or **admin** through the li
 
 ![Managing Students](screenshots/admin_students_view.png)
 
+### Role-Based Error Page for Invalid or Unrecognized Routes
 
----
+![404 Error Page](screenshots/error_page.png)
 
-## 🗃️ Project Setup
 
-> This project is hosted. To set up locally:
 
-1. Clone the repository  
-2. Import the SQL database into your MySQL  
-3. Configure `/config/config.php` and `/config/db.php` for DB connection  
-4. Run using local server (XAMPP/Laragon etc.)
 
 ---
 
 ## 📧 Contact
 
-Have feedback or need help? Open an [issue](https://github.com/your-repo/issues) or connect via email.
+connect via email:
+mdraselahmed.code@gmail.com
 
 ---
 
