@@ -5,7 +5,7 @@
             <p class="mb-0">&copy; <?php echo date('Y'); ?> Hostel Management System. All rights reserved.</p>
         </div>
     </footer>
-    
+
 
 </body>
 </html>

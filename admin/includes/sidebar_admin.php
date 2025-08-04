@@ -16,9 +16,10 @@ $sections = [
     'admins' => strpos($uri, '/admins/') !== false,
     'students' => strpos($uri, '/students/') !== false,
     'complaints' => strpos($uri, '/complaints/') !== false,
-    'payments' => strpos($uri, '/payments/index.php') !== false, 
+    'payments' => strpos($uri, '/payments/index.php') !== false,
+    'payments' => strpos($uri, '/payments/view.php') !== false,
     'payment_methods' => strpos($uri, '/payment_method/') !== false,
-    'payment_report' => strpos($uri, '/payment_report_generation.php') !== false 
+    'payment_report' => strpos($uri, '/payment_report_generation.php') !== false
 ];
 
 $currentSection = array_search(true, $sections) ?: '';
@@ -99,7 +100,8 @@ $currentSection = array_search(true, $sections) ?: '';
             <li class="nav-item">
                 <a class="nav-link <?= $currentSection === 'complaints' ? 'active' : '' ?>"
                     href="<?= BASE_URL ?>/admin/sections/complaints/index.php">
-                    <i class="bi bi-person-vcard"></i>Complaints
+                    <i class="bi bi-exclamation-octagon"></i>
+                    Complaints
                 </a>
             </li>
 

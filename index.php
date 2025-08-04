@@ -17,8 +17,69 @@ if (is_admin_logged_in()) {
 include BASE_PATH . '/includes/header.php';
 ?>
 
+<head>
+    <style>
+        :root {
+            --primary-color: #394e63ff;
+            --primary-hover: #1c2935ff;
+            --primary-text: #ffffff;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        .btn-primary:focus,
+        .btn-primary:active {
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.5) !important;
+        }
+
+        a.text-primary:hover,
+        a.text-primary:focus {
+            color: var(--primary-hover) !important;
+            text-decoration: underline;
+        }
+
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            background-color: transparent !important;
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active {
+            color: var(--primary-text) !important;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-hover) !important;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25) !important;
+        }
+    </style>
+</head>
 <!-- Hero Section with University Branding -->
-<section class="hero-section bg-university text-white py-5" style="background: linear-gradient(rgba(158, 228, 155, 0.7), rgba(0, 0, 0, 0.7)), url('assets/images/university-campus_2.jpg') no-repeat center center; background-size: cover;">
+<section class="hero-section bg-university text-white py-5" style="background: linear-gradient(rgba(88, 105, 87, 0.4), rgba(0, 0, 0, 0.3)), url('assets/images/university-campus_2.jpg') no-repeat center center; background-size: cover;">
     <div class="container py-5">
         <div class="row align-items-center">
             <div class="col-lg-7 mb-4">
@@ -104,7 +165,7 @@ include BASE_PATH . '/includes/header.php';
                         </ul>
                     </div>
                     <div class="card-footer bg-transparent">
-                        <a href="#" class="btn btn-outline-primary">View Details</a>
+                        <a href="<?= BASE_URL . '/about.php' ?>" class="btn btn-outline-primary">View Details</a>
                     </div>
                 </div>
             </div>
@@ -122,7 +183,7 @@ include BASE_PATH . '/includes/header.php';
                         </ul>
                     </div>
                     <div class="card-footer bg-transparent">
-                        <a href="#" class="btn btn-outline-primary">View Details</a>
+                        <a href="<?= BASE_URL . '/about.php' ?>" class="btn btn-outline-primary">View Details</a>
                     </div>
                 </div>
             </div>

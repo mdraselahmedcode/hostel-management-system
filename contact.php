@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/config/config.php';
 require_once BASE_PATH . '/config/auth.php';
-include BASE_PATH . '/includes/slide_message.php'; 
+include BASE_PATH . '/includes/slide_message.php';
 
 // Redirect if logged in
 if (is_student_logged_in()) {
@@ -25,6 +25,21 @@ include BASE_PATH . '/includes/header.php';
     <title>Contact Us - City University Hostel Management System</title>
 
     <style>
+        .bg-primary {
+            background-color: #2C3E50 !important;
+        }
+
+        .btn-primary {
+            background-color: #2d84d4ff !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3 !important;
+            /* Darker shade */
+            border-color: #004080 !important;
+            color: #fff !important;
+        }
+
         .contact-hero {
             background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5)),
                 url('<?= BASE_URL ?>/assets/images/university-campus_3.jpg') no-repeat center center;
@@ -55,7 +70,7 @@ include BASE_PATH . '/includes/header.php';
         }
 
         .form-control:focus {
-            border-color: #0d6efd;
+            border-color: #21bdd8ff;
             box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
         }
 
@@ -84,14 +99,14 @@ include BASE_PATH . '/includes/header.php';
             <div class="col-md-4">
                 <div class="contact-card p-4 h-100 bg-white shadow-sm text-center">
                     <div class="contact-icon bg-primary bg-opacity-10 text-primary mx-auto">
-                        <i class="fas fa-map-marker-alt fa-2x"></i>
+                        <i class="fas fa-map-marker-alt fa-2x" style="color: white;"></i>
                     </div>
                     <h4>Our Location</h4>
                     <p class="text-muted">Hostel Administration Office<br>
                         City University Campus<br>
                         Block B, Ground Floor<br>
                         Dhaka 1212, Bangladesh</p>
-                    <a href="https://maps.app.goo.gl/HhqxdaV6Pna4Z7uM9" class="btn btn-sm btn-outline-primary" target="_blank">
+                    <a href="https://maps.app.goo.gl/HhqxdaV6Pna4Z7uM9" class="btn btn-sm btn-outline-info" style="color: black;" target="_blank">
                         View on Map
                     </a>
 
@@ -101,30 +116,30 @@ include BASE_PATH . '/includes/header.php';
             <div class="col-md-4">
                 <div class="contact-card p-4 h-100 bg-white shadow-sm text-center">
                     <div class="contact-icon bg-primary bg-opacity-10 text-primary mx-auto">
-                        <i class="fas fa-phone-alt fa-2x"></i>
+                        <i class="fas fa-phone-alt fa-2x" style="color: white;"></i>
                     </div>
                     <h4>Phone Numbers</h4>
                     <p class="text-muted">
-                        <strong>General Enquiries:</strong> +880 2 55667788<br>
-                        <strong>Admissions:</strong> +880 2 55667789<br>
-                        <strong>Emergency:</strong> +880 1929 951023
+                        <strong>General Enquiries:</strong> +8801755667788<br>
+                        <strong>Admissions:</strong> +8801355667789<br>
+                        <strong>Emergency:</strong> +8801929951023
                     </p>
-                    <a href="tel:+880255667788" class="btn btn-sm btn-outline-primary">Call Now</a>
+                    <a href="tel:+880255667788" class="btn btn-sm btn-outline-info" style="color: black;">Call Now</a>
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="contact-card p-4 h-100 bg-white shadow-sm text-center">
                     <div class="contact-icon bg-primary bg-opacity-10 text-primary mx-auto">
-                        <i class="fas fa-envelope fa-2x"></i>
+                        <i class="fas fa-envelope fa-2x" style="color: white;"></i>
                     </div>
                     <h4>Email Addresses</h4>
                     <p class="text-muted">
-                        <strong>General:</strong> hostel@cityuniv.edu<br>
-                        <strong>Admissions:</strong> hostel-admissions@cityuniv.edu<br>
-                        <strong>Support:</strong> hostel-support@cityuniv.edu
+                        <strong>General:</strong> hostel@cityuniversity.edu<br>
+                        <strong>Admissions:</strong> hostel-admissions@cityuniversity.edu<br>
+                        <strong>Support:</strong> hostel-support@cityuniversity.edu
                     </p>
-                    <a href="mailto:hostel@cityuniv.edu" class="btn btn-sm btn-outline-primary">Email Us</a>
+                    <a href="mailto:hostel@cityuniv.edu" class="btn btn-sm btn-outline-info" style="color: black;">Email Us</a>
                 </div>
             </div>
         </div>
@@ -167,7 +182,7 @@ include BASE_PATH . '/includes/header.php';
                             </div>
                             <div class="mb-3">
                                 <label for="message" class="form-label">Message <span class="text-danger">*</span></label>
-                                <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                                <textarea class="form-control" id="message" name="message" rows="5" style="resize: none;" required></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary w-100 py-2">
                                 <i class="fas fa-paper-plane me-2"></i> Send Message

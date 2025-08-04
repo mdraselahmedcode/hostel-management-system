@@ -16,6 +16,68 @@ if (is_admin_logged_in()) {
 require_once BASE_PATH . '/includes/header.php';
 ?>
 
+<head>
+    <style>
+        :root {
+            --primary-color: #394e63ff;
+            --primary-hover: #1c2935ff;
+            --primary-text: #ffffff;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        .btn-primary:focus,
+        .btn-primary:active {
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.5) !important;
+        }
+
+        a.text-primary:hover,
+        a.text-primary:focus {
+            color: var(--primary-hover) !important;
+            text-decoration: underline;
+        }
+
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            background-color: transparent !important;
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active {
+            color: var(--primary-text) !important;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-hover) !important;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25) !important;
+        }
+    </style>
+</head>
+
 <!-- Make BASE_URL available to JS -->
 <script>
     const BASE_URL = "<?= BASE_URL ?>";

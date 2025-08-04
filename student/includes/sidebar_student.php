@@ -4,12 +4,6 @@ require_once BASE_PATH . '/config/db.php';
 require_once BASE_PATH . '/config/auth.php';
 
 require_student();
-
-// Get the current folder name (section) from the URL path to identify active link correctly
-// $currentSection = basename(dirname($_SERVER['SCRIPT_NAME']));
-
-// $currentPage = basename($_SERVER['SCRIPT_NAME']);
-
 ?>
 
 <head>
@@ -17,7 +11,7 @@ require_student();
 </head>
 <style>
     .sidebar {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        background: linear-gradient(135deg, #d2dde2 0%, #d2dde2 100%);
         border-right: 1px solid rgba(0, 0, 0, 0.08);
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.03);
         transition: all 0.3s ease;
@@ -50,7 +44,7 @@ require_student();
         margin: 0.25rem 0.75rem;
         padding: 0.75rem 1rem;
         transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        color: #495057;
+        color: #394e63;
         display: flex;
         align-items: center;
         position: relative;
@@ -58,20 +52,22 @@ require_student();
     }
 
     .nav-link:hover {
-        background-color: rgba(13, 110, 253, 0.08);
-        color: #0d6efd;
+        background-color: #2f3f4b;
+        color: #ffffff;
+        font: bold;
         transform: translateX(4px);
     }
 
     .nav-link:hover i {
-        color: #0d6efd;
+        color: #ffffff;
+        font: bold;
     }
 
     .nav-link.active {
-        background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+        background: linear-gradient(135deg, #4a6487 0%, #12243c 100%);
         color: white !important;
         font-weight: 500;
-        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+        box-shadow: 0 4px 12px rgba(192, 240, 243, 0.81);
     }
 
     .nav-link.active::before {
@@ -102,6 +98,7 @@ require_student();
     .sidebar-header h5 {
         font-weight: 600;
         letter-spacing: 0.5px;
+        color: #2b3c4a;
     }
 
     .logout-link {
@@ -111,11 +108,12 @@ require_student();
     }
 
     .logout-link .nav-link {
-        color: #dc3545;
+        color: #ffffff;
+        background-color: #b52a2a;
     }
 
     .logout-link .nav-link:hover {
-        background-color: rgba(220, 53, 69, 0.1);
+        background-color: #921d1d;
     }
 
     .nav-item {
@@ -134,6 +132,7 @@ require_student();
         display: none;
     }
 </style>
+
 
 <nav class="col-md-2 d-none d-md-block sidebar py-3">
     <div class="sidebar-sticky">
@@ -158,15 +157,15 @@ require_student();
 
             <li class="nav-item">
                 <a class="nav-link <?= $currentSection == 'room_details' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/room/room_details.php">
-                    <i class="bi bi-house-door"></i>Room Details
+                    <i class="bi bi-house-door"></i>Room Detail
                 </a>
             </li>
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link <?= $currentSection == 'change_password' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/student_profile/change_password.php">
                     <i class="bi bi-shield-lock"></i>Change Password
                 </a>
-            </li>
+            </li> -->
 
             <li class="nav-item">
                 <a class="nav-link <?= $currentSection == 'room_change_request' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/room_change_request/index.php">
@@ -182,7 +181,7 @@ require_student();
 
             <li class="nav-item">
                 <a class="nav-link <?= $currentSection == 'payment' ? 'active' : '' ?>" href="<?= BASE_URL ?>/student/sections/payment/payment_view.php">
-                    <i class="bi bi-receipt"></i>Payment View
+                    <i class="bi bi-receipt"></i>Payment
                 </a>
             </li>
 

@@ -56,6 +56,68 @@ function reasonLabel($reason) {
 }
 ?>
 
+<head>
+    <style>
+        :root {
+            --primary-color: #394e63ff;
+            --primary-hover: #1c2935ff;
+            --primary-text: #ffffff;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        .btn-primary:focus,
+        .btn-primary:active {
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.5) !important;
+        }
+
+        a.text-primary:hover,
+        a.text-primary:focus {
+            color: var(--primary-hover) !important;
+            text-decoration: underline;
+        }
+
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            background-color: transparent !important;
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active {
+            color: var(--primary-text) !important;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-hover) !important;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25) !important;
+        }
+    </style>
+</head>
+
 <div class="content container-fluid">
     <div class="row full-height">
         <!-- Sidebar -->
@@ -63,6 +125,11 @@ function reasonLabel($reason) {
 
         <!-- Main content -->
         <main class="col-12 col-md-10 col-lg-10 py-5 pt-3" style="max-height: calc(100vh - 142.75px); overflow-y:auto;">
+            <div class="mb-3 ">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+            </div>
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>My Room Change Requests</h2>
                 <a href="create.php" class="btn btn-primary">
@@ -78,7 +145,7 @@ function reasonLabel($reason) {
                         <a href="?status=pending" class="btn btn-outline-secondary <?= $status === 'pending' ? 'active' : '' ?>">Pending</a>
                         <a href="?status=approved" class="btn btn-outline-success <?= $status === 'approved' ? 'active' : '' ?>">Approved</a>
                         <a href="?status=rejected" class="btn btn-outline-danger <?= $status === 'rejected' ? 'active' : '' ?>">Rejected</a>
-                        <a href="?status=cancelled" class="btn btn-outline-warning <?= $status === 'cancelled' ? 'active' : '' ?>">Cancelled</a>
+                        <!-- <a href="?status=cancelled" class="btn btn-outline-warning <?= $status === 'cancelled' ? 'active' : '' ?>">Cancelled</a> -->
                     </div>
                 </div>
             </div>

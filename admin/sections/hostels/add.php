@@ -34,6 +34,65 @@ if (empty($_SESSION['csrf_token'])) {
 
 
 <style>
+
+        :root {
+            --primary-color: #394e63ff;
+            --primary-hover: #1c2935ff;
+            --primary-text: #ffffff;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        .btn-primary:focus,
+        .btn-primary:active {
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.5) !important;
+        }
+
+        a.text-primary:hover,
+        a.text-primary:focus {
+            color: var(--primary-hover) !important;
+            text-decoration: underline;
+        }
+
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            background-color: transparent !important;
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active {
+            color: var(--primary-text) !important;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-hover) !important;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25) !important;
+        }
+    
     .form-section {
         background: white;
         border-radius: 8px;
@@ -102,7 +161,7 @@ if (empty($_SESSION['csrf_token'])) {
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <!-- Back Button -->
-            <a href="javascript:history.back()" class="btn btn-outline-secondary mb-4 mt-4">
+            <a href="<?= BASE_URL . '/admin/sections/hostels/index.php' ?>" class="btn btn-outline-secondary mb-4 mt-4">
                 <i class="bi bi-arrow-left me-2"></i>Back to Hostels
             </a>
 

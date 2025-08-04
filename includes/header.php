@@ -14,8 +14,13 @@ $currentDir   = basename(dirname($_SERVER['SCRIPT_NAME']));
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="<?= BASE_URL ?>/vendor/bootstrap/css/bootstrap.min.css" />
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Bootstrap Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
@@ -49,12 +54,12 @@ $currentDir   = basename(dirname($_SERVER['SCRIPT_NAME']));
 
         .dropdown-item:hover {
             background-color: #f0f0f0;
-            color: #0d6efd;
+            color: #12bde7ff;
         }
 
         .dropdown-item.active,
         .dropdown-item:active {
-            background-color: #0d6efd;
+            background-color: #0a69a0ff;
             color: #fff !important;
             font-weight: 500;
         }
@@ -72,11 +77,11 @@ $currentDir   = basename(dirname($_SERVER['SCRIPT_NAME']));
 
 <body>
     <!-- Main Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #2C3E50;">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?= BASE_URL ?>">
-                <i class="fas fa-home-alt me-2"></i>
-                <span class="fw-bold">University Hostels</span>
+                <!-- <i class="fas fa-home-alt me-2"></i> -->
+                <span class="fw-bold">City University Hostels </span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
                 <span class="navbar-toggler-icon"></span>
@@ -134,6 +139,12 @@ $currentDir   = basename(dirname($_SERVER['SCRIPT_NAME']));
                     <li class="nav-item">
                         <a class="nav-link <?= $currentPage === 'contact.php' ? 'active' : '' ?>" href="<?= BASE_URL . '/contact.php' ?>">
                             <i class="fas fa-phone-alt me-1"></i> Contact
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link <?= $currentPage === 'developer.php' ? 'active' : '' ?>" href="<?= BASE_URL . '/developer.php' ?>">
+                            <i class="fas fa-user-cog me-1"></i> Developer
                         </a>
                     </li>
                 </ul>

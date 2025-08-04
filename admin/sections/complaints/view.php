@@ -155,6 +155,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comment'])) {
 }
 ?>
 
+<head>
+    <style>
+        :root {
+            --primary-color: #394e63ff;
+            --primary-hover: #1c2935ff;
+            --primary-text: #ffffff;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        .btn-primary:focus,
+        .btn-primary:active {
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.5) !important;
+        }
+
+        a.text-primary:hover,
+        a.text-primary:focus {
+            color: var(--primary-hover) !important;
+            text-decoration: underline;
+        }
+
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            background-color: transparent !important;
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active {
+            color: var(--primary-text) !important;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-hover) !important;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25) !important;
+        }
+
+        .card.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+    </style>
+</head>
 
 <div class="content container-fluid mt-5">
     <div class="row full-height">

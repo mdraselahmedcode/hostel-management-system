@@ -96,6 +96,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comment'])) {
 include BASE_PATH . '/student/includes/header_student.php';
 ?>
 
+<head>
+    <style>
+        :root {
+            --primary-color: #394e63ff;
+            --primary-hover: #1c2935ff;
+            --primary-text: #ffffff;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        .btn-primary:focus,
+        .btn-primary:active {
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.5) !important;
+        }
+
+        a.text-primary:hover,
+        a.text-primary:focus {
+            color: var(--primary-hover) !important;
+            text-decoration: underline;
+        }
+
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            background-color: transparent !important;
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active {
+            color: var(--primary-text) !important;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-hover) !important;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25) !important;
+        }
+
+        .card.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+    </style>
+</head>
+
 <div class="content container mt-4" style="max-height: calc(100vh - 142.75px);">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Complaint #<?= $complaint['id'] ?>: <?= htmlspecialchars($complaint['title']) ?></h2>
@@ -121,7 +188,7 @@ include BASE_PATH . '/student/includes/header_student.php';
     <div class="row">
         <div id="scroll-container" class="col-md-8 shadow-sm" style="max-height: 650px; overflow-y: auto;">
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header bg-primary">
                     <h5>Details</h5>
                 </div>
                 <div class="card-body">
@@ -165,7 +232,7 @@ include BASE_PATH . '/student/includes/header_student.php';
                             <div class="comment-section">
                                 <?php foreach ($comments as $comment): ?>
                                     <div class="card mb-3">
-                                        <div class="card-header">
+                                        <div class="card-header bg-primary">
                                             <strong><?= htmlspecialchars($comment['user_name']) ?></strong>
                                             <small class="text-light float-end">
                                                 <?= date('d M Y H:i', strtotime($comment['created_at'])) ?>
@@ -198,7 +265,7 @@ include BASE_PATH . '/student/includes/header_student.php';
 
         <div class="col-md-4">
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header bg-primary">
                     <h5>Complaint Information</h5>
                 </div>
                 <div class="card-body">
@@ -243,7 +310,7 @@ include BASE_PATH . '/student/includes/header_student.php';
             </div>
 
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header bg-primary">
                     <h5>Hostel Information</h5>
                 </div>
                 <div class="card-body">
@@ -268,7 +335,7 @@ include BASE_PATH . '/student/includes/header_student.php';
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         var $container = $('#scroll-container');
         var $comments = $container.find('.comment-section .card');
         if ($comments.length > 0) {

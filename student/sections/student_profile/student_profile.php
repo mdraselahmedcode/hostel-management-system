@@ -68,6 +68,69 @@ if ($complaintResult['last_update']) {
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?= BASE_URL . '/student/assets/css/student_profile.css' ?>">
+    <style>
+        :root {
+            --primary-color: #394e63ff;
+            --primary-hover: #1c2935ff;
+            --primary-text: #ffffff;
+        }
+
+        i {
+            color: var(--primary-hover);
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        .btn-primary:focus,
+        .btn-primary:active {
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.5) !important;
+        }
+
+        a.text-primary:hover,
+        a.text-primary:focus {
+            color: var(--primary-hover) !important;
+            text-decoration: underline;
+        }
+
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            background-color: transparent !important;
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active {
+            color: var(--primary-text) !important;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-hover) !important;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25) !important;
+        }
+    </style>
 </head>
 
 
@@ -98,7 +161,7 @@ if ($complaintResult['last_update']) {
                                     alt="Profile Image"
                                     width="150" height="150">
                                 <button class="btn btn-sm btn-primary avatar-edit-btn" data-bs-toggle="modal" data-bs-target="#avatarModal">
-                                    <i class="bi bi-camera-fill"></i>
+                                    <i class="bi bi-camera-fill text-light"></i>
                                 </button>
                             </div>
                             <h4 class="mt-3 mb-1"><?= htmlspecialchars($profile['first_name'] . ' ' . $profile['last_name']) ?></h4>
@@ -114,15 +177,15 @@ if ($complaintResult['last_update']) {
 
                             <div class="profile-meta">
                                 <div class="meta-item">
-                                    <i class="bi bi-envelope-fill"></i>
+                                    <i class="bi bi-envelope-fill text-dark"></i>
                                     <span><?= htmlspecialchars($profile['email']) ?></span>
                                 </div>
                                 <div class="meta-item">
-                                    <i class="bi bi-telephone-fill"></i>
+                                    <i class="bi bi-telephone-fill text-dark"></i>
                                     <span><?= htmlspecialchars($profile['contact_number'] ?? 'Not provided') ?></span>
                                 </div>
                                 <div class="meta-item">
-                                    <i class="bi bi-gender-ambiguous"></i>
+                                    <i class="bi bi-gender-ambiguous text-dark"></i>
                                     <span><?= htmlspecialchars(ucfirst($profile['gender'] ?? '')) ?></span>
                                 </div>
                             </div>
@@ -168,7 +231,7 @@ if ($complaintResult['last_update']) {
                                 <div class="col-md-6">
                                     <div class="info-card">
                                         <h6 class="info-title">
-                                            <i class="bi bi-building me-2"></i>Hostel Details
+                                            <i class="bi bi-building me-2"></i><span class="text-info">Hostel Details</span>
                                         </h6>
                                         <div class="info-content">
                                             <p><strong>Hostel:</strong> <?= htmlspecialchars($profile['hostel_name'] ?? 'Not assigned') ?></p>
@@ -182,7 +245,7 @@ if ($complaintResult['last_update']) {
                                 <div class="col-md-6">
                                     <div class="info-card">
                                         <h6 class="info-title">
-                                            <i class="bi bi-book me-2"></i>Academic Info
+                                            <i class="bi bi-book me-2"></i><span class="text-info">Academic Info</span>
                                         </h6>
                                         <div class="info-content">
                                             <p><strong>Department:</strong> <?= htmlspecialchars($profile['department'] ?? 'Not provided') ?></p>
@@ -196,7 +259,7 @@ if ($complaintResult['last_update']) {
                                 <div class="col-12">
                                     <div class="info-card">
                                         <h6 class="info-title">
-                                            <i class="bi bi-house-door-fill me-2"></i>Permanent Address
+                                            <i class="bi bi-house-door-fill me-2"></i><span class="text-info">Permanent Address</span>
                                         </h6>
                                         <div class="info-content">
                                             <address>
@@ -219,8 +282,8 @@ if ($complaintResult['last_update']) {
                                 <!-- Emergency Contact -->
                                 <div class="col-md-6">
                                     <div class="info-card">
-                                        <h6 class="info-title">
-                                            <i class="bi bi-person-lines-fill me-2"></i>Emergency Contact
+                                        <h6 class="info-title ">
+                                            <i class="bi bi-person-lines-fill me-2"></i> <span class="text-info">Emergency Contact</span>
                                         </h6>
                                         <div class="info-content">
                                             <p><strong>Father:</strong> <?= htmlspecialchars($profile['father_name'] ?? 'Not provided') ?></p>
@@ -232,9 +295,9 @@ if ($complaintResult['last_update']) {
 
                                 <!-- Additional Info -->
                                 <div class="col-md-6">
-                                    <div class="info-card">
+                                    <div class="info-card ">
                                         <h6 class="info-title">
-                                            <i class="bi bi-info-circle-fill me-2"></i>Additional Info
+                                            <i class="bi bi-info-circle-fill me-2"></i><span class="text-info">Additional Info</span>
                                         </h6>
                                         <div class="info-content">
                                             <p><strong>Blood Group:</strong> <?= htmlspecialchars($profile['blood_group'] ?? 'Not specified') ?></p>
@@ -265,12 +328,12 @@ if ($complaintResult['last_update']) {
                         <div class="col-md-4 mb-3">
                             <div class="card status-card bg-success bg-opacity-10">
                                 <div class="card-body text-center">
-                                    <h6 class="card-title text-light shadow-sm">Payment Status</h6>
+                                    <h6 class="card-title text-light ">Payment Status</h6>
                                     <div class="status-icon">
                                         <i class="bi bi-check-circle-fill text-success"></i>
                                     </div>
                                     <p class="mb-0">Up to date</p>
-                                    <span class="text-light shadow-sm">
+                                    <span class="text-light ">
                                         Last paid:
                                         <?= $lastPayment ? date('d M Y', strtotime($lastPayment['payment_date'])) : 'No payments yet' ?>
                                     </span>

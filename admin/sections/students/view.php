@@ -12,37 +12,6 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $studentId = intval($_GET['id']);
 
-// $sql = "
-//     SELECT 
-//         students.*,
-//         hostels.hostel_name,
-//         rooms.room_number,
-//         floors.floor_number,
-//         floors.floor_name,
-//         perm_addr.*, 
-//         perm_country.country_name AS perm_country_name,
-//         temp_addr.id AS temp_addr_id,
-//         temp_addr.country_id AS temp_country_id,
-//         temp_addr.state AS temp_state,
-//         temp_addr.division AS temp_division,
-//         temp_addr.district AS temp_district,
-//         temp_addr.sub_district AS temp_sub_district,
-//         temp_addr.village AS temp_village,
-//         temp_addr.postalcode AS temp_postalcode,
-//         temp_addr.street AS temp_street,
-//         temp_addr.house_no AS temp_house_no,
-//         temp_addr.detail AS temp_detail,
-//         temp_country.country_name AS temp_country_name
-//     FROM students
-//     LEFT JOIN hostels ON students.hostel_id = hostels.id
-//     LEFT JOIN rooms ON students.room_id = rooms.id
-//     LEFT JOIN floors ON rooms.floor_id = floors.id
-//     LEFT JOIN addresses AS perm_addr ON students.permanent_address_id = perm_addr.id
-//     LEFT JOIN countries AS perm_country ON perm_addr.country_id = perm_country.id
-//     LEFT JOIN addresses AS temp_addr ON students.temporary_address_id = temp_addr.id
-//     LEFT JOIN countries AS temp_country ON temp_addr.country_id = temp_country.id
-//     WHERE students.id = ?
-// ";
 
 $sql = "
     SELECT 
@@ -106,6 +75,71 @@ $payment_id = $student['payment_id'];
     <link rel="stylesheet" href="<?= BASE_PATH . '/vendor/bootstrap/css/bootstrap.min.css' ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+
+        
+        :root {
+            --primary-color: #394e63ff;
+            --primary-hover: #1c2935ff;
+            --primary-text: #ffffff;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        .btn-primary:focus,
+        .btn-primary:active {
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.5) !important;
+        }
+
+        a.text-primary:hover,
+        a.text-primary:focus {
+            color: var(--primary-hover) !important;
+            text-decoration: underline;
+        }
+
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            background-color: transparent !important;
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active {
+            color: var(--primary-text) !important;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-hover) !important;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25) !important;
+        }
+
+        .card.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+
         .header {
             background-color: #343a40;
             color: white;
@@ -147,7 +181,7 @@ $payment_id = $student['payment_id'];
             <i class="fas fa-arrow-left me-1"></i> Back
         </a>
         <h2 class="mb-0 text-primary">
-            <i class="fas fa-id-card me-2"></i>Student Details
+            <i class="fas fa-id-card me-2" style="color: var(--primary-color);"></i><span style="color: var(--primary-color);">Student Details</span>
         </h2>
         <div></div> <!-- Empty div for alignment -->
     </div>

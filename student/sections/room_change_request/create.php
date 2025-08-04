@@ -83,6 +83,68 @@ $hostels = $conn->query("SELECT id, hostel_name FROM hostels ORDER BY hostel_nam
 
 ?>
 
+<head>
+    <style>
+        :root {
+            --primary-color: #394e63ff;
+            --primary-hover: #1c2935ff;
+            --primary-text: #ffffff;
+        }
+
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover) !important;
+            border-color: var(--primary-hover) !important;
+        }
+
+        .btn-primary:focus,
+        .btn-primary:active {
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.5) !important;
+        }
+
+        a.text-primary:hover,
+        a.text-primary:focus {
+            color: var(--primary-hover) !important;
+            text-decoration: underline;
+        }
+
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            color: var(--primary-text) !important;
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            background-color: transparent !important;
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-primary:focus,
+        .btn-outline-primary:active {
+            color: var(--primary-text) !important;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-hover) !important;
+            box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25) !important;
+        }
+    </style>
+</head>
+
 <div class="content container-fluid">
     <div class="row full-height">
         <?php include BASE_PATH . '/student/includes/sidebar_student.php'; ?>
@@ -91,7 +153,7 @@ $hostels = $conn->query("SELECT id, hostel_name FROM hostels ORDER BY hostel_nam
             <div class="d-flex justify-content-between align-items-center">
                 <h2 class="mb-4">New Room Change Request</h2>
                 <div class="mb-4">
-                    <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                    <a href="javascript:window.history.back()" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left"></i> Back
                     </a>
                 </div>
@@ -237,10 +299,16 @@ $hostels = $conn->query("SELECT id, hostel_name FROM hostels ORDER BY hostel_nam
                 success: function(response) {
                     if (response.success) {
                         showSlideMessage(response.message, 'success');
+
                         // Reset form & dropdowns
                         $form[0].reset();
                         resetDropdown($('#floor_id'), '-- Select Floor --');
                         resetDropdown($('#room_id'), '-- Select Room --');
+
+                        // Delay redirection by 3 seconds (3000 milliseconds)
+                        setTimeout(function() {
+                            window.location.href = '<?= BASE_URL . '/student/sections/room_change_request/index.php' ?>';
+                        }, 3000);
                     } else {
                         showSlideMessage(response.message, 'danger');
                     }

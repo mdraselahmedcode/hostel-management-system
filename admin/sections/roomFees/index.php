@@ -49,6 +49,9 @@ if ($result && $result->num_rows > 0) {
 require_once BASE_PATH . '/admin/includes/header_admin.php';
 ?>
 
+<head>
+    
+</head>
 <div class="content container-fluid mt-5">
     <div class="row full-height">
         <?php require_once BASE_PATH . '/admin/includes/sidebar_admin.php'; ?>
