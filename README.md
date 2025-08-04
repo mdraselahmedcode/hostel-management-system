@@ -62,6 +62,13 @@ You can explore the functionalities as a **student** or **admin** through the li
 
 ## 📸 Screenshots
 
+### Landing Page
+
+![Landing Page](screenshots/index.png)
+
+### Check Status After Hostel Apply
+
+![Check Status](screenshots/check_status.png)
 
 ### 👨‍🎓 Student Dashboard
 
