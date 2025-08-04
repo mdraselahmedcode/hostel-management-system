@@ -66,7 +66,7 @@ You can explore the functionalities as a **student** or **admin** through the li
 
 ### 👨‍🎓 Student Dashboard
 
-![Student Dashboard](screenshots/student-dashboard.png)
+![Student Dashboard](screenshots/student_dashboard.png)
 
 ### 🧾 Payment Section
 
