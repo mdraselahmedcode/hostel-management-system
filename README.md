@@ -45,6 +45,7 @@ Password: password
   - Print receipts and monthly payment reports.
   - Overpayment is auto-adjusted to the next month.
   - View room details and roommate list.
+- And More
 
 ### 🛠️ Admin Panel
 - Admin and Super Admin roles:
