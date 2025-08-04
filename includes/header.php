@@ -81,7 +81,7 @@ $currentDir   = basename(dirname($_SERVER['SCRIPT_NAME']));
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?= BASE_URL ?>">
                 <!-- <i class="fas fa-home-alt me-2"></i> -->
-                <span class="fw-bold">City University Hostels </span>
+                <span class="fw-bold">City University Hostel </span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
                 <span class="navbar-toggler-icon"></span>
