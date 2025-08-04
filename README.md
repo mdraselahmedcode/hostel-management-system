@@ -1,92 +1,114 @@
 # 🏨 Hostel Management System
 
-A complete Hostel Management System developed with **PHP**, **jQuery**, **AJAX**, **Bootstrap**, and **MySQL**.
-
-This project is designed to manage hostel applications, student check-ins, room allocations, complaints, payments, and administrative functionalities for both students and admins, including super admins.
+A web-based Hostel Management System designed to streamline hostel admission, room allocation, payment handling, and communication between students and hostel administration.
 
 ---
 
-## 🚀 Features
+## 🌐 Live Demo
 
-### 🔹 Student Features
+🔗 [Live Site](https://hostel-management-system.infinityfreeapp.com/)
 
-- **Hostel Application:**
-  - Apply for hostel accommodation.
-  - Email verification through a verification link.
-  - Wait for admin approval after application.
-  - Get notified via email upon approval.
-  - Can only log in after admin checks them in.
+You can explore the functionalities as a **student** or **admin** through the live demo.
 
-- **Account Management:**
-  - Password reset via email link.
-  - Update profile and upload profile image.
-  - Change password securely.
+---
 
-- **Application Status:**
-  - Track the current status of hostel application.
+## 📌 Features
 
-- **Room & Hostel Info:**
-  - View room details and see roommates.
-
-- **Room Change & Complaints:**
+### 👨‍🎓 Student Panel
+- Apply for hostel admission.
+- Email verification via verification link.
+- Wait for admin approval (notified via email).
+- After approval and check-in, access full system features:
+  - Login to student dashboard.
+  - Check application status before login.
+  - Reset password via email link.
+  - Edit profile and upload profile image.
+  - Change password.
   - Send room change requests.
-  - Submit complaints and get responses via chat.
+  - File complaints and chat with admin.
+  - Make payments (manual match via mobile banking).
+  - Print receipts and monthly payment reports.
+  - Overpayment is auto-adjusted to the next month.
+  - View room details and roommate list.
 
-- **Payments:**
-  - Payment via mobile banking.
-  - Admin verifies transaction and reference codes.
-  - Overpayments are carried to the next month.
-  - Download payment receipts and monthly reports.
-
----
-
-### 🔹 Admin & Super Admin Features
-
-- **Admin Dashboard:**
-  - View and manage hostel activities.
-  - Add/approve/check-in students.
-  - Generate payments monthly for all checked-in students.
-  - Handle complaints and room change requests.
-  - Download payment reports in PDF or CSV format.
-
-- **Hostel Management:**
-  - Add hostels, floors, room types, and assign rooms.
-  - Set room fees and late fee rules.
-
-- **Student Management:**
-  - Add students manually.
-  - Approve and check-in applications.
-
-- **Late Fee System:**
-  - Automatically applies late fee based on due date.
-
-- **Admin Management (Super Admin Only):**
-  - Create/manage multiple admins.
-  - Assign roles and responsibilities.
+### 🛠️ Admin Panel
+- Admin and Super Admin roles:
+  - Super Admin can manage all admins.
+- Manage:
+  - Hostels
+  - Floors
+  - Rooms and room types
+  - Student profiles (approve, verify, check-in)
+  - Room assignments
+- Payment Management:
+  - Generate monthly payments.
+  - Auto late fee addition after due date.
+  - Download reports in PDF or CSV format.
+  - Match mobile banking payments via transaction ID and reference code.
+- Complaint Management:
+  - Respond to student complaints via chat.
+- Handle room change requests.
 
 ---
 
-## 🛠️ Tech Stack
+## 🧰 Tech Stack
 
-- **Frontend:** Bootstrap, jQuery, AJAX
-- **Backend:** PHP (Core PHP)
-- **Database:** MySQL
-
----
-
-## 📸 Screenshots (Optional)
-
-_Add screenshots of main features here if you have any._
+- **Backend:** PHP  
+- **Frontend:** HTML, CSS, Bootstrap  
+- **Interactivity:** jQuery, AJAX  
+- **Database:** MySQL  
 
 ---
 
-## 🔐 Security
+## 📸 Screenshots
 
-- Email verification before login access.
-- Secure password reset system.
-- Admin-controlled check-in process.
-- Unique transaction verification for payments.
+> *(Add actual images in a `screenshots/` folder or use image URLs directly)*
 
+### 👨‍🎓 Student Dashboard
 
+![Student Dashboard](screenshots/student-dashboard.png)
 
+### 🧾 Payment Section
 
+![Payment](screenshots/student-payment.png)
+
+### 📢 Complaint Section
+
+![Complaints](screenshots/student-complaint.png)
+
+---
+
+### 👨‍💼 Admin Dashboard
+
+![Admin Dashboard](screenshots/admin-dashboard.png)
+
+### 🏢 Room & Hostel Management
+
+![Room Management](screenshots/admin-room.png)
+
+### 💰 Payment Generation & Report
+
+![Payment Generation](screenshots/admin-payment-generation.png)
+
+---
+
+## 🗃️ Project Setup
+
+> This project is hosted. To set up locally:
+
+1. Clone the repository  
+2. Import the SQL database into your MySQL  
+3. Configure `/config/config.php` and `/config/db.php` for DB connection  
+4. Run using local server (XAMPP/Laragon etc.)
+
+---
+
+## 📧 Contact
+
+Have feedback or need help? Open an [issue](https://github.com/your-repo/issues) or connect via email.
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
