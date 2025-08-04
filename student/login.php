@@ -151,6 +151,16 @@ include BASE_PATH . '/includes/slide_message.php';
     });
 </script>
 
+<?php if (isset($_SESSION['logout_success'])): ?>
+    <script>
+        $(document).ready(function() {
+            showSlideMessage("<?= addslashes($_SESSION['logout_success']) ?>", "success");
+        });
+    </script>
+    <?php unset($_SESSION['logout_success']); ?>
+<?php endif; ?>
+
+
 <?php
 require_once BASE_PATH . '/includes/footer_student_login.php';
 ?>

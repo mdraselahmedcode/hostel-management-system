@@ -76,18 +76,32 @@ include BASE_PATH . '/includes/header.php';
             border-color: var(--primary-hover) !important;
             box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25) !important;
         }
+
+
+        
+
+        .bg-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(194, 241, 243, 0), rgba(7, 51, 51, 0.5)),
+                url('assets/images/university-campus_2.jpg') no-repeat center center;
+            background-size: cover;
+            filter: blur(3px);
+            z-index: 0;
+        }
+
     </style>
 </head>
 <!-- Hero Section with University Branding -->
-<section class="hero-section bg-university text-white py-5" style="background: linear-gradient(rgba(88, 105, 87, 0.4), rgba(0, 0, 0, 0.3)), url('assets/images/university-campus_2.jpg') no-repeat center center; background-size: cover;">
-    <div class="container py-5">
+<section class="hero-section text-white py-5 position-relative ">
+    <div class="bg-blur"></div>
+    <div class="container py-5 position-relative">
         <div class="row align-items-center">
             <div class="col-lg-7 mb-4">
-                <div class="d-flex align-items-center mb-3">
-                    <img src="assets/images/provided_logo.jpg" alt="University Logo" class="me-3" style="height: 60px; border-radius: 50%;">
-                    <h2 class="mb-0">University Hostel System</h2>
-                </div>
-                <h1 class="display-4 fw-bold mb-4">Comfortable Living for Academic Success</h1>
+                <h1 class="display-4 fw-bold mb-4 lead">Comfortable Living for Academic Success</h1>
                 <p class="lead mb-4">Secure your place in our university hostels — safe, affordable, and convenient accommodation for students.</p>
 
                 <!-- Button Group with Mobile Margin -->
@@ -101,7 +115,7 @@ include BASE_PATH . '/includes/header.php';
                 </div>
             </div>
 
-            <div class="col-lg-5">
+            <div class="col-lg-5" >
                 <div class="card shadow-lg">
                     <div class="card-body p-4">
                         <h3 class="fw-bold mb-3 text-center" style="color: rgba(20, 17, 17, 0.9);">Application Process</h3>
@@ -144,7 +158,7 @@ include BASE_PATH . '/includes/header.php';
 
 <!-- Hostels Showcase Section -->
 <section class="py-5">
-    <div class="container py-5">
+    <div class="container ">
         <div class="text-center mb-5">
             <h2 class="fw-bold">Our Hostels</h2>
             <p class="lead text-muted">Modern facilities across multiple locations</p>
@@ -192,14 +206,14 @@ include BASE_PATH . '/includes/header.php';
 </section>
 
 <!-- Why Choose Our Hostels -->
-<section class="py-5 bg-light">
-    <div class="container py-5">
+<section class="py-4 bg-light">
+    <div class="container py-3">
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <img src="assets/images/hostel_life_w_girl.jpg" alt="Hostel Life" class="img-fluid rounded shadow">
             </div>
             <div class="col-lg-6">
-                <h2 class="fw-bold mb-4">Why Choose University Hostels?</h2>
+                <h2 class="fw-bold mb-4 mt-4">Why Choose University Hostels?</h2>
                 <div class="d-flex mb-3">
                     <div class="me-4">
                         <div class="bg-primary text-white rounded-circle p-3 d-inline-flex mb-2">
@@ -240,8 +254,8 @@ include BASE_PATH . '/includes/header.php';
 </section>
 
 <!-- Application Timeline -->
-<section class="py-5">
-    <div class="container py-5">
+<section class="py-4">
+    <div class="container py-3">
         <div class="text-center mb-5">
             <h2 class="fw-bold">Application Timeline</h2>
             <p class="lead text-muted">Important dates for hostel applications</p>
@@ -285,8 +299,8 @@ include BASE_PATH . '/includes/header.php';
 </section>
 
 <!-- FAQ Section -->
-<section class="py-5 bg-light">
-    <div class="container py-5">
+<section class="py-4 bg-light">
+    <div class="container py-3">
         <div class="text-center mb-5">
             <h2 class="fw-bold">Frequently Asked Questions</h2>
             <p class="lead text-muted">Find answers to common questions about hostel accommodation</p>
@@ -355,8 +369,8 @@ include BASE_PATH . '/includes/header.php';
 
 <!-- Contact Section -->
 
-<section class="py-5">
-    <div class="container py-5">
+<section class="py-4">
+    <div class="container py-3">
         <div class="row align-items-stretch">
             <!-- Left Column -->
             <div class="col-lg-5 d-flex">

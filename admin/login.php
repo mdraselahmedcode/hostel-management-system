@@ -20,7 +20,7 @@ require_once BASE_PATH . '/includes/header.php';
 ?>
 
 <head>
-        <style>
+    <style>
         :root {
             --primary-color: #394e63ff;
             --primary-hover: #1c2935ff;
@@ -91,7 +91,7 @@ require_once BASE_PATH . '/includes/header.php';
 
                         <button type="submit" class="btn btn-primary w-100">Login</button>
                     </form>
-                    <div id="showMessage" class="mt-3"></div>
+                    <!-- <div id="showMessage" class="mt-3"></div> -->
                 </div>
             </div>
         </div>
@@ -149,8 +149,19 @@ require_once BASE_PATH . '/includes/header.php';
             });
         });
 
+
     });
 </script>
+
+<?php if (isset($_SESSION['logout_success'])): ?>
+    <script>
+        showSlideMessage("<?= addslashes($_SESSION['logout_success']) ?>", 'success');
+    </script>
+    <?php unset($_SESSION['logout_success']); ?>
+<?php endif; ?>
+
+
+
 
 <?php
 require_once BASE_PATH . '/includes/footer_admin_login.php';

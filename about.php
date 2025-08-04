@@ -30,11 +30,12 @@ require_once BASE_PATH . '/includes/header.php';
         }
 
         .hero-section {
-            background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.7)),
+            background: linear-gradient(rgba(149, 248, 252, 0.2), rgba(0, 0, 0, 0.6)),
                 url('<?= BASE_URL ?>/assets/images/university-campus_1.jpg') no-repeat center center;
             background-size: cover;
             color: white;
             padding: 100px 0;
+            
         }
 
         .mission-card {
