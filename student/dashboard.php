@@ -153,10 +153,9 @@ $currentSection = 'dashboard';
 
     <main class="main-content">
         <!-- Welcome Card -->
-        <!-- Welcome Card -->
         <div class="card shadow-sm mb-5 bg-white welcome-card">
             <div class="card-body">
-                <h2 class="mb-3 text-success">Welcome, <?= htmlspecialchars($_SESSION['student']['first_name']) ?> 👋</h2>
+                <h2 class="mb-3 text-success">Welcome, <?= htmlspecialchars($_SESSION['student']['first_name'] . ' ' . $_SESSION['student']['last_name']) ?> 👋</h2>
                 <p class="mb-1"><strong>Full Name:</strong> <?= htmlspecialchars($_SESSION['student']['first_name'] . ' ' . $_SESSION['student']['last_name']) ?></p>
                 <p class="mb-3"><strong>Email:</strong> <?= htmlspecialchars($_SESSION['student']['email']) ?></p>
 

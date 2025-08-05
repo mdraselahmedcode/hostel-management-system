@@ -40,7 +40,8 @@ $stmt->close();
 // Calculate current occupancy
 $current_occupancy = 0;
 if ($room_details && $room_details['room_id']) {
-    $stmt = $conn->prepare("SELECT COUNT(*) FROM students WHERE room_id = ?");
+    // $stmt = $conn->prepare("SELECT COUNT(*) FROM students WHERE room_id = ?");
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM students WHERE room_id = ? AND is_verified = 1 AND is_approved = 1 AND is_checked_in = 1");
     $stmt->bind_param('i', $room_details['room_id']);
     $stmt->execute();
     $stmt->bind_result($current_occupancy);
