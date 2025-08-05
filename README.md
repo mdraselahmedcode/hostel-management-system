@@ -18,7 +18,7 @@ You can explore the functionalities as a **student** or **admin** through the li
 👨‍🎓 Student  
 Email: shekhrussel140@gmail.com
 
-Password: password
+Password: Password!123
 
 👩‍💼 Admin  
 Email: mili123@gmail.com
