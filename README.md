@@ -8,7 +8,7 @@ A web-based Hostel Management System designed to streamline hostel admission, ro
 
 🔗 [Live Site](https://hostel-management-system.infinityfreeapp.com/)
 
-<--
+<!--
 You can explore the functionalities as a **student** or **admin** through the live demo.
 
 🚀 Live Demo
